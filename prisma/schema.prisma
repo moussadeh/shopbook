@@ -13,7 +13,7 @@ datasource db {
 }
 
 model Commercant {
-  id                String   @id @default(uuid())
+  id                Int   @id @default(autoincrement())
   nom               String
   prenom            String
   telephone         String   @unique
@@ -33,7 +33,7 @@ model Commercant {
 }
 
 model Client {
-  id        String   @id @default(uuid())
+  id        Int   @id @default(autoincrement())
   nom       String
   prenom    String?
   telephone String
@@ -45,9 +45,9 @@ model Client {
 }
 
 model Credit {
-  id            String   @id @default(uuid())
-  commercantId  String
-  clientId      String
+  id            Int   @id @default(autoincrement())
+  commercantId  Int
+  clientId      Int
   montantTotal  Float
   montantPaye   Float   @default(0)
   statutCredit  StatutCredit @default(NON_PAYE)
@@ -63,8 +63,8 @@ model Credit {
 }
 
 model Paiement {
-  id           String   @id @default(uuid())
-  creditId     String
+  id           Int   @id @default(autoincrement())
+  creditId     Int
   montant      Float
   datePaiement DateTime @default(now())
   createdAt    DateTime @default(now())
@@ -73,8 +73,8 @@ model Paiement {
 }
 
 model Produit {
-  id            String   @id @default(uuid())
-  commercantId  String
+  id            Int   @id @default(autoincrement())
+  commercantId  Int
   nom           String
   prixUnitaire  Float
   unite         UniteProduit
@@ -84,9 +84,9 @@ model Produit {
 }
 
 model CreditProduit {
-  id            String   @id @default(uuid())
-  creditId      String
-  produitId     String
+  id            Int   @id @default(autoincrement())
+  creditId      Int
+  produitId     Int
   quantite      Float
   prixUnitaire  Float
   montantTotal  Float
@@ -112,4 +112,5 @@ enum UniteProduit {
   BOUTEILLE
   BIDON
   METRE
+  PAQUET
 }
