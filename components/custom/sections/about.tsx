@@ -1,4 +1,4 @@
-import { Store, ShoppingBag, Wrench, Truck, Smartphone, Users, Briefcase, AlertCircle, CheckCircle, X, Check } from "lucide-react";
+import { Store, ShoppingBag, Wrench, Truck, Smartphone, Users, Briefcase, AlertCircle, CheckCircle, X, Check, Info } from "lucide-react";
 
 export default function About() {
   const sectors = [
@@ -18,7 +18,7 @@ export default function About() {
         {/* Header */}
         <div className="space-y-3 md:text-center">
           <span className="inline-flex items-center gap-2 text-md font-medium px-3 py-1.5 rounded-full bg-secondary text-vert-foncee">
-            À propos de nous
+            <Info size={18} /> À propos de nous
           </span>
           <h2 className="text-xl md:text-4xl font-bold leading-tight">
             Conçu pour les commerçants<br /><span className="text-primary">mauritaniens</span>

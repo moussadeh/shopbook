@@ -15,7 +15,7 @@ export default function Contact() {
                     <div className="space-y-6">
                         <div className="space-y-3">
                             <span className="inline-flex items-center gap-2 text-md font-medium px-3 py-1.5 rounded-full bg-secondary text-vert-foncee">
-                                Contact
+                                <Mail size={18} /> Contact
                             </span>
                             <h2 className="text-2xl md:text-4xl font-bold leading-tight">
                                 Une question ?<br />

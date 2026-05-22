@@ -253,6 +253,7 @@ import {
   Headset,
   Clock3,
   Star,
+  BadgeDollarSign,
 } from "lucide-react"
 
 export default function Pricing() {
@@ -262,8 +263,8 @@ export default function Pricing() {
 
         {/* Header */}
         <div className="space-y-2 md:text-center md:max-w-3xl md:mx-auto">
-          <div className="inline-flex items-center rounded-full bg-secondary px-4 py-2 text-md font-medium text-vert-foncee">
-            Tarifs simples et transparents
+          <div className="inline-flex items-center rounded-full bg-secondary px-4 py-2 text-md font-medium text-vert-foncee gap-2">
+            <BadgeDollarSign size={18} /> Tarifs simples et transparents
           </div>
           <h2 className="text-2xl md:text-4xl font-bold leading-tight">
             Choisissez le plan qui<br />convient à <span className="text-vert-foncee">votre boutique</span>
