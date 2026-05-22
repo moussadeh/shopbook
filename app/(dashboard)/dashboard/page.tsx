@@ -2,7 +2,7 @@ export default function Home() {
   return (
     <div className="">
       <main>
-        <h1>ShopBook Contact</h1>
+        <h1>ShopBook Dashboard</h1>
       </main>
     </div>
   );

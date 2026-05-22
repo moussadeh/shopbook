@@ -46,6 +46,11 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+  --color-vert-foncee: var(--vert-foncee);
+  --color-orange: var(--orange);
+  --color-vert-claire: var(--vert-claire);
+  --color-marron-gris-foncee: var(--marron-gris-foncee);
+  --color-marron-grisee: var(--marron-grisee);
 }
 
 :root {
@@ -55,9 +60,11 @@
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
+  /* --primary: oklch(0.205 0 0); */
+  --primary: #1d5524;
   --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
+  /*--secondary: oklch(0.97 0 0);*/
+  --secondary: #e7f0e2;
   --secondary-foreground: oklch(0.205 0 0);
   --muted: oklch(0.97 0 0);
   --muted-foreground: oklch(0.556 0 0);
@@ -81,9 +88,11 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
-  --green: #3c7224;
-  --jaune: #ecb32e;
-  --light-jaune: #e6e3bc;
+  --vert-foncee: #1d5524;
+  --orange: #f6bb3e;
+  --vert-claire: #e7f0e2;
+  --marron-gris-foncee: #3a322d;
+  --marron-grisee: #8a551e;
 }
 
 .dark {
@@ -130,14 +139,4 @@
   html {
     @apply font-sans;
   }
-}
-
-.green {
-  color: var(--green);
-}
-.jaune {
-  color: var(--jaune);
-}
-.light-jaune {
-  color: var(--light-jaune);
 }

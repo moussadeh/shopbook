@@ -2,22 +2,22 @@ import Image from "next/image";
 
 export default function Footer() {
     return (
-        <footer className="border-t mt-20">
+        <footer className="border-t">
             <div className='text-gray-500/80 pt-8 px-6 md:px-16 lg:px-24 xl:px-32'>
 
             <div className='flex flex-wrap justify-between gap-12 md:gap-6'>
 
                 <div className='max-w-80'>
                     <div className="flex gap-2 items-center">
-                        <Image src="/logos/logos_light_mode/android-chrome-192x192.png" alt="Logo" width={32} height={32} className="object-contain" />
+                        <Image src="/logos/logo/ShopBook.png" alt="Logo" width={32} height={32} className="object-contain rounded" />
                         <span>
-                            <span className="text-primary text-lg font-bold tracking-tight">Shop</span>
-                            <span className="text-chart-1 text-lg font-bold tracking-tight">Book</span>
+                            <span className="font-bold tracking-tight text-2xl text-vert-foncee">Shop</span>
+                            <span className="font-bold tracking-tight text-2xl text-orange">Book</span>
                         </span>
                     </div>
 
                     <p className='text-sm mt-3'>
-                        Le carnet numérique destiné aux commerçants Mauritaniens, pour la gestion de leur commerce.
+                        Le carnet numérique destiné aux commerçants Mauritaniens, pour la gestion de leur activité.
                     </p>
 
                     <div className='flex items-center gap-3 mt-3'>
