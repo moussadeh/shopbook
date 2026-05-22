@@ -1,4 +1,4 @@
-import {
+/*import {
   Check,
   ShieldCheck,
   RefreshCcw,
@@ -241,6 +241,209 @@ export default function Pricing() {
             </div>
           </div>
         </div>
+      </div>
+    </section>
+  )
+}*/
+
+import {
+  Check,
+  ShieldCheck,
+  RefreshCcw,
+  Headset,
+  Clock3,
+  Star,
+} from "lucide-react"
+
+export default function Pricing() {
+  return (
+    <section id="pricing" className="px-4 md:px-16 lg:px-24 xl:px-32 py-6 md:py-10 bg-muted">
+      <div className="max-w-7xl mx-auto space-y-10 md:space-y-16">
+
+        {/* Header */}
+        <div className="space-y-2 md:text-center md:max-w-3xl md:mx-auto">
+          <div className="inline-flex items-center rounded-full bg-secondary px-4 py-2 text-md font-medium text-vert-foncee">
+            Tarifs simples et transparents
+          </div>
+          <h2 className="text-2xl md:text-4xl font-bold leading-tight">
+            Choisissez le plan qui<br />convient à <span className="text-vert-foncee">votre boutique</span>
+          </h2>
+          <p className="text-muted-foreground text-base leading-relaxed md:max-w-xl md:mx-auto">
+            Gérez vos crédits clients facilement avec une solution moderne pensée pour les commerçants mauritaniens.
+          </p>
+        </div>
+
+        {/* Cards */}
+        <div className="grid lg:grid-cols-3 gap-6 md:gap-8">
+
+          {/* Découverte */}
+          <div className="rounded-3xl border border-slate-200 bg-white p-6 md:p-8 shadow-sm hover:shadow-xl transition-all duration-300">
+            <div className="space-y-5 md:space-y-6">
+              <div>
+                <h3 className="text-xl md:text-2xl font-semibold">Découverte</h3>
+                <div className="mt-1 flex items-end gap-2">
+                  <span className="text-3xl md:text-4xl font-bold">Gratuit</span>
+                </div>
+                <div className="mt-2 inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-sm text-slate-700">
+                  <Clock3 size={14} className="mr-2" />Pendant 2 semaines
+                </div>
+                <p className="mt-2 text-slate-600 text-sm md:text-base">
+                  Testez toutes les fonctionnalités de Shopbook sans engagement.
+                </p>
+              </div>
+
+              <div className="pt-4 border-t border-slate-200 space-y-2">
+                {[
+                  "Gestion des crédits clients",
+                  "Gestion des clients",
+                  "Gestion des produits",
+                  "Enregistrement des paiements",
+                  "Tableau de bord basique",
+                ].map((item) => (
+                  <div key={item} className="flex items-center gap-3">
+                    <div className="rounded-full bg-vert-claire p-1 shrink-0">
+                      <Check size={13} className="text-vert-foncee" />
+                    </div>
+                    <span className="text-slate-700 text-sm">{item}</span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="rounded-2xl bg-vert-claire p-3">
+                <p className="text-sm text-slate-600">
+                  Accès complet à toutes les fonctionnalités pendant 2 semaines.
+                </p>
+              </div>
+
+              <button className="w-full rounded-xl border border-vert-foncee py-3 font-medium text-vert-foncee transition hover:bg-vert-claire text-sm md:text-base">
+                Commencer gratuitement
+              </button>
+            </div>
+          </div>
+
+          {/* Essentiel */}
+          <div className="relative rounded-3xl border-2 border-vert-foncee bg-white p-6 md:p-8 shadow-xl md:scale-[1.02]">
+            <div className="absolute -top-4 left-1/2 -translate-x-1/2">
+              <div className="rounded-full bg-vert-foncee px-4 py-2 text-sm font-medium text-white whitespace-nowrap">
+                Standard
+              </div>
+            </div>
+
+            <div className="space-y-5 md:space-y-6">
+              <div>
+                <h3 className="text-xl md:text-2xl font-semibold text-slate-900">Essentiel</h3>
+                <div className="mt-0 flex items-end gap-2">
+                  <span className="text-3xl md:text-4xl font-bold">200</span>
+                  <span className="pb-1 text-lg text-slate-600">MRU / mois</span>
+                </div>
+                <div className="mt-2 inline-flex items-center rounded-full bg-vert-claire px-3 py-1 text-sm text-vert-foncee">
+                  <Star size={14} className="mr-2" />Le plus populaire
+                </div>
+                <p className="mt-2 text-slate-600 leading-7 text-sm md:text-base">
+                  Accédez à toutes les fonctionnalités pour gérer votre boutique sans limite.
+                </p>
+              </div>
+
+              <div className="pt-4 border-t border-slate-200 space-y-2">
+                <p className="text-slate-700 font-medium text-sm mb-3">Tout ce qui est inclus dans découverte, plus :</p>
+                {[
+                  "Accès illimité",
+                  "Statistiques avancées",
+                  "Historique complet",
+                  "Export des données",
+                  "Sauvegarde automatique",
+                  "Support prioritaire",
+                ].map((item) => (
+                  <div key={item} className="flex items-center gap-3">
+                    <div className="rounded-full bg-vert-claire p-1 shrink-0">
+                      <Check size={13} className="text-vert-foncee" />
+                    </div>
+                    <span className="text-slate-700 text-sm">{item}</span>
+                  </div>
+                ))}
+              </div>
+
+              <button className="w-full rounded-xl bg-vert-foncee py-3 font-medium text-white transition hover:bg-[#17441d] text-sm md:text-base">
+                Choisir le plan Essentiel
+              </button>
+            </div>
+          </div>
+
+          {/* Équipe */}
+          <div className="rounded-3xl border border-slate-200 bg-white p-6 md:p-8 shadow-sm hover:shadow-xl transition-all duration-300">
+            <div className="space-y-5 md:space-y-6">
+              <div>
+                <h3 className="text-xl md:text-2xl font-semibold text-slate-900">Équipe</h3>
+                <div className="mt-0 flex items-end gap-2">
+                  <span className="text-3xl md:text-4xl font-bold">200</span>
+                  <span className="pb-1 text-lg text-slate-600">MRU / mois</span>
+                </div>
+                <div className="mt-2 inline-flex rounded-full bg-purple-100 px-3 py-1 text-sm font-medium text-purple-700">
+                  +100 MRU par salarié
+                </div>
+                <p className="mt-2 text-slate-600 leading-7 text-sm md:text-base">
+                  Ajoutez vos salariés et gérez votre boutique en équipe.
+                </p>
+              </div>
+
+              <div className="pt-4 border-t border-slate-200 space-y-2">
+                <p className="text-slate-700 font-medium text-sm mb-3">Tout ce qui est inclus dans essentiel, plus :</p>
+                {[
+                  "Gestion des salariés",
+                  "Comptes salariés",
+                  "Permissions personnalisées",
+                  "Suivi des activités",
+                  "Collaboration en temps réel",
+                  "Tarification flexible",
+                ].map((item) => (
+                  <div key={item} className="flex items-center gap-3">
+                    <div className="rounded-full bg-vert-claire p-1 shrink-0">
+                      <Check size={13} className="text-vert-foncee" />
+                    </div>
+                    <span className="text-slate-700 text-sm">{item}</span>
+                  </div>
+                ))}
+              </div>
+
+              <button className="w-full rounded-xl border border-vert-foncee py-3 font-medium text-vert-foncee transition hover:bg-[#f5f9f3] text-sm md:text-base">
+                Choisir le plan Équipe
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+        {/* Garanties */}
+        <div className="grid md:grid-cols-3 gap-5 md:gap-6 rounded-3xl border border-slate-200 bg-white p-6 md:p-8">
+          {[
+            {
+              icon: <ShieldCheck size={22} className="text-[#1d5524]" />,
+              title: "Paiement sécurisé",
+              desc: "Vos données et paiements sont sécurisés.",
+            },
+            {
+              icon: <RefreshCcw size={22} className="text-[#1d5524]" />,
+              title: "Annulez à tout moment",
+              desc: "Modifiez votre abonnement quand vous voulez.",
+            },
+            {
+              icon: <Headset size={22} className="text-[#1d5524]" />,
+              title: "Support disponible",
+              desc: "Notre équipe vous accompagne à chaque étape.",
+            },
+          ].map(({ icon, title, desc }) => (
+            <div key={title} className="flex gap-4">
+              <div className="h-fit rounded-2xl bg-[#e7f0e2] p-3 shrink-0">
+                {icon}
+              </div>
+              <div>
+                <h4 className="font-semibold text-slate-900 text-sm md:text-base">{title}</h4>
+                <p className="mt-1 text-sm leading-6 text-slate-600">{desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+
       </div>
     </section>
   )
