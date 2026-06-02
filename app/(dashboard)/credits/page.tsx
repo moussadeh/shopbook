@@ -1,8 +1,8 @@
-export default function Profile() {
+export default function Credits() {
   return (
     <div className="">
       <main>
-        <h1>ShopBook Profile</h1>
+        <h1>ShopBook Credits</h1>
       </main>
     </div>
   );

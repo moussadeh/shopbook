@@ -78,6 +78,7 @@ model Produit {
   nom           String
   prixUnitaire  Float
   unite         UniteProduit
+  createdAt     DateTime  @default(now())
 
   commercant    Commercant @relation(fields: [commercantId], references: [id])
   credits       CreditProduit[]

@@ -87,7 +87,7 @@ export default function Contact() {
                             <Textarea
                                 id="message"
                                 placeholder="Décrivez votre demande..."
-                                className="resize-none min-h-[130px]"
+                                className="resize-none min-h-32.5"
                             />
                         </div>
 
