@@ -41,3 +41,13 @@ export const summaryCards = [
 export function formatMRU(amount: number): string {
   return `${amount.toLocaleString("fr-FR")} MRU`;
 }
+
+import { CreditCard, Download, Clock, AlertTriangle } from "lucide-react";
+import { StatCard } from "@/components/custom/dashboard/stats-cards";
+ 
+export const creditsStats: StatCard[] = [
+  { label: "Total crédits",     value: "36 800", unit: "MRU", icon: CreditCard,    sub: "montant global"              },
+  { label: "Total encaissé",    value: "5 500",  unit: "MRU", icon: Download,      trend: "+2 300 ce mois", trendUp: true },
+  { label: "Reste à encaisser", value: "31 300", unit: "MRU", icon: Clock,         sub: "en attente"                  },
+  { label: "En retard",         value: "18 300", unit: "MRU", icon: AlertTriangle, trend: "2 crédits",      trendUp: false },
+];

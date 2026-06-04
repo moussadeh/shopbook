@@ -20,8 +20,9 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { credits, statusStyle, STATUTS_CREDIT, summaryCards, formatMRU } from "@/lib/data/credits";
+import { credits, statusStyle, STATUTS_CREDIT, summaryCards, formatMRU, creditsStats } from "@/lib/data/credits";
 import DashboardHeader from "@/components/custom/dashboard/dashboard-header";
+import StatsCards from "@/components/custom/dashboard/stats-cards";
 
 const ITEMS_PER_PAGE = 5;
 
@@ -57,32 +58,9 @@ export default function Credits() {
     <div className="min-h-screen bg-gray-50/60">
       <DashboardHeader />
       <div className="px-4 md:px-6 py-5 space-y-5 max-w-7xl mx-auto">
+        
+        <StatsCards stats={creditsStats} />
 
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-xl md:text-2xl font-bold text-gray-900">Crédits</h1>
-            <p className="text-sm text-muted-foreground mt-0.5">
-              {filtered.length} crédit{filtered.length > 1 ? "s" : ""} trouvé{filtered.length > 1 ? "s" : ""}
-            </p>
-          </div>
-          <Button className="bg-vert-foncee text-white hover:opacity-90 flex items-center gap-2">
-            <Plus size={16} />
-            <span className="hidden sm:inline">Nouveau crédit</span>
-          </Button>
-        </div>
-
-        {/* Summary cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-          {summaryCards.map(({ label, value, color }) => (
-            <div key={label} className="bg-white rounded-2xl border p-4">
-              <p className="text-xs text-muted-foreground font-medium">{label}</p>
-              <p className={`text-base md:text-lg font-bold mt-1 ${color}`}>{formatMRU(value)}</p>
-            </div>
-          ))}
-        </div>
-
-        {/* Filtres + recherche */}
         <div className="flex flex-col sm:flex-row gap-3">
           <div className="relative flex-1">
             <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
@@ -107,9 +85,12 @@ export default function Credits() {
               </Button>
             ))}
           </div>
+          <Button className="bg-vert-foncee text-white hover:opacity-90 flex items-center gap-2">
+            <Plus size={16} />
+            <span className="hidden sm:inline">Nouveau crédit</span>
+          </Button>
         </div>
 
-        {/* Table desktop */}
         <div className="hidden md:block bg-white rounded-2xl border overflow-hidden">
           <Table>
             <TableHeader>

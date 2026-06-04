@@ -36,3 +36,13 @@ export const produits: Produit[] = [
 export const CATEGORIES = ["Tous", "Alimentation", "Boissons", "Hygiène"] as const;
 
 export const STOCK_BAS_SEUIL = 50;
+
+import { Package, TrendingUp, AlertTriangle, ShoppingCart } from "lucide-react";
+import { StatCard } from "@/components/custom/dashboard/stats-cards";
+ 
+export const produitsStats: StatCard[] = [
+  { label: "Total produits",   value: "320",  icon: Package,      sub: "en catalogue"                           },
+  { label: "Stock bas",        value: "12",   icon: AlertTriangle,trend: "sous le seuil",    trendUp: false      },
+  { label: "Ventes ce mois",   value: "1 245",icon: ShoppingCart, trend: "+8.3% vs mois dernier", trendUp: true  },
+  { label: "Produit top",      value: "Riz",  icon: TrendingUp,   sub: "560 unités vendues"                      },
+];

@@ -31,3 +31,13 @@ export const clients: Client[] = [
 ];
 
 export const STATUTS = ["Tous", "En cours", "Partiel", "En retard", "Payé"] as const;
+
+import { Users, CreditCard, CalendarDays, TrendingUp } from "lucide-react";
+import { StatCard } from "@/components/custom/dashboard/stats-cards";
+ 
+export const clientsStats: StatCard[] = [
+  { label: "Total clients",         value: "248",      icon: Users,         sub: "enregistrés"                        },
+  { label: "Clients avec crédits",  value: "186",      icon: CreditCard,    trend: "+5 ce mois",    trendUp: true     },
+  { label: "Nouveaux ce mois",      value: "12",       icon: CalendarDays,  trend: "+3 vs mois dernier", trendUp: true },
+  { label: "Total crédits",         value: "36 800",   unit: "MRU", icon: TrendingUp, sub: "encours global"           },
+];

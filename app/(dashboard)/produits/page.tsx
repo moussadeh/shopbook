@@ -20,8 +20,9 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { produits, uniteLabel, CATEGORIES, STOCK_BAS_SEUIL } from "@/lib/data/produits";
+import { produits, uniteLabel, CATEGORIES, STOCK_BAS_SEUIL, produitsStats } from "@/lib/data/produits";
 import DashboardHeader from "@/components/custom/dashboard/dashboard-header";
+import StatsCards from "@/components/custom/dashboard/stats-cards";
 
 const ITEMS_PER_PAGE = 5;
 
@@ -59,21 +60,8 @@ export default function Produits() {
       <DashboardHeader />
       <div className="px-4 md:px-6 py-5 space-y-5 max-w-7xl mx-auto">
 
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-xl md:text-2xl font-bold text-gray-900">Produits</h1>
-            <p className="text-sm text-muted-foreground mt-0.5">
-              {filtered.length} produit{filtered.length > 1 ? "s" : ""} trouvé{filtered.length > 1 ? "s" : ""}
-            </p>
-          </div>
-          <Button className="bg-vert-foncee text-white hover:opacity-90 flex items-center gap-2">
-            <Plus size={16} />
-            <span className="hidden sm:inline">Nouveau produit</span>
-          </Button>
-        </div>
+        <StatsCards stats={produitsStats} />
 
-        {/* Filtres + recherche */}
         <div className="flex flex-col sm:flex-row gap-3">
           <div className="relative flex-1">
             <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
@@ -98,6 +86,10 @@ export default function Produits() {
               </Button>
             ))}
           </div>
+          <Button className="bg-vert-foncee text-white hover:opacity-90 flex items-center gap-2">
+            <Plus size={16} />
+            <span className="hidden sm:inline">Nouveau produit</span>
+          </Button>
         </div>
 
         {/* Table desktop */}

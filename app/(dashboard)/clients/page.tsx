@@ -20,8 +20,9 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { clients, statusStyle, STATUTS } from "@/lib/data/clients";
+import { clients, clientsStats, statusStyle, STATUTS } from "@/lib/data/clients";
 import DashboardHeader from "@/components/custom/dashboard/dashboard-header";
+import StatsCards from "@/components/custom/dashboard/stats-cards";
 
 const ITEMS_PER_PAGE = 5;
 
@@ -56,18 +57,8 @@ export default function Clients() {
     <div className="min-h-screen bg-gray-50/60">
       <DashboardHeader />
       <div className="px-4 md:px-6 py-5 space-y-5 max-w-7xl mx-auto">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-xl md:text-2xl font-bold text-gray-900">Clients</h1>
-            <p className="text-sm text-muted-foreground mt-0.5">
-              {filtered.length} client{filtered.length > 1 ? "s" : ""} trouvé{filtered.length > 1 ? "s" : ""}
-            </p>
-          </div>
-          <Button className="bg-vert-foncee text-white hover:opacity-90 flex items-center gap-2">
-            <Plus size={16} />
-            <span className="hidden sm:inline">Nouveau client</span>
-          </Button>
-        </div>
+
+        <StatsCards stats={clientsStats} />
 
         <div className="flex flex-col sm:flex-row gap-3">
           <div className="relative flex-1">

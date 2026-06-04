@@ -185,7 +185,6 @@ import {
   Wallet,
   Package,
   BarChart2,
-  Settings,
   Gift,
   Menu,
   X,
@@ -196,8 +195,8 @@ const navItems = [
   { label: "Crédits",         href: "/credits",    icon: CreditCard },
   { label: "Clients",         href: "/clients",    icon: Users },
   { label: "Produits",        href: "/produits",   icon: Package },
-  { label: "Paiements",       href: "/paiements",  icon: Wallet },
-  { label: "Rapports",        href: "/rapports",   icon: BarChart2 },
+  // { label: "Paiements",       href: "/paiements",  icon: Wallet },
+  // { label: "Rapports",        href: "/rapports",   icon: BarChart2 },
   // { label: "Paramètres",      href: "/parametres", icon: Settings },
 ];
 
