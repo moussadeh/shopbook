@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Search, Plus, MoreVertical, Filter, Package } from "lucide-react";
+import { Search, Plus, MoreVertical, Package } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -80,7 +80,7 @@ export default function Produits() {
                 size="sm"
                 variant={categorie === cat ? "default" : "outline"}
                 onClick={() => handleCategorie(cat)}
-                className={`whitespace-nowrap text-xs ${categorie === cat ? "bg-vert-foncee text-white" : ""}`}
+                className={`whitespace-nowrap text-xs cursor-pointer ${categorie === cat ? "bg-vert-foncee text-white" : ""}`}
               >
                 {cat}
               </Button>
@@ -88,7 +88,7 @@ export default function Produits() {
           </div>
           <Button className="bg-vert-foncee text-white hover:opacity-90 flex items-center gap-2">
             <Plus size={16} />
-            <span className="hidden sm:inline">Nouveau produit</span>
+            <span className="hidden sm:inline cursor-pointer">Nouveau produit</span>
           </Button>
         </div>
 

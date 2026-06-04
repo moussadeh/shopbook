@@ -54,8 +54,8 @@ export default function Navbar() {
         {/* Boutons desktop / Burger mobile */}
         {isDesktop ? (
           <div className="flex items-center gap-3">
-            <Link href="/login"><Button variant="ghost">Connexion</Button></Link>
-            <Link href="/register"><Button>Inscription</Button></Link>
+            <Link href="/login"><Button variant="ghost" className="cursor-pointer">Connexion</Button></Link>
+            <Link href="/register"><Button className="cursor-pointer">Inscription</Button></Link>
           </div>
         ) : (
           <Button variant="ghost" size="icon" onClick={() => setIsOpen(!isOpen)} aria-label="Menu">

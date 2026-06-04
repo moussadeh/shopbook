@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Search, MoreVertical, Phone, Mail, Filter, Plus } from "lucide-react";
+import { Search, MoreVertical, Phone, Mail, Plus } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -78,7 +78,7 @@ export default function Clients() {
                 size="sm"
                 variant={filter === s ? "default" : "outline"}
                 onClick={() => handleFilter(s)}
-                className={`whitespace-nowrap text-xs ${filter === s ? "bg-vert-foncee text-white" : ""}`}
+                className={`whitespace-nowrap text-xs cursor-pointer ${filter === s ? "bg-vert-foncee text-white" : ""}`}
               >
                 {s}
               </Button>
@@ -86,7 +86,7 @@ export default function Clients() {
           </div>
           <Button className="bg-vert-foncee text-white hover:opacity-90 flex items-center gap-2">
             <Plus size={16} />
-            <span className="hidden sm:inline">Nouveau client</span>
+            <span className="hidden sm:inline cursor-pointer">Nouveau client</span>
           </Button>
         </div>
 

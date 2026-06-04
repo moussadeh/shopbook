@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Search, Plus, MoreVertical, Filter, TrendingDown } from "lucide-react";
+import { Search, Plus, MoreVertical, TrendingDown } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -79,7 +79,7 @@ export default function Credits() {
                 size="sm"
                 variant={filter === s ? "default" : "outline"}
                 onClick={() => handleFilter(s)}
-                className={`whitespace-nowrap text-xs ${filter === s ? "bg-vert-foncee text-white" : ""}`}
+                className={`whitespace-nowrap text-xs cursor-pointer ${filter === s ? "bg-vert-foncee text-white" : ""}`}
               >
                 {s}
               </Button>
@@ -87,7 +87,7 @@ export default function Credits() {
           </div>
           <Button className="bg-vert-foncee text-white hover:opacity-90 flex items-center gap-2">
             <Plus size={16} />
-            <span className="hidden sm:inline">Nouveau crédit</span>
+            <span className="hidden sm:inline cursor-pointer">Nouveau crédit</span>
           </Button>
         </div>
 

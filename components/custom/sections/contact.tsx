@@ -91,7 +91,7 @@ export default function Contact() {
                             />
                         </div>
 
-                        <Button className="w-full font-semibold">
+                        <Button className="cursor-pointer w-full font-semibold">
                             Envoyer le message
                         </Button>
                     </div>
