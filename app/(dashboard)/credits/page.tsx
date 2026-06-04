@@ -72,7 +72,7 @@ export default function Credits() {
             />
           </div>
           <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0">
-            <Filter size={14} className="text-muted-foreground shrink-0" />
+            {/* <Filter size={14} className="text-muted-foreground shrink-0" /> */}
             {STATUTS_CREDIT.map((s) => (
               <Button
                 key={s}

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Search, MoreVertical, Phone, Mail, Filter } from "lucide-react";
+import { Search, MoreVertical, Phone, Mail, Filter, Plus } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -71,7 +71,7 @@ export default function Clients() {
             />
           </div>
           <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0">
-            <Filter size={14} className="text-muted-foreground shrink-0" />
+            {/* <Filter size={14} className="text-muted-foreground shrink-0" /> */}
             {STATUTS.map((s) => (
               <Button
                 key={s}
@@ -84,6 +84,10 @@ export default function Clients() {
               </Button>
             ))}
           </div>
+          <Button className="bg-vert-foncee text-white hover:opacity-90 flex items-center gap-2">
+            <Plus size={16} />
+            <span className="hidden sm:inline">Nouveau client</span>
+          </Button>
         </div>
 
         <div className="hidden md:block bg-white rounded-2xl border overflow-hidden">
