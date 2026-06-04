@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Search, Plus, MoreVertical, Phone, Mail, Filter } from "lucide-react";
+import { Search, MoreVertical, Phone, Mail, Filter } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {

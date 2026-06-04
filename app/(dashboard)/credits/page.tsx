@@ -20,7 +20,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { credits, statusStyle, STATUTS_CREDIT, summaryCards, formatMRU, creditsStats } from "@/lib/data/credits";
+import { credits, statusStyle, STATUTS_CREDIT, formatMRU, creditsStats } from "@/lib/data/credits";
 import DashboardHeader from "@/components/custom/dashboard/dashboard-header";
 import StatsCards from "@/components/custom/dashboard/stats-cards";
 
