@@ -140,3 +140,8 @@
     @apply font-sans;
   }
 }
+
+.modale {
+  margin-left: 0.01rem;
+  margin-right: 0.01rem;
+}

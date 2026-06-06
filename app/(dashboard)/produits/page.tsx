@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Search, Plus, MoreVertical, Package, Pencil, Trash2, Eye } from "lucide-react";
+import { Package, Pencil } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -14,27 +14,12 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
-import {
   Sheet,
   SheetContent,
   SheetHeader,
   SheetTitle,
   SheetDescription,
 } from "@/components/ui/sheet";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import {
   Select,
   SelectContent,
@@ -45,6 +30,10 @@ import {
 import { produits, uniteLabel, CATEGORIES, STOCK_BAS_SEUIL, produitsStats, type Produit } from "@/lib/data/produits";
 import DashboardHeader from "@/components/custom/dashboard/dashboard-header";
 import StatsCards from "@/components/custom/dashboard/stats-cards";
+import SearchBar from "@/components/custom/dashboard/composants/search-bar";
+import RowActions from "@/components/custom/dashboard/composants/row-actions";
+import { DesktopPagination, MobilePagination } from "@/components/custom/dashboard/composants/table-pagination";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 const ITEMS_PER_PAGE = 5;
 
@@ -52,6 +41,7 @@ export default function Produits() {
   const [search, setSearch]           = useState("");
   const [categorie, setCategorie]     = useState<string>("Tous");
   const [currentPage, setCurrentPage] = useState(1);
+  const [dialogOpen, setDialogOpen]   = useState(false);
   const [sheetOpen, setSheetOpen]     = useState(false);
   const [selected, setSelected]       = useState<Produit | null>(null);
   const [detailOpen, setDetailOpen]   = useState(false);
@@ -70,11 +60,13 @@ export default function Produits() {
   const openNew = () => {
     setSelected(null);
     setSheetOpen(true);
+    setDialogOpen(true);
   };
 
   const openEdit = (p: Produit) => {
     setSelected(p);
     setSheetOpen(true);
+    setDialogOpen(true);
   };
 
   const openDetail = (item: Produit) => {
@@ -103,38 +95,16 @@ export default function Produits() {
 
         <StatsCards stats={produitsStats} />
 
-        {/* Filtres + recherche + bouton */}
-        <div className="space-y-3 sm:space-y-0 sm:flex sm:items-center sm:gap-3">
-          <div className="relative flex-1">
-            <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              placeholder="Rechercher un produit..."
-              value={search}
-              onChange={(e) => handleSearch(e.target.value)}
-              className="pl-9"
-            />
-          </div>
-          <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0">
-            {CATEGORIES.map((cat) => (
-              <Button
-                key={cat}
-                size="sm"
-                variant={categorie === cat ? "default" : "outline"}
-                onClick={() => handleCategorie(cat)}
-                className={`whitespace-nowrap text-xs cursor-pointer ${categorie === cat ? "bg-vert-foncee text-white" : ""}`}
-              >
-                {cat}
-              </Button>
-            ))}
-          </div>
-          <Button
-            onClick={openNew}
-            className="bg-vert-foncee text-white hover:opacity-90 flex items-center gap-2 w-full sm:w-auto shrink-0"
-          >
-            <Plus size={16} />
-            Nouveau produit
-          </Button>
-        </div>
+        <SearchBar
+          value={search}
+          onChange={handleSearch}
+          placeholder="Rechercher un produit..."
+          filters={CATEGORIES}
+          activeFilter={categorie}
+          onFilterChange={handleCategorie}
+          onNew={openNew}
+          newLabel="Nouveau produit"
+        />
 
         {/* Table desktop */}
         <div className="hidden md:block bg-white rounded-2xl border overflow-hidden">
@@ -186,25 +156,11 @@ export default function Produits() {
                       </div>
                     </TableCell>
                     <TableCell>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <button className="p-1.5 rounded-lg hover:bg-muted transition text-muted-foreground">
-                            <MoreVertical size={15} />
-                          </button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem className="gap-2 cursor-pointer" onClick={() => openDetail(p)}>
-                            <Eye size={14} /> Voir détails
-                          </DropdownMenuItem>
-                          <DropdownMenuItem className="gap-2 cursor-pointer" onClick={() => openEdit(p)}>
-                            <Pencil size={14} /> Modifier
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem className="gap-2 cursor-pointer text-red-600 focus:text-red-600">
-                            <Trash2 size={14} /> Supprimer
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
+                      <RowActions
+                        onDetail={() => openDetail(p)}
+                        onEdit={()   => openEdit(p)}
+                        onDelete={() => console.log("delete", p)}
+                      />
                     </TableCell>
                   </TableRow>
                 );
@@ -218,40 +174,13 @@ export default function Produits() {
             </div>
           )}
 
-          {totalPages > 1 && (
-            <div className="border-t px-4 py-3 flex items-center justify-between">
-              <p className="text-xs text-muted-foreground">
-                Page {currentPage} sur {totalPages} · {filtered.length} produits
-              </p>
-              <Pagination className="w-auto mx-0">
-                <PaginationContent>
-                  <PaginationItem>
-                    <PaginationPrevious
-                      onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                      className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
-                    />
-                  </PaginationItem>
-                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                    <PaginationItem key={page}>
-                      <PaginationLink
-                        onClick={() => setCurrentPage(page)}
-                        isActive={currentPage === page}
-                        className={`cursor-pointer ${currentPage === page ? "bg-vert-foncee text-white border-vert-foncee" : ""}`}
-                      >
-                        {page}
-                      </PaginationLink>
-                    </PaginationItem>
-                  ))}
-                  <PaginationItem>
-                    <PaginationNext
-                      onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                      className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
-                    />
-                  </PaginationItem>
-                </PaginationContent>
-              </Pagination>
-            </div>
-          )}
+          <DesktopPagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            totalItems={filtered.length}
+            itemLabel="produits"
+            onPageChange={setCurrentPage}
+          />
         </div>
 
         {/* Cards mobile */}
@@ -271,25 +200,11 @@ export default function Produits() {
                       <p className="text-xs text-muted-foreground">{p.categorie} · {uniteLabel[p.unite]}</p>
                     </div>
                   </div>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <button className="p-1.5 rounded-lg hover:bg-muted transition text-muted-foreground">
-                        <MoreVertical size={15} />
-                      </button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem className="gap-2 cursor-pointer">
-                        <Eye size={14} /> Voir détails
-                      </DropdownMenuItem>
-                      <DropdownMenuItem className="gap-2 cursor-pointer" onClick={() => openEdit(p)}>
-                        <Pencil size={14} /> Modifier
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem className="gap-2 cursor-pointer text-red-600 focus:text-red-600">
-                        <Trash2 size={14} /> Supprimer
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                  <RowActions
+                    onDetail={() => openDetail(p)}
+                    onEdit={()   => openEdit(p)}
+                    onDelete={() => console.log("delete", p)}
+                  />
                 </div>
 
                 <div className="grid grid-cols-3 gap-2 border-t pt-3 text-center">
@@ -329,39 +244,30 @@ export default function Produits() {
             </div>
           )}
 
-          {totalPages > 1 && (
-            <div className="flex items-center justify-between pt-2">
-              <p className="text-xs text-muted-foreground">Page {currentPage} sur {totalPages}</p>
-              <div className="flex items-center gap-2">
-                <Button variant="outline" size="sm" onClick={() => setCurrentPage((p) => Math.max(1, p - 1))} disabled={currentPage === 1}>
-                  Précédent
-                </Button>
-                <Button variant="outline" size="sm" onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages}>
-                  Suivant
-                </Button>
-              </div>
-            </div>
-          )}
+          <MobilePagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+          />
         </div>
 
       </div>
 
-      {/* Sheet — Nouveau / Modifier produit */}
-      <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
-        <SheetContent side="right" className="w-full sm:max-w-md overflow-y-auto">
-          <SheetHeader className="mb-6">
-            <SheetTitle>{selected ? "Modifier le produit" : "Nouveau produit"}</SheetTitle>
-            <SheetDescription>
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>{selected ? "Modifier le produit" : "Nouveau produit"}</DialogTitle>
+            <DialogDescription>
               {selected ? `Modification de ${selected.nom}` : "Remplissez les informations du produit."}
-            </SheetDescription>
-          </SheetHeader>
-
-          <div className="space-y-4 p-4">
+            </DialogDescription>
+          </DialogHeader>
+ 
+          <div className="space-y-4">
             <div className="space-y-1.5">
               <Label htmlFor="nom">Nom du produit</Label>
               <Input id="nom" placeholder="Ex: Riz Parfumé 5kg" defaultValue={selected?.nom ?? ""} />
             </div>
-
+ 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1.5">
                 <Label htmlFor="prix">Prix unitaire (MRU)</Label>
@@ -372,7 +278,7 @@ export default function Produits() {
                 <Input id="stock" type="number" placeholder="0" defaultValue={selected?.stock ?? ""} />
               </div>
             </div>
-
+ 
             <div className="space-y-1.5">
               <Label htmlFor="unite">Unité</Label>
               <Select defaultValue={selected?.unite ?? ""}>
@@ -386,7 +292,7 @@ export default function Produits() {
                 </SelectContent>
               </Select>
             </div>
-
+ 
             <div className="space-y-1.5">
               <Label htmlFor="categorie">Catégorie</Label>
               <Select defaultValue={selected?.categorie ?? ""}>
@@ -400,9 +306,9 @@ export default function Produits() {
                 </SelectContent>
               </Select>
             </div>
-
-            <div className="flex gap-3 pt-4">
-              <Button variant="outline" className="flex-1" onClick={() => setSheetOpen(false)}>
+ 
+            <div className="flex gap-3 pt-2">
+              <Button variant="outline" className="flex-1" onClick={() => setDialogOpen(false)}>
                 Annuler
               </Button>
               <Button className="flex-1 bg-vert-foncee text-white hover:opacity-90">
@@ -410,19 +316,18 @@ export default function Produits() {
               </Button>
             </div>
           </div>
-        </SheetContent>
-      </Sheet>
+        </DialogContent>
+      </Dialog>
 
-      <Sheet open={detailOpen} onOpenChange={setDetailOpen}>
-        <SheetContent side="right" className="w-full sm:max-w-md overflow-y-auto">
-          <SheetHeader className="mb-6">
-            <SheetTitle>Détails du produit</SheetTitle>
-          </SheetHeader>
-
+      <Dialog open={detailOpen} onOpenChange={setDetailOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Détails du produit</DialogTitle>
+          </DialogHeader>
+ 
           {detail && (
-            <div className="space-y-6 p-4">
-
-              {/* Icône + nom */}
+            <div className="space-y-5">
+ 
               <div className="flex items-center gap-4">
                 <div className="w-14 h-14 rounded-2xl bg-green-50 text-vert-foncee flex items-center justify-center shrink-0">
                   <Package size={28} />
@@ -434,8 +339,7 @@ export default function Produits() {
                   </span>
                 </div>
               </div>
-
-              {/* Infos */}
+ 
               <div className="space-y-3 border rounded-2xl p-4 bg-gray-50/60">
                 <div className="flex items-center justify-between">
                   <p className="text-xs text-muted-foreground">Prix unitaire</p>
@@ -457,8 +361,7 @@ export default function Produits() {
                   <p className="text-sm font-bold text-vert-foncee">{detail.vendu}</p>
                 </div>
               </div>
-
-              {/* Popularité */}
+ 
               <div className="space-y-1.5">
                 <div className="flex justify-between text-xs text-muted-foreground">
                   <span>Popularité</span>
@@ -471,21 +374,23 @@ export default function Produits() {
                   />
                 </div>
               </div>
-
-              <div className="flex gap-3 pt-2">
+ 
+              <div className="flex gap-3 pt-1">
                 <Button variant="outline" className="flex-1" onClick={() => setDetailOpen(false)}>
                   Fermer
                 </Button>
-                <Button className="flex-1 bg-vert-foncee text-white hover:opacity-90"
-                  onClick={() => { setDetailOpen(false); openEdit(detail); }}>
+                <Button
+                  className="flex-1 bg-vert-foncee text-white hover:opacity-90"
+                  onClick={() => { setDetailOpen(false); openEdit(detail); }}
+                >
                   <Pencil size={14} className="mr-2" /> Modifier
                 </Button>
               </div>
-
+ 
             </div>
           )}
-        </SheetContent>
-      </Sheet>
+        </DialogContent>
+      </Dialog>
 
     </div>
   );
