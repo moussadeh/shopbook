@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Search, MoreVertical, Phone, Mail, Plus } from "lucide-react";
+import { Search, MoreVertical, Phone, Mail, Plus, Eye, Pencil, Trash2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,9 +20,12 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { clients, clientsStats, statusStyle, STATUTS } from "@/lib/data/clients";
+import { Client, clients, clientsStats, statusStyle, STATUTS } from "@/lib/data/clients";
 import DashboardHeader from "@/components/custom/dashboard/dashboard-header";
 import StatsCards from "@/components/custom/dashboard/stats-cards";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { Label } from "@/components/ui/label";
 
 const ITEMS_PER_PAGE = 5;
 
@@ -30,6 +33,10 @@ export default function Clients() {
   const [search, setSearch]           = useState("");
   const [filter, setFilter]           = useState<string>("Tous");
   const [currentPage, setCurrentPage] = useState(1);
+  const [sheetOpen, setSheetOpen] = useState(false);
+  const [selected, setSelected]   = useState<Client | null>(null);
+  const [detailOpen, setDetailOpen]   = useState(false);
+  const [detail, setDetail]           = useState<Client | null>(null);
 
   const handleSearch = (value: string) => {
     setSearch(value);
@@ -39,6 +46,21 @@ export default function Clients() {
   const handleFilter = (value: string) => {
     setFilter(value);
     setCurrentPage(1);
+  };
+
+  const openNew = () => {
+    setSelected(null);
+    setSheetOpen(true);
+  };
+
+  const openEdit = (c: Client) => {
+    setSelected(c);
+    setSheetOpen(true);
+  };
+
+  const openDetail = (item: Client) => {
+    setDetail(item);
+    setDetailOpen(true);
   };
 
   const filtered = clients.filter((c) => {
@@ -84,7 +106,7 @@ export default function Clients() {
               </Button>
             ))}
           </div>
-          <Button className="bg-vert-foncee text-white hover:opacity-90 flex items-center gap-2">
+          <Button onClick={openNew} className="bg-vert-foncee text-white hover:opacity-90 flex items-center gap-2">
             <Plus size={16} />
             <span className="hidden sm:inline cursor-pointer">Nouveau client</span>
           </Button>
@@ -131,9 +153,25 @@ export default function Clients() {
                   </TableCell>
                   <TableCell className="text-muted-foreground text-xs">{c.lastActivity}</TableCell>
                   <TableCell>
-                    <button className="p-1.5 rounded-lg hover:bg-muted transition text-muted-foreground">
-                      <MoreVertical size={15} />
-                    </button>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <button className="p-1.5 rounded-lg hover:bg-muted transition text-muted-foreground">
+                          <MoreVertical size={15} />
+                        </button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem className="gap-2 cursor-pointer" onClick={() => openDetail(c)}>
+                          <Eye size={14} /> Voir détails
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="gap-2 cursor-pointer" onClick={() => openEdit(c)}>
+                          <Pencil size={14} /> Modifier
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem className="gap-2 cursor-pointer text-red-600 focus:text-red-600">
+                          <Trash2 size={14} /> Supprimer
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </TableCell>
                 </TableRow>
               ))}
@@ -258,6 +296,118 @@ export default function Clients() {
         </div>
 
       </div>
+
+      <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
+        <SheetContent side="right" className="w-full sm:max-w-md overflow-y-auto">
+          <SheetHeader className="mb-6">
+            <SheetTitle>{selected ? "Modifier le client" : "Nouveau client"}</SheetTitle>
+            <SheetDescription>
+              {selected ? `Modification de ${selected.name}` : "Remplissez les informations du client."}
+            </SheetDescription>
+          </SheetHeader>
+
+          <div className="space-y-4 p-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <Label htmlFor="prenom">Prénom</Label>
+                <Input id="prenom" placeholder="Ex: Mohamed" defaultValue={selected?.name.split(" ")[0] ?? ""} />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="nom">Nom</Label>
+                <Input id="nom" placeholder="Ex: Ahmed" defaultValue={selected?.name.split(" ")[1] ?? ""} />
+              </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="telephone">Téléphone</Label>
+              <Input id="telephone" placeholder="+222 00 00 00 00" defaultValue={selected?.phone ?? ""} />
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="email">Email (optionnel)</Label>
+              <Input id="email" type="email" placeholder="exemple@email.com" defaultValue={selected?.email ?? ""} />
+            </div>
+
+            <div className="flex gap-3 pt-4">
+              <Button variant="outline" className="flex-1" onClick={() => setSheetOpen(false)}>
+                Annuler
+              </Button>
+              <Button className="flex-1 bg-vert-foncee text-white hover:opacity-90">
+                {selected ? "Enregistrer" : "Créer le client"}
+              </Button>
+            </div>
+          </div>
+        </SheetContent>
+      </Sheet>
+
+      <Sheet open={detailOpen} onOpenChange={setDetailOpen}>
+        <SheetContent side="right" className="w-full sm:max-w-md overflow-y-auto">
+          <SheetHeader className="mb-6">
+            <SheetTitle>Détails du client</SheetTitle>
+          </SheetHeader>
+
+          {detail && (
+            <div className="space-y-6 p-4">
+
+              {/* Avatar + nom */}
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 rounded-full bg-vert-foncee text-white text-lg font-bold flex items-center justify-center shrink-0">
+                  {detail.initials}
+                </div>
+                <div>
+                  <p className="text-lg font-bold text-gray-900">{detail.name}</p>
+                  <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${statusStyle(detail.status)}`}>
+                    {detail.status}
+                  </span>
+                </div>
+              </div>
+
+              {/* Infos */}
+              <div className="space-y-3 border rounded-2xl p-4 bg-gray-50/60">
+                <div className="flex items-center justify-between">
+                  <p className="text-xs text-muted-foreground">Téléphone</p>
+                  <p className="text-sm font-semibold">{detail.phone}</p>
+                </div>
+                {detail.email && (
+                  <div className="flex items-center justify-between border-t pt-3">
+                    <p className="text-xs text-muted-foreground">Email</p>
+                    <p className="text-sm font-semibold">{detail.email}</p>
+                  </div>
+                )}
+                <div className="flex items-center justify-between border-t pt-3">
+                  <p className="text-xs text-muted-foreground">Dernière activité</p>
+                  <p className="text-sm font-semibold">{detail.lastActivity}</p>
+                </div>
+              </div>
+
+              {/* Stats */}
+              <div className="grid grid-cols-2 gap-3">
+                <div className="border rounded-2xl p-4 text-center">
+                  <p className="text-xs text-muted-foreground">Total dû</p>
+                  <p className="text-lg font-bold text-gray-900 mt-1">{detail.creditTotal}</p>
+                </div>
+                <div className="border rounded-2xl p-4 text-center">
+                  <p className="text-xs text-muted-foreground">Crédits</p>
+                  <p className="text-lg font-bold text-gray-900 mt-1">
+                    {detail.creditCount} crédit{detail.creditCount > 1 ? "s" : ""}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex gap-3 pt-2">
+                <Button variant="outline" className="flex-1" onClick={() => setDetailOpen(false)}>
+                  Fermer
+                </Button>
+                <Button className="flex-1 bg-vert-foncee text-white hover:opacity-90"
+                  onClick={() => { setDetailOpen(false); openEdit(detail); }}>
+                  <Pencil size={14} className="mr-2" /> Modifier
+                </Button>
+              </div>
+
+            </div>
+          )}
+        </SheetContent>
+      </Sheet>
     </div>
   );
 }

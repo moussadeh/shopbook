@@ -16,12 +16,9 @@ import {
 
 const navItems = [
   { label: "Tableau de bord", href: "/dashboard", icon: LayoutDashboard },
-  { label: "Crédits",         href: "/credits",    icon: CreditCard },
   { label: "Clients",         href: "/clients",    icon: Users },
   { label: "Produits",        href: "/produits",   icon: Package },
-  // { label: "Paiements",       href: "/paiements",  icon: Wallet },
-  // { label: "Rapports",        href: "/rapports",   icon: BarChart2 },
-  // { label: "Paramètres",      href: "/parametres", icon: Settings },
+  { label: "Crédits",         href: "/credits",    icon: CreditCard },
 ];
 
 export default function Sidebar() {

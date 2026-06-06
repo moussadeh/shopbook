@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Search, Plus, MoreVertical, TrendingDown } from "lucide-react";
+import { Search, Plus, MoreVertical, TrendingDown, Eye, Pencil, Trash2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,9 +20,13 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { credits, statusStyle, STATUTS_CREDIT, formatMRU, creditsStats } from "@/lib/data/credits";
+import { credits, statusStyle, STATUTS_CREDIT, formatMRU, creditsStats, Credit } from "@/lib/data/credits";
 import DashboardHeader from "@/components/custom/dashboard/dashboard-header";
 import StatsCards from "@/components/custom/dashboard/stats-cards";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const ITEMS_PER_PAGE = 5;
 
@@ -30,6 +34,10 @@ export default function Credits() {
   const [search, setSearch]           = useState("");
   const [filter, setFilter]           = useState<string>("Tous");
   const [currentPage, setCurrentPage] = useState(1);
+  const [sheetOpen, setSheetOpen] = useState(false);
+  const [selected, setSelected]   = useState<Credit | null>(null);
+  const [detailOpen, setDetailOpen]   = useState(false);
+    const [detail, setDetail]           = useState<Credit | null>(null);
 
   const handleSearch = (value: string) => {
     setSearch(value);
@@ -39,6 +47,21 @@ export default function Credits() {
   const handleFilter = (value: string) => {
     setFilter(value);
     setCurrentPage(1);
+  };
+
+  const openNew = () => {
+    setSelected(null);
+    setSheetOpen(true);
+  };
+
+  const openEdit = (c: Credit) => {
+    setSelected(c);
+    setSheetOpen(true);
+  };
+
+  const openDetail = (item: Credit) => {
+    setDetail(item);
+    setDetailOpen(true);
   };
 
   const filtered = credits.filter((c) => {
@@ -85,7 +108,7 @@ export default function Credits() {
               </Button>
             ))}
           </div>
-          <Button className="bg-vert-foncee text-white hover:opacity-90 flex items-center gap-2">
+          <Button onClick={openNew} className="bg-vert-foncee text-white hover:opacity-90 flex items-center gap-2">
             <Plus size={16} />
             <span className="hidden sm:inline cursor-pointer">Nouveau crédit</span>
           </Button>
@@ -127,9 +150,25 @@ export default function Credits() {
                   </TableCell>
                   <TableCell className="text-muted-foreground text-xs">{c.date}</TableCell>
                   <TableCell>
-                    <button className="p-1.5 rounded-lg hover:bg-muted transition text-muted-foreground">
-                      <MoreVertical size={15} />
-                    </button>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <button className="p-1.5 rounded-lg hover:bg-muted transition text-muted-foreground">
+                          <MoreVertical size={15} />
+                        </button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem className="gap-2 cursor-pointer" onClick={() => openDetail(c)}>
+                          <Eye size={14} /> Voir détails
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="gap-2 cursor-pointer" onClick={() => openEdit(c)}>
+                          <Pencil size={14} /> Modifier
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem className="gap-2 cursor-pointer text-red-600 focus:text-red-600">
+                          <Trash2 size={14} /> Supprimer
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </TableCell>
                 </TableRow>
               ))}
@@ -266,6 +305,140 @@ export default function Credits() {
         </div>
 
       </div>
+
+      <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
+        <SheetContent side="right" className="w-full sm:max-w-md overflow-y-auto">
+          <SheetHeader className="mb-6">
+            <SheetTitle>{selected ? "Modifier le crédit" : "Nouveau crédit"}</SheetTitle>
+            <SheetDescription>
+              {selected ? `Modification du crédit de ${selected.clientName}` : "Remplissez les informations du crédit."}
+            </SheetDescription>
+          </SheetHeader>
+
+          <div className="space-y-4 p-4">
+            <div className="space-y-1.5">
+              <Label htmlFor="client">Client</Label>
+              <Input id="client" placeholder="Nom du client" defaultValue={selected?.clientName ?? ""} />
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="description">Description</Label>
+              <Input id="description" placeholder="Ex: Achat riz et sucre" defaultValue={selected?.description ?? ""} />
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="montant">Montant total (MRU)</Label>
+              <Input id="montant" type="number" placeholder="0" defaultValue={selected?.montantTotal ?? ""} />
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="statut">Statut</Label>
+              <Select defaultValue={selected?.status ?? ""}>
+                <SelectTrigger id="statut">
+                  <SelectValue placeholder="Choisir un statut" />
+                </SelectTrigger>
+                <SelectContent>
+                  {STATUTS_CREDIT.filter((s) => s !== "Tous").map((s) => (
+                    <SelectItem key={s} value={s}>{s}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="flex gap-3 pt-4">
+              <Button variant="outline" className="flex-1" onClick={() => setSheetOpen(false)}>
+                Annuler
+              </Button>
+              <Button className="flex-1 bg-vert-foncee text-white hover:opacity-90">
+                {selected ? "Enregistrer" : "Créer le crédit"}
+              </Button>
+            </div>
+          </div>
+        </SheetContent>
+      </Sheet>
+
+      <Sheet open={detailOpen} onOpenChange={setDetailOpen}>
+        <SheetContent side="right" className="w-full sm:max-w-md overflow-y-auto">
+          <SheetHeader className="mb-6">
+            <SheetTitle>Détails du crédit</SheetTitle>
+          </SheetHeader>
+
+          {detail && (
+            <div className="space-y-6 p-4">
+
+              {/* Client */}
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 rounded-full bg-vert-foncee text-white text-lg font-bold flex items-center justify-center shrink-0">
+                  {detail.clientInitials}
+                </div>
+                <div>
+                  <p className="text-lg font-bold text-gray-900">{detail.clientName}</p>
+                  <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${statusStyle(detail.status)}`}>
+                    {detail.status}
+                  </span>
+                </div>
+              </div>
+
+              {/* Infos */}
+              <div className="space-y-3 border rounded-2xl p-4 bg-gray-50/60">
+                <div className="flex items-center justify-between">
+                  <p className="text-xs text-muted-foreground">Description</p>
+                  <p className="text-sm font-semibold">{detail.description}</p>
+                </div>
+                <div className="flex items-center justify-between border-t pt-3">
+                  <p className="text-xs text-muted-foreground">Date</p>
+                  <p className="text-sm font-semibold">{detail.date}</p>
+                </div>
+                <div className="flex items-center justify-between border-t pt-3">
+                  <p className="text-xs text-muted-foreground">Produits</p>
+                  <p className="text-sm font-semibold">{detail.produits} produit{detail.produits > 1 ? "s" : ""}</p>
+                </div>
+              </div>
+
+              {/* Montants */}
+              <div className="grid grid-cols-3 gap-3">
+                <div className="border rounded-2xl p-3 text-center">
+                  <p className="text-xs text-muted-foreground">Total</p>
+                  <p className="text-sm font-bold text-gray-900 mt-1">{formatMRU(detail.montantTotal)}</p>
+                </div>
+                <div className="border rounded-2xl p-3 text-center">
+                  <p className="text-xs text-muted-foreground">Payé</p>
+                  <p className="text-sm font-bold text-green-600 mt-1">{formatMRU(detail.montantPaye)}</p>
+                </div>
+                <div className="border rounded-2xl p-3 text-center">
+                  <p className="text-xs text-muted-foreground">Restant</p>
+                  <p className="text-sm font-bold text-orange-600 mt-1">{formatMRU(detail.montantRestant)}</p>
+                </div>
+              </div>
+
+              {/* Barre progression */}
+              <div className="space-y-1.5">
+                <div className="flex justify-between text-xs text-muted-foreground">
+                  <span>Progression du paiement</span>
+                  <span>{Math.round((detail.montantPaye / detail.montantTotal) * 100)}%</span>
+                </div>
+                <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-vert-foncee rounded-full"
+                    style={{ width: `${Math.round((detail.montantPaye / detail.montantTotal) * 100)}%` }}
+                  />
+                </div>
+              </div>
+
+              <div className="flex gap-3 pt-2">
+                <Button variant="outline" className="flex-1" onClick={() => setDetailOpen(false)}>
+                  Fermer
+                </Button>
+                <Button className="flex-1 bg-vert-foncee text-white hover:opacity-90"
+                  onClick={() => { setDetailOpen(false); openEdit(detail); }}>
+                  <Pencil size={14} className="mr-2" /> Modifier
+                </Button>
+              </div>
+
+            </div>
+          )}
+        </SheetContent>
+      </Sheet>
     </div>
   );
 }

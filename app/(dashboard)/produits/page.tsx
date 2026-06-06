@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { Search, Plus, MoreVertical, Package } from "lucide-react";
+import { Search, Plus, MoreVertical, Package, Pencil, Trash2, Eye } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 import {
   Table,
   TableBody,
@@ -20,7 +21,28 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { produits, uniteLabel, CATEGORIES, STOCK_BAS_SEUIL, produitsStats } from "@/lib/data/produits";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetDescription,
+} from "@/components/ui/sheet";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { produits, uniteLabel, CATEGORIES, STOCK_BAS_SEUIL, produitsStats, type Produit } from "@/lib/data/produits";
 import DashboardHeader from "@/components/custom/dashboard/dashboard-header";
 import StatsCards from "@/components/custom/dashboard/stats-cards";
 
@@ -30,6 +52,10 @@ export default function Produits() {
   const [search, setSearch]           = useState("");
   const [categorie, setCategorie]     = useState<string>("Tous");
   const [currentPage, setCurrentPage] = useState(1);
+  const [sheetOpen, setSheetOpen]     = useState(false);
+  const [selected, setSelected]       = useState<Produit | null>(null);
+  const [detailOpen, setDetailOpen]   = useState(false);
+  const [detail, setDetail]           = useState<Produit | null>(null);
 
   const handleSearch = (value: string) => {
     setSearch(value);
@@ -39,6 +65,21 @@ export default function Produits() {
   const handleCategorie = (value: string) => {
     setCategorie(value);
     setCurrentPage(1);
+  };
+
+  const openNew = () => {
+    setSelected(null);
+    setSheetOpen(true);
+  };
+
+  const openEdit = (p: Produit) => {
+    setSelected(p);
+    setSheetOpen(true);
+  };
+
+  const openDetail = (item: Produit) => {
+    setDetail(item);
+    setDetailOpen(true);
   };
 
   const filtered = produits.filter((p) => {
@@ -62,7 +103,8 @@ export default function Produits() {
 
         <StatsCards stats={produitsStats} />
 
-        <div className="flex flex-col sm:flex-row gap-3">
+        {/* Filtres + recherche + bouton */}
+        <div className="space-y-3 sm:space-y-0 sm:flex sm:items-center sm:gap-3">
           <div className="relative flex-1">
             <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
             <Input
@@ -73,7 +115,6 @@ export default function Produits() {
             />
           </div>
           <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0">
-            {/* <Filter size={14} className="text-muted-foreground shrink-0" /> */}
             {CATEGORIES.map((cat) => (
               <Button
                 key={cat}
@@ -86,9 +127,12 @@ export default function Produits() {
               </Button>
             ))}
           </div>
-          <Button className="bg-vert-foncee text-white hover:opacity-90 flex items-center gap-2">
+          <Button
+            onClick={openNew}
+            className="bg-vert-foncee text-white hover:opacity-90 flex items-center gap-2 w-full sm:w-auto shrink-0"
+          >
             <Plus size={16} />
-            <span className="hidden sm:inline cursor-pointer">Nouveau produit</span>
+            Nouveau produit
           </Button>
         </div>
 
@@ -108,8 +152,8 @@ export default function Produits() {
             </TableHeader>
             <TableBody>
               {paginated.map((p) => {
-                const pct       = Math.round((p.vendu / maxVendu) * 100);
-                const stockBas  = p.stock < STOCK_BAS_SEUIL;
+                const pct      = Math.round((p.vendu / maxVendu) * 100);
+                const stockBas = p.stock < STOCK_BAS_SEUIL;
                 return (
                   <TableRow key={p.id}>
                     <TableCell>
@@ -142,9 +186,25 @@ export default function Produits() {
                       </div>
                     </TableCell>
                     <TableCell>
-                      <button className="p-1.5 rounded-lg hover:bg-muted transition text-muted-foreground">
-                        <MoreVertical size={15} />
-                      </button>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <button className="p-1.5 rounded-lg hover:bg-muted transition text-muted-foreground">
+                            <MoreVertical size={15} />
+                          </button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem className="gap-2 cursor-pointer" onClick={() => openDetail(p)}>
+                            <Eye size={14} /> Voir détails
+                          </DropdownMenuItem>
+                          <DropdownMenuItem className="gap-2 cursor-pointer" onClick={() => openEdit(p)}>
+                            <Pencil size={14} /> Modifier
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem className="gap-2 cursor-pointer text-red-600 focus:text-red-600">
+                            <Trash2 size={14} /> Supprimer
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </TableCell>
                   </TableRow>
                 );
@@ -158,7 +218,6 @@ export default function Produits() {
             </div>
           )}
 
-          {/* Pagination desktop */}
           {totalPages > 1 && (
             <div className="border-t px-4 py-3 flex items-center justify-between">
               <p className="text-xs text-muted-foreground">
@@ -212,9 +271,25 @@ export default function Produits() {
                       <p className="text-xs text-muted-foreground">{p.categorie} · {uniteLabel[p.unite]}</p>
                     </div>
                   </div>
-                  <button className="p-1.5 rounded-lg hover:bg-muted transition text-muted-foreground">
-                    <MoreVertical size={15} />
-                  </button>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <button className="p-1.5 rounded-lg hover:bg-muted transition text-muted-foreground">
+                        <MoreVertical size={15} />
+                      </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem className="gap-2 cursor-pointer">
+                        <Eye size={14} /> Voir détails
+                      </DropdownMenuItem>
+                      <DropdownMenuItem className="gap-2 cursor-pointer" onClick={() => openEdit(p)}>
+                        <Pencil size={14} /> Modifier
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem className="gap-2 cursor-pointer text-red-600 focus:text-red-600">
+                        <Trash2 size={14} /> Supprimer
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
 
                 <div className="grid grid-cols-3 gap-2 border-t pt-3 text-center">
@@ -254,27 +329,14 @@ export default function Produits() {
             </div>
           )}
 
-          {/* Pagination mobile */}
           {totalPages > 1 && (
             <div className="flex items-center justify-between pt-2">
-              <p className="text-xs text-muted-foreground">
-                Page {currentPage} sur {totalPages}
-              </p>
+              <p className="text-xs text-muted-foreground">Page {currentPage} sur {totalPages}</p>
               <div className="flex items-center gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                  disabled={currentPage === 1}
-                >
+                <Button variant="outline" size="sm" onClick={() => setCurrentPage((p) => Math.max(1, p - 1))} disabled={currentPage === 1}>
                   Précédent
                 </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                  disabled={currentPage === totalPages}
-                >
+                <Button variant="outline" size="sm" onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages}>
                   Suivant
                 </Button>
               </div>
@@ -283,6 +345,148 @@ export default function Produits() {
         </div>
 
       </div>
+
+      {/* Sheet — Nouveau / Modifier produit */}
+      <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
+        <SheetContent side="right" className="w-full sm:max-w-md overflow-y-auto">
+          <SheetHeader className="mb-6">
+            <SheetTitle>{selected ? "Modifier le produit" : "Nouveau produit"}</SheetTitle>
+            <SheetDescription>
+              {selected ? `Modification de ${selected.nom}` : "Remplissez les informations du produit."}
+            </SheetDescription>
+          </SheetHeader>
+
+          <div className="space-y-4 p-4">
+            <div className="space-y-1.5">
+              <Label htmlFor="nom">Nom du produit</Label>
+              <Input id="nom" placeholder="Ex: Riz Parfumé 5kg" defaultValue={selected?.nom ?? ""} />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <Label htmlFor="prix">Prix unitaire (MRU)</Label>
+                <Input id="prix" type="number" placeholder="0" defaultValue={selected?.prixUnitaire ?? ""} />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="stock">Stock</Label>
+                <Input id="stock" type="number" placeholder="0" defaultValue={selected?.stock ?? ""} />
+              </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="unite">Unité</Label>
+              <Select defaultValue={selected?.unite ?? ""}>
+                <SelectTrigger id="unite">
+                  <SelectValue placeholder="Choisir une unité" />
+                </SelectTrigger>
+                <SelectContent>
+                  {Object.entries(uniteLabel).map(([key, label]) => (
+                    <SelectItem key={key} value={key}>{label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="categorie">Catégorie</Label>
+              <Select defaultValue={selected?.categorie ?? ""}>
+                <SelectTrigger id="categorie">
+                  <SelectValue placeholder="Choisir une catégorie" />
+                </SelectTrigger>
+                <SelectContent>
+                  {CATEGORIES.filter((c) => c !== "Tous").map((cat) => (
+                    <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="flex gap-3 pt-4">
+              <Button variant="outline" className="flex-1" onClick={() => setSheetOpen(false)}>
+                Annuler
+              </Button>
+              <Button className="flex-1 bg-vert-foncee text-white hover:opacity-90">
+                {selected ? "Enregistrer" : "Créer le produit"}
+              </Button>
+            </div>
+          </div>
+        </SheetContent>
+      </Sheet>
+
+      <Sheet open={detailOpen} onOpenChange={setDetailOpen}>
+        <SheetContent side="right" className="w-full sm:max-w-md overflow-y-auto">
+          <SheetHeader className="mb-6">
+            <SheetTitle>Détails du produit</SheetTitle>
+          </SheetHeader>
+
+          {detail && (
+            <div className="space-y-6 p-4">
+
+              {/* Icône + nom */}
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 rounded-2xl bg-green-50 text-vert-foncee flex items-center justify-center shrink-0">
+                  <Package size={28} />
+                </div>
+                <div>
+                  <p className="text-lg font-bold text-gray-900">{detail.nom}</p>
+                  <span className="text-xs bg-gray-100 text-gray-600 font-semibold px-2 py-0.5 rounded-full">
+                    {detail.categorie}
+                  </span>
+                </div>
+              </div>
+
+              {/* Infos */}
+              <div className="space-y-3 border rounded-2xl p-4 bg-gray-50/60">
+                <div className="flex items-center justify-between">
+                  <p className="text-xs text-muted-foreground">Prix unitaire</p>
+                  <p className="text-sm font-bold text-gray-900">{detail.prixUnitaire} MRU</p>
+                </div>
+                <div className="flex items-center justify-between border-t pt-3">
+                  <p className="text-xs text-muted-foreground">Unité</p>
+                  <p className="text-sm font-semibold">{uniteLabel[detail.unite]}</p>
+                </div>
+                <div className="flex items-center justify-between border-t pt-3">
+                  <p className="text-xs text-muted-foreground">Stock actuel</p>
+                  <p className={`text-sm font-bold ${detail.stock < STOCK_BAS_SEUIL ? "text-red-600" : "text-gray-900"}`}>
+                    {detail.stock}
+                    {detail.stock < STOCK_BAS_SEUIL && <span className="ml-1 text-xs font-normal text-red-400">(bas)</span>}
+                  </p>
+                </div>
+                <div className="flex items-center justify-between border-t pt-3">
+                  <p className="text-xs text-muted-foreground">Total vendu</p>
+                  <p className="text-sm font-bold text-vert-foncee">{detail.vendu}</p>
+                </div>
+              </div>
+
+              {/* Popularité */}
+              <div className="space-y-1.5">
+                <div className="flex justify-between text-xs text-muted-foreground">
+                  <span>Popularité</span>
+                  <span>{Math.round((detail.vendu / maxVendu) * 100)}%</span>
+                </div>
+                <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-vert-foncee rounded-full"
+                    style={{ width: `${Math.round((detail.vendu / maxVendu) * 100)}%` }}
+                  />
+                </div>
+              </div>
+
+              <div className="flex gap-3 pt-2">
+                <Button variant="outline" className="flex-1" onClick={() => setDetailOpen(false)}>
+                  Fermer
+                </Button>
+                <Button className="flex-1 bg-vert-foncee text-white hover:opacity-90"
+                  onClick={() => { setDetailOpen(false); openEdit(detail); }}>
+                  <Pencil size={14} className="mr-2" /> Modifier
+                </Button>
+              </div>
+
+            </div>
+          )}
+        </SheetContent>
+      </Sheet>
+
     </div>
   );
 }
