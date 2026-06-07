@@ -12,7 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { credits, statusStyle, STATUTS_CREDIT, formatMRU, creditsStats, Credit } from "@/lib/data/credits";
+import { credits, statusStyle, STATUTS_CREDIT, formatMRU, creditsStats, Credit } from "@/lib/donnes/credits";
 import DashboardHeader from "@/components/custom/dashboard/dashboard-header";
 import StatsCards from "@/components/custom/dashboard/stats-cards";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";

@@ -12,7 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Client, clients, clientsStats, statusStyle, STATUTS } from "@/lib/data/clients";
+import { Client, clients, clientsStats, statusStyle, STATUTS } from "@/lib/donnes/clients";
 import DashboardHeader from "@/components/custom/dashboard/dashboard-header";
 import StatsCards from "@/components/custom/dashboard/stats-cards";
 import { Label } from "@/components/ui/label";

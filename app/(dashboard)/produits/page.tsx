@@ -27,7 +27,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { produits, uniteLabel, CATEGORIES, STOCK_BAS_SEUIL, produitsStats, type Produit } from "@/lib/data/produits";
+import { produits, uniteLabel, CATEGORIES, STOCK_BAS_SEUIL, produitsStats, type Produit } from "@/lib/donnes/produits";
 import DashboardHeader from "@/components/custom/dashboard/dashboard-header";
 import StatsCards from "@/components/custom/dashboard/stats-cards";
 import SearchBar from "@/components/custom/dashboard/composants/search-bar";

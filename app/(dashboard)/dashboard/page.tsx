@@ -5,7 +5,7 @@ import RecentActivity from "@/components/custom/dashboard/recent-activity";
 import ClientsTable from "@/components/custom/dashboard/clients-table";
 import ProductsList from "@/components/custom/dashboard/products-list";
 import DashboardHeader from "@/components/custom/dashboard/dashboard-header";
-import { dashboardStats } from "@/lib/data/dashboard";
+import { dashboardStats } from "@/lib/donnes/dashboard";
 
 export default function Dashboard() {
   return (

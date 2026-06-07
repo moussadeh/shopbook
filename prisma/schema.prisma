@@ -28,20 +28,23 @@ model Commercant {
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 
+  clients           Client[]
   produits          Produit[]
   credits           Credit[]
 }
 
 model Client {
-  id        Int   @id @default(autoincrement())
-  nom       String
-  prenom    String?
-  telephone String
-  email     String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id           Int   @id @default(autoincrement())
+  commercantId Int
+  nom          String
+  prenom       String?
+  telephone    String
+  email        String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
-  credits           Credit[]
+  commercant   Commercant @relation(fields: [commercantId], references: [id])
+  credits      Credit[]
 }
 
 model Credit {
@@ -79,6 +82,7 @@ model Produit {
   prixUnitaire  Float
   unite         UniteProduit
   createdAt     DateTime  @default(now())
+  updatedAt     DateTime @updatedAt
 
   commercant    Commercant @relation(fields: [commercantId], references: [id])
   credits       CreditProduit[]

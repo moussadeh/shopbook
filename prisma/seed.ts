@@ -44,7 +44,7 @@ async function main() {
     });
 
     // Produits
-    const produitsC1 = await prisma.produit.createMany({
+    await prisma.produit.createMany({
         data: [
             { commercantId: commercant1.id, nom: "Riz", prixUnitaire: 20, unite: UniteProduit.KILO },
             { commercantId: commercant1.id, nom: "Sucre", prixUnitaire: 20, unite: UniteProduit.KILO },
@@ -74,6 +74,7 @@ async function main() {
             prenom: "Mohamed",
             telephone: "+22244111222",
             email: "sidi@example.com",
+            commercantId: commercant1.id,
         },
     });
     const client2 = await prisma.client.create({
@@ -81,6 +82,8 @@ async function main() {
             nom: "Aïcha",
             prenom: "Mint Ahmed",
             telephone: "+22244111333",
+            email: "aicha@example.com",
+            commercantId: commercant1.id,
         },
     });
     const client3 = await prisma.client.create({
@@ -88,6 +91,7 @@ async function main() {
             nom: "Oumar",
             prenom: "Diallo",
             telephone: "+22244111444",
+            commercantId: commercant2.id,
         },
     });
 
@@ -173,8 +177,7 @@ main()
         process.exit(1);
     })
     .finally(async () => {
-        console.log("fin");
+        console.log("Seeding completed.");
         await prisma.$disconnect();
     })
 ;
-console.log("Seeding completed.");
