@@ -80,7 +80,9 @@ model Produit {
   commercantId  Int
   nom           String
   prixUnitaire  Float
+  stock         Int
   unite         UniteProduit
+  categorie     CategorieProduit @default(AUTRES)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime @updatedAt
 
@@ -118,4 +120,12 @@ enum UniteProduit {
   BIDON
   METRE
   PAQUET
+}
+
+enum CategorieProduit {
+  ALIMENTAIRE
+  BOISSONS
+  HYGIENE
+  VETEMENTS
+  AUTRES
 }
