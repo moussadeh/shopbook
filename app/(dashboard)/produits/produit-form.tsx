@@ -3,7 +3,7 @@
 import { useActionState, useEffect, useState } from "react";
 import type { ProduitRow } from "@/lib/data/produits";
 import { saveProduit, type ActionState } from "./actions";
-import { uniteLabel, CATEGORIES, categorieLabel } from "@/lib/donnes/produits";
+import { uniteLabel, categorieLabel } from "@/lib/donnes/produits";
 import { DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
