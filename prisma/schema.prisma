@@ -37,7 +37,7 @@ model Client {
   id           Int   @id @default(autoincrement())
   commercantId Int
   nom          String
-  prenom       String?
+  prenom       String
   telephone    String
   email        String?
   createdAt    DateTime @default(now())
@@ -102,7 +102,7 @@ model CreditProduit {
 
 enum StatutCredit {
   NON_PAYE
-  PARTIELLEMENT_PAYE
+  EN_COURS
   PAYE
 }
 
