@@ -1,53 +1,34 @@
-import { StatutCredit, statusStyle } from "./dashboard";
-
-export type { StatutCredit };
-export { statusStyle };
-
-export interface Credit {
-  id:             number;
-  clientInitials: string;
-  clientName:     string;
-  description:    string;
-  montantTotal:   number;
-  montantPaye:    number;
-  montantRestant: number;
-  status:         StatutCredit;
-  date:           string;
-  produits:       number;
-}
-
-export const credits: Credit[] = [
-  { id: 1, clientInitials: "MA", clientName: "Mohamed Ahmed",    description: "Achat riz et sucre",   montantTotal: 4500,  montantPaye: 2000, montantRestant: 2500,  status: "Partiel",             date: "18 Mai 2025", produits: 2 },
-  { id: 2, clientInitials: "SK", clientName: "Sidi Kane",        description: "Achat huile",           montantTotal: 8500,  montantPaye: 0,    montantRestant: 8500,  status: "En cours",           date: "18 Mai 2025", produits: 1 },
-  { id: 3, clientInitials: "MM", clientName: "Moussa Diop",      description: "Achat lait et thé",     montantTotal: 12300, montantPaye: 0,    montantRestant: 12300, status: "En retard",          date: "17 Mai 2025", produits: 3 },
-  { id: 4, clientInitials: "AM", clientName: "Aminata Mint Ali", description: "Achat sucre",           montantTotal: 2500,  montantPaye: 2500, montantRestant: 0,     status: "Payé",               date: "16 Mai 2025", produits: 1 },
-  { id: 5, clientInitials: "BA", clientName: "Baba Ahmed",       description: "Achat riz",             montantTotal: 5800,  montantPaye: 0,    montantRestant: 5800,  status: "En cours",           date: "15 Mai 2025", produits: 1 },
-  { id: 6, clientInitials: "FO", clientName: "Fatima Ould",      description: "Achat huile et sucre",  montantTotal: 3200,  montantPaye: 1000, montantRestant: 2200,  status: "Partiel",            date: "14 Mai 2025", produits: 2 },
-  { id: 7, clientInitials: "IO", clientName: "Ibrahima Ould",    description: "Achat farine",          montantTotal: 6000,  montantPaye: 0,    montantRestant: 6000,  status: "En retard",          date: "13 Mai 2025", produits: 1 },
-  { id: 8, clientInitials: "ZM", clientName: "Zeynab Mint",      description: "Achat thé et café",     montantTotal: 1800,  montantPaye: 1800, montantRestant: 0,     status: "Payé",               date: "12 Mai 2025", produits: 2 },
-  { id: 9, clientInitials: "MO", clientName: "Moussa Ould",      description: "Achat riz et huile",    montantTotal: 7500,  montantPaye: 5000, montantRestant: 2500,  status: "Partiel",            date: "11 Mai 2025", produits: 2 },
-  { id: 10, clientInitials: "SA", clientName: "Sadia Ahmed",      description: "Achat sucre et farine", montantTotal: 4000,  montantPaye: 0,    montantRestant: 4000,  status: "En cours",           date: "10 Mai 2025", produits: 2 },
-];
-
-export const STATUTS_CREDIT = ["Tous", "En cours", "Partiel", "En retard", "Payé"] as const;
-
-export const summaryCards = [
-  { label: "Total crédits",     value: credits.reduce((acc, c) => acc + c.montantTotal,   0), color: "text-blue-700"   },
-  { label: "Total encaissé",    value: credits.reduce((acc, c) => acc + c.montantPaye,    0), color: "text-green-700"  },
-  { label: "Reste à encaisser", value: credits.reduce((acc, c) => acc + c.montantRestant, 0), color: "text-orange-600" },
-  { label: "En retard",         value: credits.filter((c) => c.status === "En retard").reduce((acc, c) => acc + c.montantRestant, 0), color: "text-red-600" },
-];
+import { Wallet, TrendingDown, TrendingUp, CheckCircle2 } from "lucide-react";
+import type { StatCard } from "@/components/custom/dashboard/stats-cards";
+import type { CreditsStats } from "@/lib/data/credits";
+import { StatutCredit } from "@/app/generated/prisma/client";
 
 export function formatMRU(amount: number): string {
   return `${amount.toLocaleString("fr-FR")} MRU`;
 }
 
-import { CreditCard, Download, Clock, AlertTriangle } from "lucide-react";
-import { StatCard } from "@/components/custom/dashboard/stats-cards";
- 
-export const creditsStats: StatCard[] = [
-  { label: "Total crédits",     value: "36 800", unit: "MRU", icon: CreditCard,    sub: "montant global"              },
-  { label: "Total encaissé",    value: "5 500",  unit: "MRU", icon: Download,      trend: "+2 300 ce mois", trendUp: true },
-  { label: "Reste à encaisser", value: "31 300", unit: "MRU", icon: Clock,         sub: "en attente"                  },
-  { label: "En retard",         value: "18 300", unit: "MRU", icon: AlertTriangle, trend: "2 crédits",      trendUp: false },
-];
+export const statutCreditLabel: Record<StatutCredit, string> = {
+  NON_PAYE: "Non payé",
+  EN_COURS: "En cours",
+  PAYE:     "Payé",
+};
+
+export const STATUTS_CREDIT: string[] = ["Tous", ...Object.values(statutCreditLabel)];
+
+export function statusStyle(statut: string) {
+  switch (statut) {
+    case "Payé":     return "bg-green-100 text-green-700";
+    case "En cours": return "bg-amber-100 text-amber-700";
+    case "Non payé": return "bg-red-100 text-red-700";
+    default:         return "bg-gray-100 text-gray-600";
+  }
+}
+
+export function buildCreditsStats(s: CreditsStats): StatCard[] {
+  return [
+    { label: "Crédits actifs",   value: String(s.creditsActifs),                  icon: Wallet,       sub: "non soldés" },
+    { label: "Encours total",    value: s.encoursTotal.toLocaleString("fr-FR"),   unit: "MRU", icon: TrendingDown, sub: "à recouvrer" },
+    { label: "Encaissé ce mois", value: s.encaisseCeMois.toLocaleString("fr-FR"), unit: "MRU", icon: TrendingUp,   sub: "paiements reçus" },
+    { label: "Crédits soldés",   value: String(s.creditsSoldes),                  icon: CheckCircle2, sub: "payés" },
+  ];
+}
