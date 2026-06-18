@@ -4,8 +4,6 @@ import { useState } from "react";
 import { buildClientsStats, STATUTS } from "@/lib/donnes/clients";
 import type { ClientRow, ClientsStats } from "@/lib/data/clients";
 import { deleteClient } from "./actions";
-
-import DashboardHeader from "@/components/custom/dashboard/dashboard-header";
 import StatsCards from "@/components/custom/dashboard/stats-cards";
 import SearchBar from "@/components/custom/dashboard/composants/search-bar";
 import {
@@ -59,7 +57,6 @@ export default function ClientsView({ clients, stats }: { clients: ClientRow[]; 
 
   return (
     <div className="min-h-screen bg-gray-50/60">
-      <DashboardHeader />
       <div className="px-4 md:px-6 py-5 space-y-5 max-w-7xl mx-auto">
         <StatsCards stats={statCards} />
 

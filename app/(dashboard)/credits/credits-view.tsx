@@ -4,8 +4,6 @@ import { useState } from "react";
 import { buildCreditsStats, STATUTS_CREDIT, statutCreditLabel } from "@/lib/donnes/credits";
 import type { CreditRow, CreditsStats, ClientOption } from "@/lib/data/credits";
 import { deleteCredit } from "./actions";
-
-import DashboardHeader from "@/components/custom/dashboard/dashboard-header";
 import StatsCards from "@/components/custom/dashboard/stats-cards";
 import SearchBar from "@/components/custom/dashboard/composants/search-bar";
 import { DesktopPagination, MobilePagination } from "@/components/custom/dashboard/composants/table-pagination";
@@ -68,7 +66,6 @@ export default function CreditsView({
 
   return (
     <div className="min-h-screen bg-gray-50/60">
-      <DashboardHeader />
       <div className="px-4 md:px-6 py-5 space-y-5 max-w-7xl mx-auto">
         <StatsCards stats={statCards} />
 
