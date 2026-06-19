@@ -1,5 +1,6 @@
 import { getCommercant } from "@/lib/data/commercant";
 import { ChevronDown } from "lucide-react";
+import CommercantMenu from "./commercant-menu";
 
 export default async function DashboardHeader() {
   const commercant = await getCommercant();
@@ -17,13 +18,14 @@ export default async function DashboardHeader() {
       </div>
 
       <div className="flex items-center gap-2 md:gap-3 shrink-0">
-        <button className="flex items-center gap-2 border rounded-xl px-2 py-1.5 hover:bg-muted transition-colors">
+        {/* <button className="flex items-center gap-2 border rounded-xl px-2 py-1.5 hover:bg-muted transition-colors">
           <div className="w-7 h-7 rounded-full bg-vert-foncee flex items-center justify-center text-white text-xs font-bold">
             {initiale}
           </div>
           <span className="hidden md:block text-sm font-medium text-gray-700">Boutique {commercant?.prenom ?? ""}</span>
           <ChevronDown size={14} className="text-gray-500 hidden md:block" />
-        </button>
+        </button> */}
+        <CommercantMenu initiale={initiale} nomBoutique={commercant?.nomBoutique ?? ""} />
       </div>
     </header>
   );

@@ -1,3 +1,9 @@
+import "server-only";
+import { redirect } from "next/navigation";
+import { getSession } from "./session";
+
 export async function getCommercantId(): Promise<number> {
-    return 1;
+  const session = await getSession();
+  if (!session) redirect("/login");
+  return session.commercantId;
 }

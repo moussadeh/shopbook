@@ -1,9 +1,5 @@
-export default function Home() {
-  return (
-    <div className="">
-      <main>
-        <h1>ShopBook Login</h1>
-      </main>
-    </div>
-  );
+import LoginForm from "./login-form";
+
+export default function LoginPage() {
+  return <LoginForm />;
 }
