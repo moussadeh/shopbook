@@ -1,5 +1,4 @@
 import { getCommercant } from "@/lib/data/commercant";
-import { ChevronDown } from "lucide-react";
 import CommercantMenu from "./commercant-menu";
 
 export default async function DashboardHeader() {
@@ -25,7 +24,7 @@ export default async function DashboardHeader() {
           <span className="hidden md:block text-sm font-medium text-gray-700">Boutique {commercant?.prenom ?? ""}</span>
           <ChevronDown size={14} className="text-gray-500 hidden md:block" />
         </button> */}
-        <CommercantMenu initiale={initiale} nomBoutique={commercant?.nomBoutique ?? ""} />
+        <CommercantMenu initiale={initiale} nomBoutique={commercant?.nomBoutique ?? ""} prenom={commercant?.prenom ?? ""} />
       </div>
     </header>
   );

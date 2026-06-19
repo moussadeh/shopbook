@@ -45,7 +45,7 @@ export async function registerAction(_prev: AuthState, formData: FormData): Prom
         select: { id: true },
     });
 
-    await createSession(commercant.id);
+    //await createSession(commercant.id);
     redirect("/login");
 }
 
@@ -54,16 +54,16 @@ export async function loginAction(_prev: AuthState, formData: FormData): Promise
     if (!parsed.success) {
         return { fieldErrors: toFieldErrors(parsed.error.flatten().fieldErrors) };
     }
-    const { email, motDePasse } = parsed.data;
+    const { telephone, motDePasse } = parsed.data;
 
     const commercant = await prisma.commercant.findUnique({
-        where: { email },
+        where: { telephone },
         select: { id: true, motDePasse: true },
     });
 
-    // message générique : on ne révèle pas si l'email existe
+    // message générique : on ne révèle pas si le téléphone existe
     if (!commercant || !(await verifyPassword(motDePasse, commercant.motDePasse))) {
-        return { error: "Email ou mot de passe incorrect" };
+        return { error: "Téléphone ou mot de passe incorrect" };
     }
 
     await createSession(commercant.id);

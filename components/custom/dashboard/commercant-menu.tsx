@@ -11,9 +11,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-type Props = { initiale: string; nomBoutique: string };
+type Props = { initiale: string; nomBoutique: string; prenom:string; };
 
-export default function CommercantMenu({ initiale, nomBoutique }: Props) {
+export default function CommercantMenu({ initiale, nomBoutique, prenom }: Props) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -21,7 +21,7 @@ export default function CommercantMenu({ initiale, nomBoutique }: Props) {
           <div className="w-7 h-7 rounded-full bg-vert-foncee flex items-center justify-center text-white text-xs font-bold">
             {initiale}
           </div>
-          <span className="hidden md:block text-sm font-medium text-gray-700">{nomBoutique}</span>
+          <span className="hidden md:block text-sm font-medium text-gray-700">Boutique de {prenom}</span>
           <ChevronDown size={14} className="text-gray-500 hidden md:block" />
         </button>
       </DropdownMenuTrigger>
