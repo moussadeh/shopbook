@@ -4,13 +4,13 @@ import { SignJWT, jwtVerify } from "jose";
 
 const secret = new TextEncoder().encode(process.env.SESSION_SECRET);
 const COOKIE = "shopbook_session";
-const MAX_AGE = 60 * 60 * 24 * 7; // 7 jours
+const MAX_AGE = 60 * 60 * 24; // 24 heures
 
 export async function createSession(commercantId: number) {
   const token = await new SignJWT({ commercantId })
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
-    .setExpirationTime("7d")
+    .setExpirationTime("1d")
     .sign(secret);
 
   const store = await cookies();

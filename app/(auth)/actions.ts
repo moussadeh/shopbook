@@ -9,6 +9,7 @@ import { createSession, destroySession } from "@/lib/auth/session";
 export type AuthState = {
     error?: string;                        // erreur globale → Alert
     fieldErrors?: Record<string, string>;  // erreurs par champ
+    values?: Record<string, string>;
 };
 
 // transforme les erreurs Zod en { champ: "message" }
@@ -22,9 +23,13 @@ function toFieldErrors(flatten: Record<string, string[] | undefined>) {
 }
 
 export async function registerAction(_prev: AuthState, formData: FormData): Promise<AuthState> {
-    const parsed = registerSchema.safeParse(Object.fromEntries(formData));
+    const raw = Object.fromEntries(formData) as Record<string, string>;
+    const values: Record<string, string> = { ...raw };
+    delete values.motDePasse;
+
+    const parsed = registerSchema.safeParse(raw);
     if (!parsed.success) {
-        return { fieldErrors: toFieldErrors(parsed.error.flatten().fieldErrors) };
+        return { fieldErrors: toFieldErrors(parsed.error.flatten().fieldErrors), values };
     }
     const d = parsed.data;
 

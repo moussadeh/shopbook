@@ -129,3 +129,14 @@ enum CategorieProduit {
   VETEMENTS
   AUTRES
 }
+
+model MessageContact {
+  id        Int      @id @default(autoincrement())
+  prenom    String
+  nom       String
+  email     String
+  sujet     String
+  message   String
+  lu        Boolean  @default(false)
+  createdAt DateTime @default(now())
+}

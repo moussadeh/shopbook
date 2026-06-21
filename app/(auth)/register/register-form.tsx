@@ -34,43 +34,43 @@ export default function RegisterForm() {
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-1.5">
             <Label htmlFor="prenom">Prénom</Label>
-            <Input id="prenom" name="prenom" placeholder="Mohamed" className="h-11" aria-invalid={!!err.prenom} />
+            <Input id="prenom" name="prenom" placeholder="Mohamed" className="h-11" defaultValue={state.values?.prenom ?? ""} aria-invalid={!!err.prenom} />
             {err.prenom && <p className="text-xs text-red-600">{err.prenom}</p>}
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="nom">Nom</Label>
-            <Input id="nom" name="nom" placeholder="Ahmed" className="h-11" aria-invalid={!!err.nom} />
+            <Input id="nom" name="nom" placeholder="Ahmed" className="h-11" defaultValue={state.values?.nom ?? ""} aria-invalid={!!err.nom} />
             {err.nom && <p className="text-xs text-red-600">{err.nom}</p>}
           </div>
         </div>
 
         <div className="space-y-1.5">
           <Label htmlFor="nomBoutique">Nom de la boutique</Label>
-          <Input id="nomBoutique" name="nomBoutique" placeholder="Boutique Ahmed" className="h-11" aria-invalid={!!err.nomBoutique} />
+          <Input id="nomBoutique" name="nomBoutique" placeholder="Boutique Ahmed" className="h-11" defaultValue={state.values?.nomBoutique ?? ""} aria-invalid={!!err.nomBoutique} />
           {err.nomBoutique && <p className="text-xs text-red-600">{err.nomBoutique}</p>}
         </div>
 
         <div className="space-y-1.5">
           <Label htmlFor="telephone">Téléphone</Label>
-          <Input id="telephone" name="telephone" type="tel" placeholder="+222 00 00 00 00" className="h-11" aria-invalid={!!err.telephone} />
+          <Input id="telephone" name="telephone" type="tel" placeholder="+222 00 00 00 00" className="h-11" defaultValue={state.values?.telephone ?? ""} aria-invalid={!!err.telephone} />
           {err.telephone && <p className="text-xs text-red-600">{err.telephone}</p>}
         </div>
 
         <div className="space-y-1.5">
           <Label htmlFor="email">Email</Label>
-          <Input id="email" name="email" type="email" placeholder="vous@exemple.com" className="h-11" aria-invalid={!!err.email} />
+          <Input id="email" name="email" type="email" placeholder="vous@exemple.com" className="h-11" defaultValue={state.values?.email ?? ""} aria-invalid={!!err.email} />
           {err.email && <p className="text-xs text-red-600">{err.email}</p>}
         </div>
 
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-1.5">
             <Label htmlFor="ville">Ville</Label>
-            <Input id="ville" name="ville" placeholder="Nouakchott" className="h-11" aria-invalid={!!err.ville} />
+            <Input id="ville" name="ville" placeholder="Nouakchott" className="h-11" defaultValue={state.values?.ville ?? ""} aria-invalid={!!err.ville} />
             {err.ville && <p className="text-xs text-red-600">{err.ville}</p>}
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="quartier">Quartier</Label>
-            <Input id="quartier" name="quartier" placeholder="Tevragh Zeina" className="h-11" aria-invalid={!!err.quartier} />
+            <Input id="quartier" name="quartier" placeholder="Tevragh Zeina" className="h-11" defaultValue={state.values?.quartier ?? ""} aria-invalid={!!err.quartier} />
             {err.quartier && <p className="text-xs text-red-600">{err.quartier}</p>}
           </div>
         </div>
