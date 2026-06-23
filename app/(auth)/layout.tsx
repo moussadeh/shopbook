@@ -2,9 +2,9 @@ import { ShoppingBag, Check } from "lucide-react";
 import Image from "next/image";
 
 const atouts = [
-  "Suivi des crédits en temps réel",
-  "Gestion des clients et produits",
-  "Tableau de bord clair et mobile",
+  "Vos crédits toujours à jour",
+  "Vos clients et vos produits réunis",
+  "Un tableau de bord clair, sur téléphone comme sur ordinateur",
 ];
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
@@ -25,7 +25,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
             Gérez les crédits de votre boutique en toute simplicité.
           </h1>
           <p className="text-white/80 leading-relaxed">
-            Suivez vos clients, vos produits et vos paiements au même endroit.
+            Vos clients, vos produits et vos paiements au même endroit.
             Sachez qui vous doit quoi, à tout moment.
           </p>
           <ul className="space-y-3">

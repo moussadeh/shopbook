@@ -22,7 +22,8 @@ export default function Pricing() {
             Choisissez le plan qui<br />convient à <span className="text-vert-foncee">votre boutique</span>
           </h2>
           <p className="text-muted-foreground text-base leading-relaxed md:max-w-xl md:mx-auto">
-            Gérez vos crédits clients facilement avec une solution moderne pensée pour les commerçants mauritaniens.
+            Une offre claire, pensée pour les commerçants mauritaniens.<br />
+            Aucun engagement. Paiement par Bankily, Masrvi ou Sedad.
           </p>
         </div>
 
@@ -38,20 +39,19 @@ export default function Pricing() {
                   <span className="text-3xl md:text-4xl font-bold">Gratuit</span>
                 </div>
                 <div className="mt-2 inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-sm text-slate-700">
-                  <Clock3 size={14} className="mr-2" />Pendant 2 semaines
+                  <Clock3 size={14} className="mr-2" />Pendant 14 jours
                 </div>
                 <p className="mt-2 text-slate-600 text-sm md:text-base">
-                  Testez toutes les fonctionnalités de Shopbook sans engagement.
+                  Essayez tout ShopBook, sans payer, sans engagement.
                 </p>
               </div>
 
               <div className="pt-4 border-t border-slate-200 space-y-2">
                 {[
-                  "Gestion des crédits clients",
-                  "Gestion des clients",
-                  "Gestion des produits",
-                  "Enregistrement des paiements",
-                  "Tableau de bord basique",
+                  "Tous vos crédits clients au même endroit",
+                  "Vos clients et vos produits, en illimité",
+                  "Suivi des paiements et statut automatique",
+                  "Tableau de bord complet",
                 ].map((item) => (
                   <div key={item} className="flex items-center gap-3">
                     <div className="rounded-full bg-vert-claire p-1 shrink-0">
@@ -64,7 +64,7 @@ export default function Pricing() {
 
               <div className="rounded-2xl bg-vert-claire p-3">
                 <p className="text-sm text-slate-600">
-                  Accès complet à toutes les fonctionnalités pendant 2 semaines.
+                  Aucun paiement à l&apos;inscription.
                 </p>
               </div>
 
@@ -93,19 +93,18 @@ export default function Pricing() {
                   <Star size={14} className="mr-2" />Le plus populaire
                 </div>
                 <p className="mt-2 text-slate-600 leading-7 text-sm md:text-base">
-                  Accédez à toutes les fonctionnalités pour gérer votre boutique sans limite.
+                  Tout ShopBook pour gérer votre activité, sans limite de temps.
                 </p>
               </div>
 
               <div className="pt-4 border-t border-slate-200 space-y-2">
-                <p className="text-slate-700 font-medium text-sm mb-3">Tout ce qui est inclus dans découverte, plus :</p>
+                <p className="text-slate-700 font-medium text-sm mb-3">Tout ce que contient l&apos;essai, plus :</p>
                 {[
-                  "Accès illimité",
-                  "Statistiques avancées",
-                  "Historique complet",
-                  "Export des données",
-                  "Sauvegarde automatique",
-                  "Support prioritaire",
+                  "Statistiques détaillées de votre activité",
+                  "Historique complet de vos crédits et paiements",
+                  "Export de vos données",
+                  "Sauvegarde automatique de vos données",
+                  "Aide rapide quand vous en avez besoin",
                 ].map((item) => (
                   <div key={item} className="flex items-center gap-3">
                     <div className="rounded-full bg-vert-claire p-1 shrink-0">
@@ -135,19 +134,17 @@ export default function Pricing() {
                   +100 MRU par salarié
                 </div>
                 <p className="mt-2 text-slate-600 leading-7 text-sm md:text-base">
-                  Ajoutez vos salariés et gérez votre boutique en équipe.
+                  Pour gérer votre boutique à plusieurs.
                 </p>
               </div>
 
               <div className="pt-4 border-t border-slate-200 space-y-2">
-                <p className="text-slate-700 font-medium text-sm mb-3">Tout ce qui est inclus dans essentiel, plus :</p>
+                <p className="text-slate-700 font-medium text-sm mb-3">Tout l&apos;Essentiel, plus :</p>
                 {[
-                  "Gestion des salariés",
-                  "Comptes salariés",
-                  "Permissions personnalisées",
-                  "Suivi des activités",
+                  "Un compte pour chaque salarié",
+                  "Les droits d'accès que vous définissez",
+                  "Vous voyez toujours qui a noté quoi",
                   "Collaboration en temps réel",
-                  "Tarification flexible",
                 ].map((item) => (
                   <div key={item} className="flex items-center gap-3">
                     <div className="rounded-full bg-vert-claire p-1 shrink-0">
@@ -171,18 +168,18 @@ export default function Pricing() {
           {[
             {
               icon: <ShieldCheck size={22} className="text-[#1d5524]" />,
-              title: "Paiement sécurisé",
-              desc: "Vos données et paiements sont sécurisés.",
+              title: "Vos données en sécurité",
+              desc: "Tout est sauvegardé automatiquement. Vous ne perdez jamais vos crédits, contrairement à un cahier.",
             },
             {
               icon: <RefreshCcw size={22} className="text-[#1d5524]" />,
-              title: "Annulez à tout moment",
-              desc: "Modifiez votre abonnement quand vous voulez.",
+              title: "Sans engagement",
+              desc: "Vous payez le mois quand vous voulez continuer. Rien ne se renouvelle dans votre dos.",
             },
             {
               icon: <Headset size={22} className="text-[#1d5524]" />,
-              title: "Support disponible",
-              desc: "Notre équipe vous accompagne à chaque étape.",
+              title: "Une équipe à vos côtés",
+              desc: "Une question, un souci ? On vous répond rapidement, par téléphone ou par mail. On est là pour vous.",
             },
           ].map(({ icon, title, desc }) => (
             <div key={title} className="flex gap-4">

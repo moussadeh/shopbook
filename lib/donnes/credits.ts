@@ -26,9 +26,9 @@ export function statusStyle(statut: string) {
 
 export function buildCreditsStats(s: CreditsStats): StatCard[] {
   return [
-    { label: "Crédits actifs",   value: String(s.creditsActifs),                  icon: Wallet,       sub: "non soldés" },
-    { label: "Encours total",    value: s.encoursTotal.toLocaleString("fr-FR"),   unit: "MRU", icon: TrendingDown, sub: "à recouvrer" },
+    { label: "Crédits en cours",   value: String(s.creditsActifs),                  icon: Wallet,       sub: "non payés" },
+    { label: "À récupérer",    value: s.encoursTotal.toLocaleString("fr-FR"),   unit: "MRU", icon: TrendingDown, sub: "dû par vos clients" },
     { label: "Encaissé ce mois", value: s.encaisseCeMois.toLocaleString("fr-FR"), unit: "MRU", icon: TrendingUp,   sub: "paiements reçus" },
-    { label: "Crédits soldés",   value: String(s.creditsSoldes),                  icon: CheckCircle2, sub: "payés" },
+    { label: "Crédits payés",   value: String(s.creditsSoldes),                  icon: CheckCircle2, sub: "payés" },
   ];
 }

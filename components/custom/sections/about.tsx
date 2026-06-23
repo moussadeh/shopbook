@@ -8,7 +8,7 @@ export default function About() {
     { icon: <Truck size={15} />, label: "Grossistes" },
     { icon: <Smartphone size={15} />, label: "Vendeurs en ligne" },
     { icon: <Users size={15} />, label: "Petites activités" },
-    { icon: <Briefcase size={15} />, label: "Services" },
+    { icon: <Briefcase size={15} />, label: "Autres services" },
   ];
 
   return (
@@ -48,7 +48,7 @@ export default function About() {
               <AlertCircle size={20} className="text-destructive shrink-0" /> Avant ShopBook
             </h3>
             <ul className="space-y-3 text-sm text-muted-foreground">
-              {["Cahiers difficiles à suivre", "Informations perdues ou oubliées", "Calculs manuels et erreurs fréquentes", "Aucune vision claire des dettes"].map(item => (
+              {["Cahiers difficiles à suivre", "Informations perdues ou oubliées", "Calculs à la main, erreurs fréquentes", "Pas de vue claire sur qui vous doit quoi"].map(item => (
                 <li key={item} className="flex items-start gap-3">
                   <span className="flex items-center justify-center w-5 h-5 rounded-full bg-red-100 shrink-0 mt-0.5">
                     <X size={11} className="text-destructive" />
@@ -64,7 +64,7 @@ export default function About() {
               <CheckCircle size={20} className="shrink-0" /> Avec ShopBook
             </h3>
             <ul className="space-y-3 text-sm text-white/85">
-              {["Tous les crédits centralisés", "Suivi simple des paiements", "Calcul automatique des montants", "Vision claire de votre activité"].map(item => (
+              {["Tous vos crédits au même endroit", "Suivi simple des paiements", "Calcul automatique des montants", "Vue claire sur votre commerce"].map(item => (
                 <li key={item} className="flex items-start gap-3">
                   <span className="flex items-center justify-center w-5 h-5 rounded-full bg-white/20 shrink-0 mt-0.5">
                     <Check size={11} className="text-green-200" />

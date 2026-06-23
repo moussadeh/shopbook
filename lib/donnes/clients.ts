@@ -21,20 +21,20 @@ export function buildClientsStats(s: ClientsStats): StatCard[] {
       label: "Clients avec crédits",
       value: String(s.clientsAvecCredits),
       icon: CreditCard,
+      sub: "avec au moins un crédit en cours",
     },
     {
       label: "Nouveaux ce mois",
       value: String(s.nouveauxCeMois),
       icon: CalendarDays,
-      trend: `${diff >= 0 ? "+" : ""}${diff} vs mois dernier`,
-      trendUp: diff >= 0,
+      sub: "clients enregistrés ce mois",
     },
     {
       label: "Total crédits",
       value: s.totalEncours.toLocaleString("fr-FR"),
       unit: "MRU",
       icon: TrendingUp,
-      sub: "encours global",
+      sub: "dû par vos clients",
     },
   ];
 }

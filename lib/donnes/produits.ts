@@ -41,8 +41,8 @@ export const STOCK_BAS_SEUIL = 50;
 export function buildProduitsStats(s: ProduitsStats): StatCard[] {
   return [
     { label: "Total produits",  value: String(s.totalProduits),               icon: Package,        sub: "au catalogue" },
-    { label: "Valeur du stock", value: s.valeurStock.toLocaleString("fr-FR"), unit: "MRU", icon: Wallet, sub: "prix × stock" },
-    { label: "Stock bas",       value: String(s.stockBas),                    icon: AlertTriangle,  sub: `seuil < ${STOCK_BAS_SEUIL}` },
-    { label: "Total vendu",     value: s.totalVendu.toLocaleString("fr-FR"),  icon: TrendingUp,     sub: "unités écoulées" },
+    { label: "Valeur du stock", value: s.valeurStock.toLocaleString("fr-FR"), unit: "MRU", icon: Wallet, sub: "valeur de vos produits en stock" },
+    { label: "Stock bas",       value: String(s.stockBas),                    icon: AlertTriangle,  sub: "produits bientôt épuisés" },
+    { label: "Total vendu",     value: s.totalVendu.toLocaleString("fr-FR"),  icon: TrendingUp,     sub: "unités vendues" },
   ];
 }

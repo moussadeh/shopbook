@@ -34,10 +34,10 @@ export default function Contact() {
               </span>
               <h2 className="text-2xl md:text-4xl font-bold leading-tight">
                 Une question ?<br />
-                <span className="text-primary">Écrivez-nous</span>
+                <span className="text-primary">On vous répond.</span>
               </h2>
               <p className="text-muted-foreground text-base leading-relaxed">
-                Notre équipe est disponible pour répondre à toutes vos questions sur ShopBook.
+                Avant de vous lancer ou en cours de route, écrivez-nous - on prend le temps de vous aider.
               </p>
             </div>
 

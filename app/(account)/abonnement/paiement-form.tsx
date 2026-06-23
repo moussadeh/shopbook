@@ -31,6 +31,7 @@ export default function PaiementForm() {
         <p className="text-sm text-muted-foreground">
           Montant : <span className="font-semibold text-gray-800">{PRIX_ABONNEMENT} MRU</span> / mois.
           Envoyez le paiement, puis joignez la capture.
+          Dès que vous envoyez votre preuve de paiement, votre accès est rétabli immédiatement.
         </p>
       </div>
 

@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { CheckCircle } from "lucide-react";
+import Link from "next/link";
 
 export default function Welcome() {
     return (
@@ -14,31 +15,31 @@ export default function Welcome() {
                     </h1>
 
                     <p className="text-muted-foreground text-base leading-relaxed">
-                        ShopBook est la plateforme de gestion de crédits clients conçue pour les commerçants Mauritaniens.
+                        ShopBook remplace votre cahier de crédits par un outil clair, fait pour les commerçants mauritaniens.
                     </p>
 
                     <ul className="text-muted-foreground space-y-3">
                         <li className="flex items-start gap-3">
                             <CheckCircle size={18} className="text-orange shrink-0 mt-0.5" />
-                            <span>Enregistrez et suivez tous vos crédits clients.</span>
+                            <span>Notez qui vous doit, combien, et pour quoi.</span>
                         </li>
                         <li className="flex items-start gap-3">
                             <CheckCircle size={18} className="text-orange shrink-0 mt-0.5" />
-                            <span>Consultez l&apos;historique et les paiements.</span>
+                            <span>Suivez chaque paiement, voyez ce qui reste à récupérer.</span>
                         </li>
                         <li className="flex items-start gap-3">
                             <CheckCircle size={18} className="text-orange shrink-0 mt-0.5" />
-                            <span>Sécurisez votre activité et développez votre commerce.</span>
+                            <span>Retrouvez tout au même endroit, sur votre téléphone comme sur votre ordinateur.</span>
                         </li>
                     </ul>
 
                     <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-2">
-                        <button className="cursor-pointer bg-primary font-bold text-white px-6 py-3 rounded-lg hover:opacity-90 transition text-sm">
+                        <Link href="/register" className="cursor-pointer bg-primary font-bold text-white px-6 py-3 rounded-lg hover:opacity-90 transition text-md text-center">
                             Commencer gratuitement
-                        </button>
-                        <button className="cursor-pointer bg-white font-bold px-6 py-3 rounded-lg border-2 hover:opacity-90 transition border-vert-foncee text-vert-foncee text-sm">
+                        </Link>
+                        <Link href="/login" className="cursor-pointer bg-white font-bold px-6 py-3 rounded-lg border-2 hover:opacity-90 transition border-vert-foncee text-vert-foncee text-md text-center">
                             Se connecter
-                        </button>
+                        </Link>
                     </div>
                 </div>
 

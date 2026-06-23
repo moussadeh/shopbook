@@ -18,7 +18,7 @@ export default function Footer() {
                         </div>
 
                         <p className='text-sm mt-3'>
-                            Le carnet numérique destiné aux commerçants Mauritaniens, pour la gestion de leur activité.
+                            Le carnet numérique qui remplace le cahier de crédits. Pensé pour les commerçants mauritaniens.
                         </p>
 
                         <div className='flex items-center gap-3 mt-3'>

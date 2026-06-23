@@ -19,7 +19,7 @@ export default function RegisterForm() {
   return (
     <div className="bg-white rounded-3xl border p-6 sm:p-8 shadow-sm">
       <div className="space-y-1.5 mb-6">
-        <h2 className="text-2xl font-bold text-gray-900">Créer votre compte</h2>
+        <h2 className="text-2xl font-bold text-vert-foncee">Bienvenue parmi nous</h2>
         <p className="text-sm text-muted-foreground">Quelques infos et votre boutique est prête.</p>
       </div>
 

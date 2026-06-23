@@ -21,8 +21,8 @@ export const donutColor: Record<StatutCredit, string> = {
 export function buildDashboardStats(s: DashboardStats): StatCard[] {
   return [
     { label: "Clients",          value: String(s.totalClients),                   icon: Users,        sub: "enregistrés" },
-    { label: "Encours total",    value: s.encoursTotal.toLocaleString("fr-FR"),    unit: "MRU", icon: TrendingDown, sub: "à recouvrer" },
+    { label: "À récupérer",    value: s.encoursTotal.toLocaleString("fr-FR"),    unit: "MRU", icon: TrendingDown, sub: "à recouvrer" },
     { label: "Encaissé ce mois", value: s.encaisseCeMois.toLocaleString("fr-FR"),  unit: "MRU", icon: TrendingUp,   sub: "paiements reçus" },
-    { label: "Crédits actifs",   value: String(s.creditsActifs),                   icon: Wallet,       sub: "non soldés" },
+    { label: "Crédits en cours",   value: String(s.creditsActifs),                   icon: Wallet,       sub: "non soldés" },
   ];
 }
