@@ -46,7 +46,7 @@ export async function registerAction(_prev: AuthState, formData: FormData): Prom
 
     const motDePasse = await hashPassword(d.motDePasse);
     const commercant = await prisma.commercant.create({
-        data: { ...d, motDePasse },
+        data: { ...d, motDePasse, essaiFinLe: new Date(Date.now() + 14 * 86_400_000) },
         select: { id: true },
     });
 

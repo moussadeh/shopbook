@@ -3,13 +3,16 @@
 import { Phone, Mail, MoreVertical } from "lucide-react";
 import type { ClientRow } from "@/lib/data/clients";
 import { statusStyle } from "@/lib/donnes/dashboard";
+import RowActions from "@/components/custom/dashboard/composants/row-actions";
 
 type Props = {
   clients: ClientRow[];
   onDetail: (c: ClientRow) => void;
+  onEdit: (c: ClientRow) => void;
+  onDelete: (c: ClientRow) => void;
 };
 
-export default function ClientsCards({ clients, onDetail }: Props) {
+export default function ClientsCards({ clients, onDetail, onEdit, onDelete }: Props) {
   return (
     <>
       {clients.map((c) => (
@@ -42,12 +45,11 @@ export default function ClientsCards({ clients, onDetail }: Props) {
                   <Mail size={15} />
                 </button>
               )}
-              <button
-                onClick={() => onDetail(c)}
-                className="p-2 rounded-xl border hover:bg-muted transition text-muted-foreground"
-              >
-                <MoreVertical size={15} />
-              </button>
+              <RowActions
+                onDetail={() => onDetail(c)}
+                onEdit={() => onEdit(c)}
+                onDelete={() => onDelete(c)}
+              />
             </div>
           </div>
         </div>

@@ -93,7 +93,7 @@ export default function ClientsView({ clients, stats }: { clients: ClientRow[]; 
 
         {/* Mobile */}
         <div className="md:hidden space-y-3">
-          <ClientsCards clients={paginated} onDetail={openDetail} />
+          <ClientsCards clients={paginated} onDetail={openDetail} onEdit={openEdit} onDelete={handleDelete} />
           {filtered.length === 0 && (
             <div className="py-12 text-center text-muted-foreground text-sm bg-white rounded-2xl border">
               Aucun client trouvé

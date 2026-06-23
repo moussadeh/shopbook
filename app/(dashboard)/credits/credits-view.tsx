@@ -103,7 +103,7 @@ export default function CreditsView({
 
         {/* Mobile */}
         <div className="md:hidden space-y-3">
-          <CreditsCards credits={paginated} onDetail={openDetail} onPaiement={openPaiement} />
+          <CreditsCards credits={paginated} onDetail={openDetail} onPaiement={openPaiement} onEdit={openEdit} onDelete={handleDelete} />
           {filtered.length === 0 && (
             <div className="py-12 text-center text-muted-foreground text-sm bg-white rounded-2xl border">Aucun crédit trouvé</div>
           )}

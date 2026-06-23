@@ -24,13 +24,16 @@ model Commercant {
   ville             String
   quartier          String
   pays              String
-  isAbonne          Boolean  @default(false)
+  essaiFinLe        DateTime @default(now())
+  role              Role @default(COMMERCANT)
+  abonneJusquau     DateTime?
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 
   clients           Client[]
   produits          Produit[]
   credits           Credit[]
+  paiementsAbo      PaiementAbonnement[]
 }
 
 model Client {
@@ -139,4 +142,36 @@ model MessageContact {
   message   String
   lu        Boolean  @default(false)
   createdAt DateTime @default(now())
+}
+
+model PaiementAbonnement {
+  id           Int                @id @default(autoincrement())
+  commercantId Int
+  methode      MethodePaiement
+  montant      Float
+  captureUrl   String             // capture d'écran du paiement (Supabase Storage)
+  statut       StatutPaiementAbo  @default(EN_ATTENTE)
+  motifRejet   String?            // si l'admin rejette
+  verifieLe    DateTime?
+  createdAt    DateTime           @default(now())
+
+  commercant   Commercant @relation(fields: [commercantId], references: [id])
+}
+
+enum MethodePaiement {
+  BANKILY
+  MASRVI
+  SEDAD
+  AUTRE
+}
+
+enum StatutPaiementAbo {
+  EN_ATTENTE   // soumis → accès provisoire accordé
+  APPROUVE     // admin a confirmé la réception
+  REJETE       // argent non reçu → accès bloqué
+}
+
+enum Role {
+  COMMERCANT
+  ADMIN
 }

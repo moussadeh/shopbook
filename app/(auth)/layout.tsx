@@ -47,21 +47,20 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
 
       {/* Droite : zone formulaire */}
       <div className="flex flex-col min-h-screen lg:min-h-0 bg-gray-50/60">
-        {/* En-tête mobile (le branding condensé) */}
-        <div className="lg:hidden bg-vert-foncee text-white px-6 pt-10 pb-8 rounded-b-3xl">
-          <div className="flex items-center gap-2">
-            <Image src="/logos/logo/ShopBook.png" alt="Logo" width={36} height={36} className="object-contain rounded" />
-            <span className="text-lg font-bold">ShopBook</span>
+      <div className="flex-1 flex items-center justify-center p-6">
+        <div className="w-full max-w-md space-y-6">
+          {/* En-tête mobile : logo + nom centrés (caché sur desktop, déjà présent à gauche) */}
+          <div className="flex flex-col items-center gap-2 lg:hidden">
+            <Image src="/logos/logo/ShopBook.png" alt="Logo" width={70} height={70} className="object-contain rounded" />
+            <span>
+              <span className="font-bold tracking-tight text-2xl text-vert-foncee">Shop</span>
+              <span className="font-bold tracking-tight text-2xl text-orange">Book</span>
+            </span>
           </div>
-          <p className="text-white/80 text-sm mt-3">
-            Gérez les crédits de votre boutique simplement.
-          </p>
-        </div>
-
-        <div className="flex-1 flex items-center justify-center p-6">
-          <div className="w-full max-w-md">{children}</div>
+          {children}
         </div>
       </div>
+    </div>
     </div>
   );
 }

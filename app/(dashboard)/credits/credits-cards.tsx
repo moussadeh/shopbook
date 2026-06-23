@@ -4,14 +4,17 @@ import { TrendingDown, MoreVertical } from "lucide-react";
 import type { CreditRow } from "@/lib/data/credits";
 import { statusStyle, statutCreditLabel, formatMRU } from "@/lib/donnes/credits";
 import { Button } from "@/components/ui/button";
+import RowActions from "@/components/custom/dashboard/composants/row-actions";
 
 type Props = {
   credits: CreditRow[];
   onDetail: (c: CreditRow) => void;
+  onEdit: (c: CreditRow) => void;
+  onDelete: (c: CreditRow) => void;
   onPaiement: (c: CreditRow) => void;
 };
 
-export default function CreditsCards({ credits, onDetail, onPaiement }: Props) {
+export default function CreditsCards({ credits, onDetail, onEdit, onDelete, onPaiement }: Props) {
   return (
     <>
       {credits.map((c) => (
@@ -59,12 +62,11 @@ export default function CreditsCards({ credits, onDetail, onPaiement }: Props) {
                   <TrendingDown size={13} /> Paiement
                 </Button>
               )}
-              <button
-                onClick={() => onDetail(c)}
-                className="p-1.5 rounded-lg border hover:bg-muted transition text-muted-foreground"
-              >
-                <MoreVertical size={14} />
-              </button>
+              <RowActions
+                onDetail={() => onDetail(c)}
+                onEdit={() => onEdit(c)}
+                onDelete={() => onDelete(c)}
+              />
             </div>
           </div>
         </div>
