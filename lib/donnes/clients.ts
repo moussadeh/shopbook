@@ -1,9 +1,8 @@
 import { Users, CreditCard, CalendarDays, TrendingUp } from "lucide-react";
 import { StatCard } from "@/components/custom/dashboard/stats-cards";
-import { StatutCredit, statusStyle } from "./dashboard";
+import { statusStyle } from "./dashboard";
 import type { ClientsStats } from "@/lib/data/clients";
 
-export type { StatutCredit };
 export { statusStyle };
 
 export const STATUTS = ["Tous", "En cours", "Partiel", "En retard", "Payé"] as const;
