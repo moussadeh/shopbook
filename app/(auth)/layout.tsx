@@ -1,3 +1,5 @@
+import { redirect } from "next/navigation";
+import { getSession } from "@/lib/auth/session";
 import { ShoppingBag, Check } from "lucide-react";
 import Image from "next/image";
 
@@ -7,7 +9,10 @@ const atouts = [
   "Un tableau de bord clair, sur téléphone comme sur ordinateur",
 ];
 
-export default function AuthLayout({ children }: { children: React.ReactNode }) {
+export default async function AuthLayout({ children }: { children: React.ReactNode }) {
+  const session = await getSession();
+  if (session) redirect("/dashboard");
+
   return (
     <div className="min-h-screen lg:grid lg:grid-cols-2">
       {/* Gauche : branding (desktop uniquement) */}
