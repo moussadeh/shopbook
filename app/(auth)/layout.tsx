@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth/session";
-import { ShoppingBag, Check } from "lucide-react";
+import { Check } from "lucide-react";
 import Image from "next/image";
 import prisma from "@/prisma/prisma";
 

@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { exigerAdmin } from "@/lib/auth/abonnement";
 import Image from "next/image";
 import AdminNav from "./admin-nav";
