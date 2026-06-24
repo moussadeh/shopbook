@@ -63,7 +63,7 @@ export async function loginAction(_prev: AuthState, formData: FormData): Promise
 
     const commercant = await prisma.commercant.findUnique({
         where: { telephone },
-        select: { id: true, motDePasse: true },
+        select: { id: true, motDePasse: true, role: true },
     });
 
     // message générique : on ne révèle pas si le téléphone existe
@@ -72,7 +72,7 @@ export async function loginAction(_prev: AuthState, formData: FormData): Promise
     }
 
     await createSession(commercant.id);
-    redirect("/dashboard");
+    redirect(commercant.role === "ADMIN" ? "/messages" : "/dashboard");
 }
 
 export async function logoutAction() {

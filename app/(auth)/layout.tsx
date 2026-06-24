@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth/session";
 import { ShoppingBag, Check } from "lucide-react";
 import Image from "next/image";
+import prisma from "@/prisma/prisma";
 
 const atouts = [
   "Vos crédits toujours à jour",
@@ -11,7 +12,13 @@ const atouts = [
 
 export default async function AuthLayout({ children }: { children: React.ReactNode }) {
   const session = await getSession();
-  if (session) redirect("/dashboard");
+  if (session) {
+    const c = await prisma.commercant.findUnique({
+      where: { id: session.commercantId },
+      select: { role: true },
+    });
+    redirect(c?.role === "ADMIN" ? "/messages" : "/dashboard");
+  }
 
   return (
     <div className="min-h-screen lg:grid lg:grid-cols-2">
