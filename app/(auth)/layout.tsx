@@ -3,6 +3,7 @@ import { getSession } from "@/lib/auth/session";
 import { Check } from "lucide-react";
 import Image from "next/image";
 import prisma from "@/prisma/prisma";
+import Link from "next/link";
 
 const atouts = [
   "Vos crédits toujours à jour",
@@ -28,8 +29,10 @@ export default async function AuthLayout({ children }: { children: React.ReactNo
         <div className="absolute -bottom-32 -left-20 w-96 h-96 rounded-full bg-white/5 blur-3xl" />
 
         <div className="relative flex items-center gap-2">
-          <Image src="/logos/logo/ShopBook.png" alt="Logo" width={36} height={36} className="object-contain rounded" />
-          <span className="text-xl font-bold">ShopBook</span>
+          <Link href="/" className="flex items-center gap-2 shrink-0">
+            <Image src="/logos/logo/ShopBook.png" alt="Logo" width={36} height={36} className="object-contain rounded" />
+            <span className="text-xl font-bold">ShopBook</span>
+          </Link>
         </div>
 
         <div className="relative space-y-6 max-w-md">
