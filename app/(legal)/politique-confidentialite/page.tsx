@@ -52,11 +52,6 @@ export default function ConfidentialitePage() {
             "La capture d'écran que vous envoyez lors d'un paiement par Bankily, Masrvi ou Sedad, le temps nécessaire à sa vérification.",
           ]} />
 
-          <p className="font-semibold text-gray-800">Les données techniques</p>
-          <Puces items={[
-            "Adresse IP, type d'appareil, journaux de connexion — utilisés uniquement pour la sécurité du service (détecter un accès suspect, par exemple).",
-          ]} />
-
           <p>Nous ne collectons pas plus que ce qui est nécessaire au fonctionnement de ShopBook.</p>
         </Section>
 
@@ -109,10 +104,6 @@ export default function ConfidentialitePage() {
         </Section>
 
         <Section n="8" titre="Vos droits">
-          <p>
-            Conformément à la loi mauritanienne n° 2017-020 relative à la protection des données à caractère
-            personnel, vous avez le droit de :
-          </p>
           <Puces items={[
             "Accéder aux données que nous détenons sur vous",
             "Demander leur correction si elles sont inexactes",
@@ -120,17 +111,13 @@ export default function ConfidentialitePage() {
             "Vous opposer à certains usages de vos données",
             "Retirer votre consentement à tout moment",
           ]} />
-          <p>
-            Pour exercer ces droits, écrivez-nous à contact@shopbook.mr. Vous pouvez aussi adresser une réclamation à
-            l&apos;Autorité de Protection des Données à caractère personnel (APD), basée à Nouakchott.
-          </p>
         </Section>
 
         <Section n="9" titre="Contact">
           <p>Une question sur vos données ou cette politique ?</p>
           <Puces items={[
             "E-mail : contact@shopbook.mr",
-            "WhatsApp : +222 00 00 00 00",
+            "WhatsApp : +222 42 09 80 02",
             "Adresse : Nouakchott, Mauritanie",
           ]} />
         </Section>

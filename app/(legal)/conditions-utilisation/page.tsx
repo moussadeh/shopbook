@@ -58,12 +58,12 @@ export default function ConditionsPage() {
         <Section n="4" titre="Abonnement et paiement">
           <p>
             ShopBook fonctionne par abonnement payant après l&apos;essai gratuit. Les tarifs en vigueur sont affichés sur
-            notre page Tarifs.
+            notre page d&apos;accueil.
           </p>
           <p className="font-semibold text-gray-800">Comment fonctionne le paiement :</p>
           <Puces items={[
             "Le paiement se fait par vos propres moyens, via Bankily, Masrvi ou Sedad.",
-            "Vous soumettez ensuite la preuve de ce paiement (capture d&apos;écran) dans votre espace ShopBook.",
+            "Vous soumettez ensuite la preuve de ce paiement (capture d'écran) dans votre espace ShopBook.",
             "Votre accès est rétabli immédiatement, dès la soumission de votre preuve.",
             "Un administrateur vérifie ensuite la réception du paiement, en général sous 48 h.",
             "Si le paiement n'est pas confirmé, votre accès est de nouveau bloqué, et vous devrez recommencer la démarche avec une preuve valide.",
@@ -146,18 +146,11 @@ export default function ConditionsPage() {
           </p>
         </Section>
 
-        <Section n="12" titre="Droit applicable">
-          <p>
-            Les présentes conditions sont soumises au droit mauritanien. Tout litige relève des juridictions
-            compétentes de Nouakchott.
-          </p>
-        </Section>
-
-        <Section n="13" titre="Contact">
+        <Section n="12" titre="Contact">
           <p>Une question sur ces conditions ?</p>
           <Puces items={[
             "E-mail : contact@shopbook.mr",
-            "WhatsApp : +222 00 00 00 00",
+            "WhatsApp : +222 42 09 80 02",
             "Adresse : Nouakchott, Mauritanie",
           ]} />
         </Section>
