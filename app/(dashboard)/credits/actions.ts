@@ -113,3 +113,49 @@ export async function deleteCredit(id: number) {
 
     revalidatePath("/credits");
 }
+
+export type PaiementClientState = { error?: string; success?: boolean };
+
+export async function payerClient(_prev: PaiementClientState, formData: FormData): Promise<PaiementClientState> {
+  const commercantId = await getCommercantId();
+
+  const clientId = Number(formData.get("clientId"));
+  let restant = Number(formData.get("montant"));
+
+  if (!clientId) return { error: "Client invalide." };
+  if (Number.isNaN(restant) || restant <= 0) return { error: "Le montant doit être supérieur à 0." };
+
+  // Crédits non soldés, du plus ancien au plus récent
+  const credits = await prisma.credit.findMany({
+    where: { commercantId, clientId, statutCredit: { not: StatutCredit.PAYE } },
+    orderBy: { dateCredit: "asc" },
+    select: { id: true, montantTotal: true, montantPaye: true },
+  });
+
+  const resteTotal = credits.reduce((s, c) => s + (c.montantTotal - c.montantPaye), 0);
+  if (restant > resteTotal) return { error: "Le paiement dépasse le total dû par ce client." };
+
+  // Imputation en cascade
+  const ops = [];
+  for (const credit of credits) {
+    if (restant <= 0) break;
+    const resteCredit = credit.montantTotal - credit.montantPaye;
+    const aImputer = Math.min(restant, resteCredit);
+    const nouveauPaye = credit.montantPaye + aImputer;
+
+    ops.push(prisma.paiement.create({ data: { creditId: credit.id, montant: aImputer } }));
+    ops.push(prisma.credit.update({
+      where: { id: credit.id },
+      data: {
+        montantPaye: nouveauPaye,
+        statutCredit: nouveauPaye >= credit.montantTotal ? StatutCredit.PAYE : StatutCredit.EN_COURS,
+      },
+    }));
+
+    restant -= aImputer;
+  }
+
+  await prisma.$transaction(ops);
+  revalidatePath("/credits");
+  return { success: true };
+}
