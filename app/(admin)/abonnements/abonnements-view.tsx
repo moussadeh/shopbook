@@ -76,7 +76,6 @@ export default function AbonnementsView({ paiements }: { paiements: PaiementAboR
               <div className="flex flex-wrap items-center justify-between gap-2 mt-3 pt-3 border-t">
                 <a
                   href={p.captureUrl}
-                  target="_blank"
                   rel="noreferrer"
                   className="inline-flex items-center gap-1 text-xs font-semibold text-vert-foncee hover:underline"
                 >
