@@ -46,7 +46,7 @@ export default function Footer() {
                         <div>
                             <p className='text-sm text-gray-800 font-semibold'>Entreprise</p>
                             <ul className='mt-3 flex flex-col gap-2 text-sm'>
-                                <li><a href="#">À propos</a></li>
+                                <li><a href="/a-propos" target="_blank" rel="noopener noreferrer">À propos</a></li>
                                 <li><a href="#">Contact</a></li>
                                 <li><a href="#">Carrière</a></li>
                             </ul>
@@ -63,8 +63,8 @@ export default function Footer() {
                         <div>
                             <p className='text-sm text-gray-800 font-semibold'>Juridique</p>
                             <ul className='mt-3 flex flex-col gap-2 text-sm'>
-                                <li><a href="#">Politique de confidentialité</a></li>
-                                <li><a href="#">Conditions d&apos;utilisation</a></li>
+                                <li><a href="/politique-confidentialite" target="_blank" rel="noopener noreferrer">Politique de confidentialité</a></li>
+                                <li><a href="/conditions-utilisation" target="_blank" rel="noopener noreferrer">Conditions d&apos;utilisation</a></li>
                             </ul>
                         </div>
 
