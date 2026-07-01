@@ -2,6 +2,7 @@ import "server-only";
 
 import prisma from "@/prisma/prisma";
 import { StatutPaiementAbo } from "@/app/generated/prisma/client";
+import { getCaptureUrl } from "../services/storage";
 
 const fmt = new Intl.DateTimeFormat("fr-FR", {
   day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit",
@@ -33,7 +34,7 @@ export type PaiementAboRow = {
   commercantId: number;
   commercantNom: string; boutique: string; initials: string;
   telephone: string; email: string;
-  methode: string; montant: number; captureUrl: string;
+  methode: string; montant: number; captureUrl: string | null;
   statut: StatutPaiementAbo; motifRejet: string | null;
   date: string;
 };
@@ -47,19 +48,21 @@ export async function getPaiementsAbo(): Promise<PaiementAboRow[]> {
       commercant: { select: { prenom: true, nom: true, nomBoutique: true, telephone: true, email: true } },
     },
   });
-  return rows.map((p) => ({
-    id: p.id,
-    commercantId: p.commercantId,
-    commercantNom: `${p.commercant.prenom} ${p.commercant.nom}`,
-    boutique: p.commercant.nomBoutique,
-    initials: `${p.commercant.prenom[0] ?? ""}${p.commercant.nom[0] ?? ""}`.toUpperCase(),
-    telephone: p.commercant.telephone,
-    email: p.commercant.email,
-    methode: p.methode,
-    montant: p.montant,
-    captureUrl: p.captureUrl,
-    statut: p.statut,
-    motifRejet: p.motifRejet,
-    date: fmt.format(p.createdAt),
-  }));
+  return Promise.all(
+    rows.map(async (p) => ({
+      id: p.id,
+      commercantId: p.commercantId,
+      commercantNom: `${p.commercant.prenom} ${p.commercant.nom}`,
+      boutique: p.commercant.nomBoutique,
+      initials: `${p.commercant.prenom[0] ?? ""}${p.commercant.nom[0] ?? ""}`.toUpperCase(),
+      telephone: p.commercant.telephone,
+      email: p.commercant.email,
+      methode: p.methode,
+      montant: p.montant,
+      captureUrl: await getCaptureUrl(p.captureUrl),
+      statut: p.statut,
+      motifRejet: p.motifRejet,
+      date: fmt.format(p.createdAt),
+    })
+  ));
 }

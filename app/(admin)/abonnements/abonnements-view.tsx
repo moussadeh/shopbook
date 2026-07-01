@@ -74,13 +74,13 @@ export default function AbonnementsView({ paiements }: { paiements: PaiementAboR
             {/* Actions — seulement si en attente ou rejeté */}
             {(p.statut === "EN_ATTENTE" || (p.statut === "REJETE" && p.motifRejet)) && (
               <div className="flex flex-wrap items-center justify-between gap-2 mt-3 pt-3 border-t">
-                <a
-                  href={p.captureUrl}
-                  rel="noreferrer"
-                  className="inline-flex items-center gap-1 text-xs font-semibold text-vert-foncee hover:underline"
-                >
-                  <ExternalLink size={12} /> Voir la capture
-                </a>
+                {p.captureUrl ? (
+                  <a href={p.captureUrl} rel="noreferrer" className="inline-flex items-center gap-1 text-xs font-semibold text-vert-foncee hover:underline">
+                    <ExternalLink size={12} /> Voir la capture
+                  </a>
+                ) : (
+                  <span className="text-xs text-muted-foreground">Capture indisponible</span>
+                )}
 
                 {p.statut === "EN_ATTENTE" && (
                   <div className="flex items-center gap-2">
