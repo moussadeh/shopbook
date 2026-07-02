@@ -12,6 +12,7 @@ import {
   Gift,
   Menu,
   X,
+  Store,
 } from "lucide-react";
 
 const navItems = [
@@ -19,6 +20,7 @@ const navItems = [
   { label: "Clients",         href: "/clients",    icon: Users },
   { label: "Produits",        href: "/produits",   icon: Package },
   { label: "Crédits",         href: "/credits",    icon: CreditCard },
+  { label: "Ma boutique",     href: "/ma-boutique", icon: Store },
 ];
 
 export default function Sidebar() {

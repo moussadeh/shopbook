@@ -41,6 +41,25 @@ export async function getCaptureUrl(chemin: string): Promise<string | null> {
   return data.signedUrl;
 }
 
+export async function uploadImageProduit(file: File, produitId: number): Promise<string> {
+  const ext = file.name.split(".").pop() || "jpg";
+  const chemin = `produit-${produitId}/${Date.now()}.${ext}`;
+  const buffer = Buffer.from(await file.arrayBuffer());
+
+  const { error } = await supabase.storage
+    .from("produits")
+    .upload(chemin, buffer, { contentType: file.type, upsert: false });
+
+  if (error) {
+    console.error("[uploadImageProduit] échec:", error);
+    throw new Error("Échec de l'upload de l'image.");
+  }
+
+  // bucket public → URL directe
+  const { data } = supabase.storage.from("produits").getPublicUrl(chemin);
+  return data.publicUrl;
+}
+
 
 
 // import "server-only";
