@@ -66,7 +66,6 @@ model Credit {
   commercant    Commercant @relation(fields: [commercantId], references: [id])
   client        Client     @relation(fields: [clientId], references: [id])
   paiements     Paiement[]
-  produits      CreditProduit[]
 }
 
 model Paiement {
@@ -83,28 +82,15 @@ model Produit {
   id            Int   @id @default(autoincrement())
   commercantId  Int
   nom           String
-  prixUnitaire  Float
-  stock         Int
-  unite         UniteProduit
+  prix          Float
   categorie     CategorieProduit @default(AUTRES)
+  description   String?
+  visibleBoutique Boolean  @default(false)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime @updatedAt
 
   commercant    Commercant @relation(fields: [commercantId], references: [id])
-  credits       CreditProduit[]
   images        ProduitImage[]
-}
-
-model CreditProduit {
-  id            Int   @id @default(autoincrement())
-  creditId      Int
-  produitId     Int
-  quantite      Float
-  prixUnitaire  Float
-  montantTotal  Float
-
-  credit        Credit  @relation(fields: [creditId], references: [id])
-  produit       Produit @relation(fields: [produitId], references: [id])
 }
 
 enum StatutCredit {
@@ -113,19 +99,19 @@ enum StatutCredit {
   PAYE
 }
 
-enum UniteProduit {
-  SAC
-  KILO
-  LIBAR
-  LITRE
-  SACHET
-  CARTON
-  BOITE
-  BOUTEILLE
-  BIDON
-  METRE
-  PAQUET
-}
+// enum UniteProduit {
+//   SAC
+//   KILO
+//   LIBAR
+//   LITRE
+//   SACHET
+//   CARTON
+//   BOITE
+//   BOUTEILLE
+//   BIDON
+//   METRE
+//   PAQUET
+// }
 
 enum CategorieProduit {
   ALIMENTAIRE
@@ -181,6 +167,7 @@ model ProduitImage {
   id         Int      @id @default(autoincrement())
   produitId  Int
   url        String            // URL publique dans le bucket "produits"
+  ordre      Int      @default(0)
   createdAt  DateTime @default(now())
 
   produit    Produit  @relation(fields: [produitId], references: [id], onDelete: Cascade)

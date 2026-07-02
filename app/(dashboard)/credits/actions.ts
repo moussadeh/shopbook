@@ -107,7 +107,6 @@ export async function deleteCredit(id: number) {
     // on efface les enfants d'abord (pas de cascade dans le schéma)
     await prisma.$transaction([
         prisma.paiement.deleteMany({ where: { creditId: id } }),
-        prisma.creditProduit.deleteMany({ where: { creditId: id } }),
         prisma.credit.delete({ where: { id } }),
     ]);
 

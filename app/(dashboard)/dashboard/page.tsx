@@ -3,8 +3,6 @@ import { buildDashboardStats } from "@/lib/donnes/dashboard";
 import StatsCards from "@/components/custom/dashboard/stats-cards";
 import RecentActivity from "@/components/custom/dashboard/recent-activity";
 import CreditDistribution from "@/components/custom/dashboard/credit-distribution";
-import ClientsTable from "@/components/custom/dashboard/clients-table";
-import ProductsList from "@/components/custom/dashboard/products-list";
 
 export default async function DashboardPage() {
   const data = await getDashboardData();
@@ -17,11 +15,6 @@ export default async function DashboardPage() {
         <RecentActivity activities={data.activities} />
         <CreditDistribution segments={data.distribution.segments} total={data.distribution.total} />
       </div>
-
-      {/* <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <ClientsTable clients={data.topClients} />
-        <ProductsList produits={data.topProduits} />
-      </div> */}
     </div>
   );
 }

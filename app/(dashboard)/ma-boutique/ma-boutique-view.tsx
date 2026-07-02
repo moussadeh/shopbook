@@ -20,7 +20,8 @@ export default function MaBoutiqueView({ boutique }: { boutique: BoutiqueRow | n
   const [livraison, setLivraison] = useState(boutique?.livraison ?? false);
   const [retrait, setRetrait] = useState(boutique?.retrait ?? true);
 
-  const lienPublic = boutique ? `${typeof window !== "undefined" ? window.location.origin : ""}/boutique/${boutique.slug}` : "";
+  const base = process.env.NEXT_PUBLIC_APP_URL ?? "";
+  const lienPublic = boutique ? `${base}/boutique/${boutique.slug}` : "";
 
   useEffect(() => {
     if (copie) {
@@ -57,11 +58,11 @@ export default function MaBoutiqueView({ boutique }: { boutique: BoutiqueRow | n
             <div className="flex-1 bg-gray-50 border rounded-xl px-3 py-2.5 text-sm text-gray-600 truncate">
               {lienPublic}
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-2 items-center">
               <Button onClick={copier} variant="outline" className="flex-1 sm:flex-none gap-1.5">
                 {copie ? <><Check size={15} /> Copié</> : <><Copy size={15} /> Copier</>}
               </Button>
-              <a href={lienPublic} target="_blank" rel="noreferrer"
+              <a href={lienPublic} rel="noreferrer"
                 className="inline-flex items-center justify-center gap-1.5 px-3 rounded-xl border text-sm font-medium hover:bg-muted transition">
                 <ExternalLink size={15} /> Voir
               </a>

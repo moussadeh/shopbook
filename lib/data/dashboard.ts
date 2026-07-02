@@ -59,7 +59,7 @@ export async function getDashboardData(): Promise<DashboardData> {
   const [
     totalClients, creditsActifs, encours, paiementsMois,
     recentPaiements, recentCredits, recentClients,
-    distributionRaw, clientsAvecCredits, produitsRaw,
+    distributionRaw, clientsAvecCredits,
   ] = await Promise.all([
     prisma.client.count({ where: { commercantId } }),
     prisma.credit.count({ where: { commercantId, statutCredit: { not: StatutCredit.PAYE } } }),
@@ -97,10 +97,10 @@ export async function getDashboardData(): Promise<DashboardData> {
         credits: { select: { montantTotal: true, montantPaye: true, statutCredit: true, updatedAt: true },
           orderBy: { updatedAt: "desc" } } },
     }),
-    prisma.produit.findMany({
-      where: { commercantId },
-      select: { id: true, nom: true, prixUnitaire: true, credits: { select: { quantite: true } } },
-    }),
+    // prisma.produit.findMany({
+    //   where: { commercantId },
+    //   select: { id: true, nom: true, prixUnitaire: true, credits: { select: { quantite: true } } },
+    // }),
   ]);
 
   // --- stats ---
@@ -163,12 +163,12 @@ export async function getDashboardData(): Promise<DashboardData> {
     .sort((a, b) => b.creditTotal - a.creditTotal)
     .slice(0, 5);
 
-  // --- top produits (par quantité vendue) ---
-  const topProduits: TopProduit[] = produitsRaw
-    .map((p) => ({ id: p.id, nom: p.nom, prixUnitaire: p.prixUnitaire,
-      vendu: p.credits.reduce((s, cp) => s + cp.quantite, 0) }))
-    .sort((a, b) => b.vendu - a.vendu)
-    .slice(0, 5);
+  // // --- top produits (par quantité vendue) ---
+  // const topProduits: TopProduit[] = produitsRaw
+  //   .map((p) => ({ id: p.id, nom: p.nom, prixUnitaire: p.prixUnitaire,
+  //     vendu: p.credits.reduce((s, cp) => s + cp.quantite, 0) }))
+  //   .sort((a, b) => b.vendu - a.vendu)
+  //   .slice(0, 5);
 
-  return { stats, activities, distribution: { segments, total: totalDistribution }, topClients, topProduits };
+  return { stats, activities, distribution: { segments, total: totalDistribution }, topClients, topProduits: [] };
 }
