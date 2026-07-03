@@ -85,7 +85,7 @@ model Produit {
   prix          Float
   categorie     CategorieProduit @default(AUTRES)
   description   String?
-  visibleBoutique Boolean  @default(false)
+  disponible    Boolean  @default(false)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime @updatedAt
 

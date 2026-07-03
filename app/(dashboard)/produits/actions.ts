@@ -1,3 +1,94 @@
+"use server";
+
+import prisma from "@/prisma/prisma";
+import { getCommercantId } from "@/lib/auth/auth";
+import { revalidatePath } from "next/cache";
+import { uploadImageProduit } from "@/lib/services/storage";
+
+export type ActionState = { error?: string; success?: boolean };
+
+const MAX_IMAGES = 3;
+
+function lireForm(formData: FormData) {
+  const nom = (formData.get("nom") as string)?.trim();
+  const prix = Number(formData.get("prix"));
+  const description = ((formData.get("description") as string) || "").trim() || null;
+  const disponible = formData.get("disponible") !== "false"; // dispo par défaut
+
+  if (!nom) return { error: "Le nom est requis." };
+  if (Number.isNaN(prix) || prix < 0) return { error: "Prix invalide." };
+
+  return { data: { nom, prix, description, disponible } };
+}
+
+export async function saveProduit(_prev: ActionState, formData: FormData): Promise<ActionState> {
+  const commercantId = await getCommercantId();
+
+  const { data, error } = lireForm(formData);
+  if (error || !data) return { error };
+
+  const idRaw = formData.get("id");
+  const id = idRaw ? Number(idRaw) : null;
+
+  let produitId: number;
+
+  if (id) {
+    await prisma.produit.update({ where: { id, commercantId }, data });
+    produitId = id;
+  } else {
+    const cree = await prisma.produit.create({
+      data: { ...data, commercantId },
+      select: { id: true },
+    });
+    produitId = cree.id;
+  }
+
+  // Images jointes (création surtout) — on respecte la limite de 3
+  const fichiers = formData.getAll("images").filter((f): f is File => f instanceof File && f.size > 0);
+  if (fichiers.length > 0) {
+    const dejaLa = await prisma.produitImage.count({ where: { produitId } });
+    let ordre = dejaLa;
+
+    for (const file of fichiers) {
+      if (ordre >= MAX_IMAGES) break;
+      if (!file.type.startsWith("image/")) continue;
+      if (file.size > 5 * 1024 * 1024) continue; // 5 Mo max
+
+      const url = await uploadImageProduit(file, produitId);
+      await prisma.produitImage.create({ data: { produitId, url, ordre } });
+      ordre++;
+    }
+  }
+
+  revalidatePath("/produits");
+  return { success: true };
+}
+
+export async function deleteProduit(id: number) {
+  const commercantId = await getCommercantId();
+  await prisma.produit.deleteMany({ where: { id, commercantId } }); // images en cascade
+  revalidatePath("/produits");
+}
+
+export async function toggleDisponible(id: number, disponible: boolean) {
+  const commercantId = await getCommercantId();
+  await prisma.produit.updateMany({ where: { id, commercantId }, data: { disponible } });
+  revalidatePath("/produits");
+}
+
+export async function supprimerImageProduit(imageId: number) {
+  const commercantId = await getCommercantId();
+  const image = await prisma.produitImage.findFirst({
+    where: { id: imageId, produit: { commercantId } },
+    select: { id: true },
+  });
+  if (!image) return;
+  await prisma.produitImage.delete({ where: { id: imageId } });
+  revalidatePath("/produits");
+}
+
+
+
 // "use server";
 
 // import prisma from "@/prisma/prisma";

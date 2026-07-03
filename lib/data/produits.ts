@@ -1,3 +1,68 @@
+import "server-only";
+
+import prisma from "@/prisma/prisma";
+import { getCommercantId } from "@/lib/auth/auth";
+
+export type ProduitImageRow = { id: number; url: string };
+
+export type ProduitRow = {
+  id: number;
+  nom: string;
+  prix: number;
+  description: string;
+  disponible: boolean;
+  images: ProduitImageRow[];
+  image: string | null; // 1re image (raccourci pour la liste)
+};
+
+export async function getProduits(): Promise<ProduitRow[]> {
+  const commercantId = await getCommercantId();
+
+  const rows = await prisma.produit.findMany({
+    where: { commercantId },
+    orderBy: { createdAt: "desc" },
+    select: {
+      id: true,
+      nom: true,
+      prix: true,
+      description: true,
+      disponible: true,
+      images: { select: { id: true, url: true }, orderBy: { ordre: "asc" } },
+    },
+  });
+
+  return rows.map((p) => ({
+    id: p.id,
+    nom: p.nom,
+    prix: p.prix,
+    description: p.description ?? "",
+    disponible: p.disponible,
+    images: p.images,
+    image: p.images[0]?.url ?? null,
+  }));
+}
+
+export type ProduitsStats = {
+  total: number;
+  disponibles: number;
+  indisponibles: number;
+  avecImage: number;
+};
+
+export async function getProduitsStats(): Promise<ProduitsStats> {
+  const commercantId = await getCommercantId();
+
+  const [total, disponibles, avecImage] = await Promise.all([
+    prisma.produit.count({ where: { commercantId } }),
+    prisma.produit.count({ where: { commercantId, disponible: true } }),
+    prisma.produit.count({ where: { commercantId, images: { some: {} } } }),
+  ]);
+
+  return { total, disponibles, indisponibles: total - disponibles, avecImage };
+}
+
+
+
 // import "server-only";
 
 // import prisma from "@/prisma/prisma";
