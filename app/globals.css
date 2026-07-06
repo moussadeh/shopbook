@@ -51,6 +51,7 @@
   --color-vert-claire: var(--vert-claire);
   --color-marron-gris-foncee: var(--marron-gris-foncee);
   --color-marron-grisee: var(--marron-grisee);
+  --color-vert-claire-2: var(--vert-claire-2);
 }
 
 :root {
@@ -93,6 +94,7 @@
   --vert-claire: #e7f0e2;
   --marron-gris-foncee: #3a322d;
   --marron-grisee: #8a551e;
+  --vert-claire-2: #F5FAF3;
 }
 
 .dark {
