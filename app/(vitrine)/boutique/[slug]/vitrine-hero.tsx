@@ -1,4 +1,4 @@
-import { Store, BadgeCheck, ShieldCheck, HandCoins, Sparkles } from "lucide-react";
+import { BadgeCheck, ShieldCheck, HandCoins, Sparkles } from "lucide-react";
 import type { Vitrine } from "@/lib/data/boutique-publique";
 import Image from "next/image";
 
