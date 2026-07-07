@@ -1,5 +1,5 @@
 import { getBoutiquePublique } from "@/lib/data/boutique-publique";
-import { getAcheteurId } from "@/lib/auth/acheteur";
+import { getAcheteur, getAcheteurId } from "@/lib/auth/acheteur";
 import BoutiqueFermee from "./boutique-fermee";
 import VitrineView from "./vitrine-view";
 import { notFound } from "next/navigation";
@@ -23,6 +23,7 @@ export default async function BoutiquePage({ params }: Props) {
   if (!res.active) return <BoutiqueFermee />;
 
   const acheteurId = await getAcheteurId();
+  const acheteur = await getAcheteur();
 
-  return <VitrineView vitrine={res.vitrine} slug={slug} dejaConnecte={!!acheteurId} />;
+  return <VitrineView vitrine={res.vitrine} slug={slug} acheteur={acheteur} />;
 }

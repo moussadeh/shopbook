@@ -1,5 +1,6 @@
 import { Package, Plus, Minus } from "lucide-react";
 import type { VitrineProduit } from "@/lib/data/boutique-publique";
+import Image from "next/image";
 
 type Props = {
   produit: VitrineProduit;
@@ -16,7 +17,7 @@ export default function ProduitCard({ produit, qte, onAdd, onChange }: Props) {
       <div className="aspect-square bg-vert-claire-2 text-vert-foncee flex items-center justify-center relative">
         {produit.image ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={produit.image} alt={produit.nom} className="w-full h-full object-cover" />
+          <img src={produit.image} alt={produit.nom} className="absolute inset-0 w-full h-full object-cover image_card_boutique" />
         ) : (
           <Package size={26} />
         )}

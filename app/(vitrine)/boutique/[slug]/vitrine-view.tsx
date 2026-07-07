@@ -10,20 +10,22 @@ import PanierPanel from "./panier-panel";
 import PanierBarreMobile from "./panier-barre-mobile";
 import CheckoutModal from "./checkout-modal";
 import Image from "next/image";
+import AcheteurMenu from "../../acheteur-menu";
 
 export type LignePanier = { produit: VitrineProduit; qte: number };
 
-const LOT = 12;
+const LOT = 9;
 
 export default function VitrineView({
   vitrine,
   slug,
-  dejaConnecte,
+  acheteur,
 }: {
   vitrine: Vitrine;
   slug: string;
-  dejaConnecte: boolean;
+  acheteur: { id: number; nom: string; telephone: string } | null;
 }) {
+  const dejaConnecte = !!acheteur;
   const [search, setSearch] = useState("");
   const [tri, setTri] = useState<"recent" | "prix-asc" | "prix-desc">("recent");
   const [visibles, setVisibles] = useState(LOT);
@@ -86,18 +88,25 @@ export default function VitrineView({
             </span>
           </Link>
 
-          <button
-            onClick={() => setPanierMobileOuvert(true)}
-            className="lg:hidden relative w-10 h-10 rounded-xl border flex items-center justify-center hover:bg-muted transition"
-            aria-label="Voir le panier"
-          >
-            <ShoppingCart size={18} className="text-gray-700" />
-            {nbArticles > 0 && (
-              <span className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-vert-foncee text-white text-xs font-bold flex items-center justify-center">
-                {nbArticles}
-              </span>
+          <div className="flex items-center gap-2">
+            {acheteur && (
+              <div className="hidden sm:block">
+                <AcheteurMenu nom={acheteur.nom} />
+              </div>
             )}
-          </button>
+            <button
+              onClick={() => setPanierMobileOuvert(true)}
+              className="lg:hidden relative w-10 h-10 rounded-xl border flex items-center justify-center hover:bg-muted transition"
+              aria-label="Voir le panier"
+            >
+              <ShoppingCart size={18} className="text-gray-700" />
+              {nbArticles > 0 && (
+                <span className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-vert-foncee text-white text-xs font-bold flex items-center justify-center">
+                  {nbArticles}
+                </span>
+              )}
+            </button>
+          </div>
         </div>
       </div>
 
