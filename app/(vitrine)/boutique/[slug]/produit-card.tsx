@@ -17,7 +17,7 @@ export default function ProduitCard({ produit, qte, onAdd, onChange }: Props) {
       <div className="aspect-square bg-vert-claire-2 text-vert-foncee flex items-center justify-center relative">
         {produit.image ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={produit.image} alt={produit.nom} className="absolute inset-0 w-full h-full object-cover image_card_boutique" />
+          <img src={produit.image} alt={produit.nom} className="absolute inset-0 w-full h-full object-cover" />
         ) : (
           <Package size={26} />
         )}
