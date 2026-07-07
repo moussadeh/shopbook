@@ -13,9 +13,10 @@ type Props = {
   lignes: LignePanier[];
   onChange: (id: number, delta: number) => void;
   onRemove: (id: number) => void;
+  onCheckout: () => void;
 };
 
-export default function PanierBarreMobile({ nbArticles, total, ouvert, onOuvrir, onFermer, lignes, onChange, onRemove }: Props) {
+export default function PanierBarreMobile({ nbArticles, total, ouvert, onOuvrir, onFermer, lignes, onChange, onRemove, onCheckout }: Props) {
   return (
     <div className="lg:hidden">
       {/* Barre flottante */}
@@ -45,7 +46,7 @@ export default function PanierBarreMobile({ nbArticles, total, ouvert, onOuvrir,
                 <X size={16} />
               </button>
             </div>
-            <PanierPanel lignes={lignes} total={total} onChange={onChange} onRemove={onRemove} />
+            <PanierPanel lignes={lignes} total={total} onChange={onChange} onRemove={onRemove} onCheckout={onCheckout} />
           </div>
         </div>
       )}

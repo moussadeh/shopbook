@@ -35,6 +35,7 @@ model Commercant {
   credits           Credit[]
   paiementsAbo      PaiementAbonnement[]
   boutique          Boutique?
+  commandes         Commande[]
 }
 
 model Client {
@@ -91,6 +92,7 @@ model Produit {
 
   commercant    Commercant @relation(fields: [commercantId], references: [id])
   images        ProduitImage[]
+  lignesCommande LigneCommande[]
 }
 
 enum StatutCredit {
@@ -189,4 +191,66 @@ enum StatutPaiementAbo {
 enum Role {
   COMMERCANT
   ADMIN
+}
+
+model Acheteur {
+  id         Int      @id @default(autoincrement())
+  nom        String
+  telephone  String   @unique   // identifiant de connexion
+  motDePasse String              // haché (bcrypt)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  commandes  Commande[]
+}
+
+model Commande {
+  id            Int      @id @default(autoincrement())
+  acheteurId    Int
+  commercantId  Int                  // à quelle boutique (via le commerçant)
+  mode          ModeCommande
+  adresse       String?              // requise si mode = LIVRAISON
+  statut        StatutCommande   @default(NOUVELLE)   // logistique
+  statutPaiement StatutPaiementCommande @default(EN_ATTENTE)
+  total         Float                // figé à la création
+  note          String?              // message optionnel du client
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  acheteur      Acheteur     @relation(fields: [acheteurId], references: [id])
+  commercant    Commercant   @relation(fields: [commercantId], references: [id], onDelete: Cascade)
+  lignes        LigneCommande[]
+}
+
+model LigneCommande {
+  id           Int      @id @default(autoincrement())
+  commandeId   Int
+  produitId    Int?                  // référence (nullable : le produit peut être supprimé plus tard)
+  nomProduit   String                // figé au moment de la commande
+  prixUnitaire Float                 // figé au moment de la commande
+  quantite     Int
+
+  commande     Commande @relation(fields: [commandeId], references: [id], onDelete: Cascade)
+  produit      Produit? @relation(fields: [produitId], references: [id], onDelete: SetNull)
+}
+
+enum ModeCommande {
+  LIVRAISON
+  RETRAIT
+}
+
+enum StatutCommande {
+  NOUVELLE         // reçue, pas encore prise en charge
+  EN_PREPARATION   // le commerçant prépare
+  PRETE            // prête pour retrait (mode RETRAIT)
+  EN_LIVRAISON     // en cours de livraison (mode LIVRAISON)
+  RECUPEREE        // retirée par le client (final)
+  LIVREE           // livrée au client (final)
+  REFUSEE          // refusée par le commerçant
+  ANNULEE          // annulée par le client
+}
+
+enum StatutPaiementCommande {
+  EN_ATTENTE       // pas encore payée
+  PAYEE            // payée à la remise
 }

@@ -6,9 +6,10 @@ type Props = {
   total: number;
   onChange: (id: number, delta: number) => void;
   onRemove: (id: number) => void;
+  onCheckout: () => void;
 };
 
-export default function PanierPanel({ lignes, total, onChange, onRemove }: Props) {
+export default function PanierPanel({ lignes, total, onChange, onRemove, onCheckout }: Props) {
   const nb = lignes.reduce((s, l) => s + l.qte, 0);
 
   return (
@@ -59,8 +60,8 @@ export default function PanierPanel({ lignes, total, onChange, onRemove }: Props
           </div>
 
           <button
-            disabled
-            className="w-full h-11 rounded-xl bg-vert-foncee text-white font-semibold flex items-center justify-center gap-2 opacity-60 cursor-not-allowed"
+            onClick={onCheckout}
+            className="w-full h-11 rounded-xl bg-vert-foncee text-white font-semibold flex items-center justify-center gap-2 hover:opacity-90 transition"
           >
             Passer la commande
           </button>

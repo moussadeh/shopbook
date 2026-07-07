@@ -8,18 +8,28 @@ import VitrineHero from "./vitrine-hero";
 import ProduitCard from "./produit-card";
 import PanierPanel from "./panier-panel";
 import PanierBarreMobile from "./panier-barre-mobile";
+import CheckoutModal from "./checkout-modal";
 import Image from "next/image";
 
 export type LignePanier = { produit: VitrineProduit; qte: number };
 
 const LOT = 12;
 
-export default function VitrineView({ vitrine }: { vitrine: Vitrine }) {
+export default function VitrineView({
+  vitrine,
+  slug,
+  dejaConnecte,
+}: {
+  vitrine: Vitrine;
+  slug: string;
+  dejaConnecte: boolean;
+}) {
   const [search, setSearch] = useState("");
   const [tri, setTri] = useState<"recent" | "prix-asc" | "prix-desc">("recent");
   const [visibles, setVisibles] = useState(LOT);
   const [panier, setPanier] = useState<Record<number, LignePanier>>({});
   const [panierMobileOuvert, setPanierMobileOuvert] = useState(false);
+  const [checkoutOuvert, setCheckoutOuvert] = useState(false);
 
   const lignes = Object.values(panier);
   const nbArticles = lignes.reduce((s, l) => s + l.qte, 0);
@@ -39,6 +49,14 @@ export default function VitrineView({ vitrine }: { vitrine: Vitrine }) {
 
   const retirer = (id: number) =>
     setPanier((prev) => { const c = { ...prev }; delete c[id]; return c; });
+
+  const viderPanier = () => setPanier({});
+
+  // Ouvre le checkout (ferme le panier mobile s'il était ouvert)
+  const ouvrirCheckout = () => {
+    setPanierMobileOuvert(false);
+    setCheckoutOuvert(true);
+  };
 
   const produitsFiltres = useMemo(() => {
     let list = vitrine.produits.filter((p) =>
@@ -138,7 +156,7 @@ export default function VitrineView({ vitrine }: { vitrine: Vitrine }) {
 
           {/* Panier desktop */}
           <div className="hidden lg:block sticky top-20">
-            <PanierPanel lignes={lignes} total={total} onChange={changerQte} onRemove={retirer} />
+            <PanierPanel lignes={lignes} total={total} onChange={changerQte} onRemove={retirer} onCheckout={ouvrirCheckout} />
           </div>
         </div>
 
@@ -157,8 +175,22 @@ export default function VitrineView({ vitrine }: { vitrine: Vitrine }) {
           lignes={lignes}
           onChange={changerQte}
           onRemove={retirer}
+          onCheckout={ouvrirCheckout}
         />
       )}
+
+      {/* Modale de commande */}
+      <CheckoutModal
+        ouvert={checkoutOuvert}
+        onFermer={() => setCheckoutOuvert(false)}
+        slug={slug}
+        lignes={lignes}
+        total={total}
+        dejaConnecte={dejaConnecte}
+        livraison={vitrine.livraison}
+        retrait={vitrine.retrait}
+        onCommandeOk={viderPanier}
+      />
     </div>
   );
 }
