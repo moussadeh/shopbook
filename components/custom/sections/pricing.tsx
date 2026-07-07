@@ -86,7 +86,7 @@ export default function Pricing() {
               <div>
                 <h3 className="text-xl md:text-2xl font-semibold text-slate-900">Essentiel</h3>
                 <div className="mt-0 flex items-end gap-2">
-                  <span className="text-3xl md:text-4xl font-bold">500</span>
+                  <span className="text-3xl md:text-4xl font-bold">300</span>
                   <span className="pb-1 text-lg text-slate-600">MRU / mois</span>
                 </div>
                 <div className="mt-2 inline-flex items-center rounded-full bg-vert-claire px-3 py-1 text-sm text-vert-foncee">
