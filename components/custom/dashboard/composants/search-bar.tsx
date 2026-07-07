@@ -9,8 +9,8 @@ interface SearchBarProps {
   filters:        readonly string[];
   activeFilter:   string;
   onFilterChange: (filter: string) => void;
-  onNew:          () => void;
-  newLabel:       string;
+  onNew?:          () => void;
+  newLabel?:       string;
 }
 
 export default function SearchBar({

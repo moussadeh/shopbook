@@ -13,6 +13,7 @@ import {
   Menu,
   X,
   Store,
+  Inbox,
 } from "lucide-react";
 
 const navItems = [
@@ -20,6 +21,7 @@ const navItems = [
   { label: "Clients",         href: "/clients",    icon: Users },
   { label: "Produits",        href: "/produits",   icon: Package },
   { label: "Crédits",         href: "/credits",    icon: CreditCard },
+  { label: "Commandes",       href: "/commandes",  icon: Inbox },
   { label: "Ma boutique",     href: "/ma-boutique", icon: Store },
 ];
 
