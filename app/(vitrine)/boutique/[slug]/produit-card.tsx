@@ -13,7 +13,7 @@ export default function ProduitCard({ produit, qte, onAdd, onChange }: Props) {
 
   return (
     <div className={`bg-white rounded-xl border overflow-hidden flex flex-col ${indispo ? "opacity-60" : ""}`}>
-      <div className="aspect-square bg-green-50 text-vert-foncee flex items-center justify-center relative">
+      <div className="aspect-square bg-vert-claire-2 text-vert-foncee flex items-center justify-center relative">
         {produit.image ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={produit.image} alt={produit.nom} className="w-full h-full object-cover" />
