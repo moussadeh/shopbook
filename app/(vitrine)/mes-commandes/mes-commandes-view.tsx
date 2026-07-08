@@ -42,7 +42,7 @@ function CommandeItem({ commande }: { commande: MaCommande }) {
   const annulee = ["REFUSEE", "ANNULEE"].includes(commande.statut);
 
   return (
-    <div className="bg-white rounded-2xl border overflow-hidden">
+    <div className="bg-vert-claire-2 rounded-2xl border overflow-hidden">
       {/* En-tête */}
       <button onClick={() => setOuvert((v) => !v)} className="w-full text-left p-4 flex items-center gap-3">
         <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${finie ? "bg-green-50 text-vert-foncee" : "bg-gray-100 text-gray-500"}`}>
