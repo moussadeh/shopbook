@@ -50,7 +50,7 @@ function CommandeItem({ commande }: { commande: MaCommande }) {
         </div>
         <div className="flex-1 min-w-0">
           <p className="font-semibold text-gray-900 truncate">{commande.boutiqueNom}</p>
-          <p className="text-xs text-muted-foreground">#{commande.id} · {commande.date}</p>
+          <p className="text-xs text-muted-foreground">{commande.date}</p>
         </div>
         <div className="text-right shrink-0">
           <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${statutStyle[commande.statut]}`}>
@@ -88,7 +88,14 @@ function CommandeItem({ commande }: { commande: MaCommande }) {
 
           {/* Paiement */}
           <div className="flex items-center justify-between text-sm bg-gray-50 rounded-xl p-3">
-            {commande.boutiqueSlug && (
+            <span className="text-gray-600 mr-2">Paiement :</span>
+            <span className={`font-semibold ${commande.statutPaiement === "PAYEE" ? "text-green-600" : "text-amber-600"}`}>
+              {commande.statutPaiement === "PAYEE" ? "Payée" : "À payer à la réception"}
+            </span>
+          </div>
+
+          <div className="flex items-center justify-center text-sm bg-gray-50 rounded-xl p-3">
+          {commande.boutiqueSlug && (
             <Link
                 href={`/boutique/${commande.boutiqueSlug}`}
                 className="inline-flex items-center gap-1.5 text-sm font-semibold text-vert-foncee hover:underline"
@@ -96,9 +103,6 @@ function CommandeItem({ commande }: { commande: MaCommande }) {
                 <Store size={14} /> Revoir la boutique
             </Link>
             )}
-            <span className={`font-semibold ${commande.statutPaiement === "PAYEE" ? "text-green-600" : "text-amber-600"}`}>
-              {commande.statutPaiement === "PAYEE" ? "Payée" : "À payer à la réception"}
-            </span>
           </div>
         </div>
       )}

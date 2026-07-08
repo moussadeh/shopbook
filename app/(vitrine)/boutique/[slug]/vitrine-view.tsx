@@ -94,7 +94,7 @@ export default function VitrineView({
                 <AcheteurMenu nom={acheteur.nom} />
               </div>
             )}
-            <button
+            {/* <button
               onClick={() => setPanierMobileOuvert(true)}
               className="lg:hidden relative w-10 h-10 rounded-xl border flex items-center justify-center hover:bg-muted transition"
               aria-label="Voir le panier"
@@ -105,7 +105,7 @@ export default function VitrineView({
                   {nbArticles}
                 </span>
               )}
-            </button>
+            </button> */}
           </div>
         </div>
       </div>
