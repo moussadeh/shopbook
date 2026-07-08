@@ -114,7 +114,7 @@ export default function MessagesView({ messages }: { messages: MessageRow[] }) {
                 <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">{actif.message}</p>
               </div>
 
-              <div className="flex flex-wrap gap-3 pt-2 border-t">
+              <div className="flex flex-wrap gap-3 pt-2 border-t items-center">
                 <a
                   href={`mailto:${actif.email}?subject=RE: ${encodeURIComponent(actif.sujet)}`}
                   className="inline-flex items-center gap-2 bg-vert-foncee text-white font-semibold text-sm px-4 py-2.5 rounded-xl hover:opacity-90 transition"

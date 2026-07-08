@@ -1,9 +1,10 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { User, LogOut, ChevronDown } from "lucide-react";
+import { User, LogOut, ChevronDown, Package } from "lucide-react";
 import { logoutAcheteur } from "@/app/(vitrine)/acheteur-actions";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function AcheteurMenu({ nom }: { nom: string }) {
   const [ouvert, setOuvert] = useState(false);
@@ -42,6 +43,10 @@ export default function AcheteurMenu({ nom }: { nom: string }) {
               <p className="text-sm font-semibold text-gray-900 truncate">{nom}</p>
               <p className="text-xs text-muted-foreground">Connecté</p>
             </div>
+            <Link href="/mes-commandes" onClick={() => setOuvert(false)}
+              className="w-full flex items-center gap-2 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-muted transition border-b">
+              <Package size={15} /> Mes commandes
+            </Link>
             <button
               onClick={deconnexion}
               disabled={isPending}

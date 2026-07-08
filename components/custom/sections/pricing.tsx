@@ -101,7 +101,7 @@ export default function Pricing() {
                 <p className="text-slate-700 font-medium text-sm mb-3">Tout ce que contient l&apos;essai, plus :</p>
                 {[
                   "Statistiques détaillées de votre activité",
-                  "Historique complet de vos crédits et paiements",
+                  "Historique complet de vos crédits",
                   "Export de vos données",
                   "Sauvegarde automatique de vos données",
                   "Aide rapide quand vous en avez besoin",
