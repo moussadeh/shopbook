@@ -90,7 +90,7 @@ export default function VitrineView({
 
           <div className="flex items-center gap-2">
             {acheteur && (
-              <div className="hidden sm:block">
+              <div>
                 <AcheteurMenu nom={acheteur.nom} />
               </div>
             )}
