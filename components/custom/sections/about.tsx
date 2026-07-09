@@ -35,7 +35,8 @@ export default function About() {
             Conçu pour les commerçants<br /><span className="text-primary">mauritaniens</span>
           </h2>
           <p className="text-muted-foreground text-base leading-relaxed md:max-w-xl md:mx-auto">
-            ShopBook remplace les carnets crédit par une plateforme simple et fiable — suivez vos dettes, enregistrez les paiements et gardez le contrôle de votre activité.
+            ShopBook remplace les carnets crédit par une plateforme simple et fiable - suivez vos dettes, enregistrez les paiements et gardez le contrôle de votre activité.
+            Vous avez aussi la possibilité de créer votre boutique en ligne et de gérer vos commandes clients.
           </p>
           <p className="text-muted-foreground text-base leading-relaxed md:max-w-xl md:mx-auto">
             Quel que soit votre secteur, ShopBook s&apos;adapte à votre commerce.
@@ -59,7 +60,7 @@ export default function About() {
               <AlertCircle size={20} className="text-destructive shrink-0" /> Avant ShopBook
             </h3>
             <ul className="space-y-3 text-sm text-muted-foreground">
-              {["Cahiers difficiles à suivre", "Informations perdues ou oubliées", "Calculs à la main, erreurs fréquentes", "Pas de vue claire sur qui vous doit quoi"].map(item => (
+              {["Cahiers difficiles à suivre", "Informations perdues ou oubliées", "Calculs à la main, erreurs fréquentes", "Pas de vue claire sur qui vous doit quoi", "Vos produits visibles qu'en boutique"].map(item => (
                 <li key={item} className="flex items-start gap-3">
                   <span className="flex items-center justify-center w-5 h-5 rounded-full bg-red-100 shrink-0 mt-0.5">
                     <X size={11} className="text-destructive" />
@@ -75,7 +76,7 @@ export default function About() {
               <CheckCircle size={20} className="shrink-0" /> Avec ShopBook
             </h3>
             <ul className="space-y-3 text-sm text-white/85">
-              {["Tous vos crédits au même endroit", "Suivi simple des paiements", "Calcul automatique des montants", "Vue claire sur votre commerce"].map(item => (
+              {["Tous vos crédits au même endroit", "Suivi simple des paiements", "Calcul automatique des montants", "Vue claire sur votre commerce", "Votre boutique en ligne avec vos produits"].map(item => (
                 <li key={item} className="flex items-start gap-3">
                   <span className="flex items-center justify-center w-5 h-5 rounded-full bg-white/20 shrink-0 mt-0.5">
                     <Check size={11} className="text-green-200" />

@@ -134,15 +134,15 @@ export default function Pricing() {
                   Prémium
                 </div>
                 <p className="mt-2 text-slate-600 leading-7 text-sm md:text-base">
-                  Pour gérer votre boutique en ligne à plusieurs.
+                  Pour créer votre boutique et gérer vos commandes clients.
                 </p>
               </div>
 
               <div className="pt-4 border-t border-slate-200 space-y-2">
                 <p className="text-slate-700 font-medium text-sm mb-3">Tout l&apos;Essentiel, plus :</p>
                 {[
-                  "Un compte pour chaque salarié",
                   "Votre boutique en ligne, pour vos clients",
+                  "Un lien personnalisé pour votre boutique",
                   "Gestion des commandes et des stocks",
                   "Gestion des produits",
                   "Boutique en ligne personnalisable",
