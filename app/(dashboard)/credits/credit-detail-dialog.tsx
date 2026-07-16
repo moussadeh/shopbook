@@ -13,10 +13,11 @@ type Props = {
   onEditCredit: (c: CreditRow) => void;
   onDeleteCredit: (c: CreditRow) => void;
   onNouveauCredit: () => void;
+  // onAnnulerDernierPaiement: (clientId: number) => void;
 };
 
 export default function CreditDetailDialog({
-  open, onOpenChange, client, onEditCredit, onDeleteCredit, onNouveauCredit,
+  open, onOpenChange, client, onEditCredit, onDeleteCredit, onNouveauCredit
 }: Props) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

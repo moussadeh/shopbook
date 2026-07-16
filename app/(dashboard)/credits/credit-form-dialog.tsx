@@ -14,16 +14,20 @@ const initial: ActionState = {};
 function CreditForm({
   credit,
   clients,
+  clientPreselection,
   onSuccess,
   onCancel,
 }: {
   credit: CreditRow | null;
   clients: ClientOption[];
+  clientPreselection?: number | null;
   onSuccess: () => void;
   onCancel: () => void;
 }) {
   const [state, formAction, isPending] = useActionState(saveCredit, initial);
-  const [clientId, setClientId] = useState<string>(credit ? String(credit.clientId) : "");
+  const [clientId, setClientId] = useState<string>(
+    credit ? String(credit.clientId) : clientPreselection ? String(clientPreselection) : ""
+  );
 
   useEffect(() => { if (state.success) onSuccess(); }, [state.success, onSuccess]);
 
@@ -80,19 +84,22 @@ export default function CreditFormDialog({
   onOpenChange,
   credit,
   clients,
+  clientPreselection,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   credit: CreditRow | null;
   clients: ClientOption[];
+  clientPreselection?: number | null;
 }) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <CreditForm
-          key={`${credit?.id ?? "new"}-${open}`}
+          key={`${credit?.id ?? "new"}-${clientPreselection ?? ""}-${open}`}
           credit={credit}
           clients={clients}
+          clientPreselection={clientPreselection}
           onSuccess={() => onOpenChange(false)}
           onCancel={() => onOpenChange(false)}
         />

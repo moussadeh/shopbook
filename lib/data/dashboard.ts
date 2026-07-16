@@ -88,8 +88,9 @@ export async function getDashboardData(): Promise<DashboardData> {
       orderBy: { createdAt: "desc" }, take: 6,
       select: { id: true, prenom: true, nom: true, createdAt: true },
     }),
-    prisma.credit.groupBy({
-      by: ["statutCredit"], where: { commercantId }, _sum: { montantTotal: true },
+    prisma.credit.aggregate({
+      where: { commercantId },
+      _sum: { montantTotal: true, montantPaye: true },
     }),
     prisma.client.findMany({
       where: { commercantId, credits: { some: {} } },
@@ -136,12 +137,18 @@ export async function getDashboardData(): Promise<DashboardData> {
   const activities: ActivityItem[] = acts.slice(0, 6).map(({ _d, ...rest }) => rest);
 
   // --- donut ---
-  const totalDistribution = distributionRaw.reduce((s, g) => s + (g._sum.montantTotal ?? 0), 0);
-  const segments: DonutSegment[] = distributionRaw.map((g) => {
-    const montant = g._sum.montantTotal ?? 0;
-    return { statut: g.statutCredit, montant,
-      pct: totalDistribution > 0 ? Math.round((montant / totalDistribution) * 100) : 0 };
-  });
+  const totalCredits = distributionRaw._sum.montantTotal ?? 0;
+  const totalPaye = distributionRaw._sum.montantPaye ?? 0;
+  const totalRestant = totalCredits - totalPaye;
+
+  const segments: DonutSegment[] = [
+    { statut: "PAYE" as StatutCredit, montant: totalPaye,
+      pct: totalCredits > 0 ? Math.round((totalPaye / totalCredits) * 100) : 0 },
+    { statut: "EN_COURS" as StatutCredit, montant: totalRestant,
+      pct: totalCredits > 0 ? Math.round((totalRestant / totalCredits) * 100) : 0 },
+  ];
+
+  const totalDistribution = totalCredits;
 
   // --- top clients (par restant dû) ---
   const topClients: TopClient[] = clientsAvecCredits

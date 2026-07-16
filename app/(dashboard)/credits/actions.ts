@@ -158,3 +158,31 @@ export async function payerClient(_prev: PaiementClientState, formData: FormData
   revalidatePath("/credits");
   return { success: true };
 }
+
+export async function annulerDernierPaiement(clientId: number) {
+  const commercantId = await getCommercantId();
+
+  // dernier paiement de ce client (tous crédits confondus)
+  const dernier = await prisma.paiement.findFirst({
+    where: { credit: { commercantId, clientId } },
+    orderBy: { datePaiement: "desc" },
+    select: { id: true, montant: true, creditId: true,
+      credit: { select: { montantTotal: true, montantPaye: true } } },
+  });
+  if (!dernier) return;
+
+  const nouveauPaye = dernier.credit.montantPaye - dernier.montant;
+
+  await prisma.$transaction([
+    prisma.paiement.delete({ where: { id: dernier.id } }),
+    prisma.credit.update({
+      where: { id: dernier.creditId },
+      data: {
+        montantPaye: nouveauPaye,
+        statutCredit: computeStatut(nouveauPaye, dernier.credit.montantTotal),
+      },
+    }),
+  ]);
+
+  revalidatePath("/credits");
+}
