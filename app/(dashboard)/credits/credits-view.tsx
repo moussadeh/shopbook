@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { buildCreditsStats, STATUTS_CREDIT, statutCreditLabel } from "@/lib/donnes/credits";
-import type { ClientCreditRow, CreditRow, CreditsStats, ClientOption } from "@/lib/data/credits";
-import { deleteCredit } from "./actions";
+import type { EmprunteurCreditRow, CreditRow, CreditsStats, EmprunteurOption } from "@/lib/data/credits";
+import { deleteCredit, annulerDernierPaiement } from "./actions";
 import StatsCards from "@/components/custom/dashboard/stats-cards";
 import SearchBar from "@/components/custom/dashboard/composants/search-bar";
 import { DesktopPagination, MobilePagination } from "@/components/custom/dashboard/composants/table-pagination";
@@ -19,11 +19,11 @@ const ITEMS_PER_PAGE = 5;
 export default function CreditsView({
   credits,
   stats,
-  clients,
+  emprunteurs,
 }: {
-  credits: ClientCreditRow[];
+  credits: EmprunteurCreditRow[];
   stats: CreditsStats;
-  clients: ClientOption[];
+  emprunteurs: EmprunteurOption[];
 }) {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("Tous");
@@ -34,48 +34,55 @@ export default function CreditsView({
   const [preselection, setPreselection] = useState<number | null>(null);
 
   const [detailOpen, setDetailOpen] = useState(false);
-  const [detail, setDetail] = useState<ClientCreditRow | null>(null);
+  const [detail, setDetail] = useState<EmprunteurCreditRow | null>(null);
 
   const [paiementOpen, setPaiementOpen] = useState(false);
-  const [paiementCible, setPaiementCible] = useState<ClientCreditRow | null>(null);
+  const [paiementCible, setPaiementCible] = useState<EmprunteurCreditRow | null>(null);
 
   const statCards = buildCreditsStats(stats);
 
   const handleSearch = (v: string) => { setSearch(v); setCurrentPage(1); };
   const handleFilter = (v: string) => { setFilter(v); setCurrentPage(1); };
 
-  const openDetail   = (c: ClientCreditRow) => { setDetail(c); setDetailOpen(true); };
-  const openPaiement = (c: ClientCreditRow) => { setPaiementCible(c); setPaiementOpen(true); };
+  const openDetail   = (c: EmprunteurCreditRow) => { setDetail(c); setDetailOpen(true); };
+  const openPaiement = (c: EmprunteurCreditRow) => { setPaiementCible(c); setPaiementOpen(true); };
 
-  // Nouveau crédit "vierge" (bouton du haut)
   const openNew = () => { setSelected(null); setPreselection(null); setFormOpen(true); };
 
-  // Nouveau crédit pré-rempli avec un client (clic sur la ligne / carte)
-  const openNouveauCreditPour = (c: ClientCreditRow) => {
+  const openNouveauCreditPour = (c: EmprunteurCreditRow) => {
     setSelected(null);
-    setPreselection(c.clientId);
+    setPreselection(c.emprunteurId);
     setFormOpen(true);
   };
 
-  // Depuis le détail : modifier un crédit précis
-  const openEditCredit = (c: CreditRow) => { setDetailOpen(false); setSelected(c); setPreselection(null); setFormOpen(true); };
+  const openEditCredit = (c: CreditRow) => {
+    setDetailOpen(false);
+    setSelected(c);
+    setPreselection(null);
+    setFormOpen(true);
+  };
 
-  // Depuis le détail : nouveau crédit pour le client courant
   const openNouveauCreditDepuisDetail = () => {
-    if (detail) { setPreselection(detail.clientId); }
+    if (detail) setPreselection(detail.emprunteurId);
     setDetailOpen(false);
     setSelected(null);
     setFormOpen(true);
   };
 
   const handleDeleteCredit = async (c: CreditRow) => {
-    if (!confirm(`Supprimer ce crédit de ${c.clientName} (${c.date}) ?`)) return;
+    if (!confirm(`Supprimer ce crédit de ${c.emprunteurNom} (${c.date}) ?`)) return;
     await deleteCredit(c.id);
     setDetailOpen(false);
   };
 
+  const handleAnnulerPaiement = async (emprunteurId: number) => {
+    if (!confirm("Annuler le dernier paiement de ce client ? Le montant sera retiré.")) return;
+    await annulerDernierPaiement(emprunteurId);
+    setDetailOpen(false);
+  };
+
   const filtered = credits.filter((c) => {
-    const matchSearch = c.clientName.toLowerCase().includes(search.toLowerCase());
+    const matchSearch = c.emprunteurNom.toLowerCase().includes(search.toLowerCase());
     const matchFilter = filter === "Tous" || statutCreditLabel[c.statutGlobal] === filter;
     return matchSearch && matchFilter;
   });
@@ -102,7 +109,7 @@ export default function CreditsView({
         {/* Desktop */}
         <div className="hidden md:block bg-white rounded-2xl border overflow-hidden">
           <CreditsTable
-            clients={paginated}
+            emprunteurs={paginated}
             onDetail={openDetail}
             onPaiement={openPaiement}
             onNouveauCreditPour={openNouveauCreditPour}
@@ -122,7 +129,7 @@ export default function CreditsView({
         {/* Mobile */}
         <div className="md:hidden space-y-3">
           <CreditsCards
-            clients={paginated}
+            emprunteurs={paginated}
             onDetail={openDetail}
             onPaiement={openPaiement}
             onNouveauCreditPour={openNouveauCreditPour}
@@ -138,18 +145,19 @@ export default function CreditsView({
         open={formOpen}
         onOpenChange={setFormOpen}
         credit={selected}
-        clients={clients}
-        clientPreselection={preselection}
+        emprunteurs={emprunteurs}
+        emprunteurPreselection={preselection}
       />
       <CreditDetailDialog
         open={detailOpen}
         onOpenChange={setDetailOpen}
-        client={detail}
+        emprunteur={detail}
         onEditCredit={openEditCredit}
         onDeleteCredit={handleDeleteCredit}
         onNouveauCredit={openNouveauCreditDepuisDetail}
+        onAnnulerDernierPaiement={handleAnnulerPaiement}
       />
-      <PaiementDialog open={paiementOpen} onOpenChange={setPaiementOpen} client={paiementCible} />
+      <PaiementDialog open={paiementOpen} onOpenChange={setPaiementOpen} emprunteur={paiementCible} />
     </div>
   );
 }

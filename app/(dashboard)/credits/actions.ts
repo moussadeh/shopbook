@@ -1,11 +1,14 @@
 "use server";
 
 import prisma from "@/prisma/prisma";
-import { getCommercantId } from "@/lib/auth/auth";
+import { exigerCommercant } from "@/lib/auth/auth";
 import { revalidatePath } from "next/cache";
 import { StatutCredit } from "@/app/generated/prisma/client";
 
 export type ActionState = { error?: string; success?: boolean };
+export type PaiementClientState = { error?: string; success?: boolean };
+
+const num = (d: unknown) => Number(d ?? 0);
 
 function computeStatut(montantPaye: number, montantTotal: number): StatutCredit {
   if (montantPaye <= 0) return StatutCredit.NON_PAYE;
@@ -14,140 +17,100 @@ function computeStatut(montantPaye: number, montantTotal: number): StatutCredit 
 }
 
 export async function saveCredit(_prev: ActionState, formData: FormData): Promise<ActionState> {
-    const commercantId = await getCommercantId();
+  const commercantId = await exigerCommercant();
 
-    const clientId     = Number(formData.get("clientId"));
-    const montantTotal = Number(formData.get("montantTotal"));
-    const description  = ((formData.get("description") as string) || "").trim() || null;
+  const emprunteurId = Number(formData.get("emprunteurId"));
+  const montantTotal = Number(formData.get("montantTotal"));
+  const description  = ((formData.get("description") as string) || "").trim() || null;
 
-    if (!clientId) return { error: "Le client est requis." };
-    if (Number.isNaN(montantTotal) || montantTotal <= 0)
-        return { error: "Le montant total doit être supérieur à 0." };
+  if (!emprunteurId) return { error: "Le client est requis." };
+  if (Number.isNaN(montantTotal) || montantTotal <= 0)
+    return { error: "Le montant total doit être supérieur à 0." };
 
-    const idRaw = formData.get("id");
-    const id = idRaw ? Number(idRaw) : null;
+  const idRaw = formData.get("id");
+  const id = idRaw ? Number(idRaw) : null;
 
-    if (id) {
-        const existing = await prisma.credit.findFirst({
-        where: { id, commercantId },
-        select: { montantPaye: true },
-        });
-        if (!existing) return { error: "Crédit introuvable." };
-        if (montantTotal < existing.montantPaye)
-        return { error: "Le montant total ne peut pas être inférieur au déjà payé." };
-
-        await prisma.credit.update({
-        where: { id, commercantId },
-        data: {
-            clientId,
-            montantTotal,
-            description,
-            statutCredit: computeStatut(existing.montantPaye, montantTotal),
-        },
-        });
-    } else {
-        await prisma.credit.create({
-        data: {
-            commercantId,
-            clientId,
-            montantTotal,
-            description,
-            montantPaye: 0,
-            statutCredit: StatutCredit.NON_PAYE,
-        },
-        });
-    }
-
-    revalidatePath("/credits");
-    return { success: true };
-}
-
-export async function addPaiement(_prev: ActionState, formData: FormData): Promise<ActionState> {
-    const commercantId = await getCommercantId();
-
-    const creditId = Number(formData.get("creditId"));
-    const montant  = Number(formData.get("montant"));
-
-    if (!creditId) return { error: "Crédit invalide." };
-    if (Number.isNaN(montant) || montant <= 0)
-        return { error: "Le montant doit être supérieur à 0." };
-
-    const credit = await prisma.credit.findFirst({
-        where: { id: creditId, commercantId },
-        select: { montantTotal: true, montantPaye: true },
+  if (id) {
+    const existant = await prisma.credit.findFirst({
+      where: { id, commercantId },
+      select: { montantPaye: true },
     });
-    if (!credit) return { error: "Crédit introuvable." };
+    if (!existant) return { error: "Crédit introuvable." };
 
-    const nouveauPaye = credit.montantPaye + montant;
-    if (nouveauPaye > credit.montantTotal)
-        return { error: "Le paiement dépasse le montant restant." };
+    const dejaPaye = num(existant.montantPaye);
+    if (montantTotal < dejaPaye)
+      return { error: "Le montant total ne peut pas être inférieur au déjà payé." };
 
-    // paiement + mise à jour du crédit, de façon atomique
-    await prisma.$transaction([
-        prisma.paiement.create({ data: { creditId, montant } }),
-        prisma.credit.update({
-        where: { id: creditId },
-        data: {
-            montantPaye: nouveauPaye,
-            statutCredit: computeStatut(nouveauPaye, credit.montantTotal),
-        },
-        }),
-    ]);
+    await prisma.credit.updateMany({
+      where: { id, commercantId },
+      data: {
+        emprunteurId,
+        montantTotal,
+        description,
+        statutCredit: computeStatut(dejaPaye, montantTotal),
+      },
+    });
+  } else {
+    await prisma.credit.create({
+      data: {
+        commercantId,
+        emprunteurId,
+        montantTotal,
+        description,
+        montantPaye: 0,
+        statutCredit: StatutCredit.NON_PAYE,
+      },
+    });
+  }
 
-    revalidatePath("/credits");
-    return { success: true };
+  revalidatePath("/credits");
+  return { success: true };
 }
 
 export async function deleteCredit(id: number) {
-    const commercantId = await getCommercantId();
-
-    const credit = await prisma.credit.findFirst({ where: { id, commercantId }, select: { id: true } });
-    if (!credit) return;
-
-    // on efface les enfants d'abord (pas de cascade dans le schéma)
-    await prisma.$transaction([
-        prisma.paiement.deleteMany({ where: { creditId: id } }),
-        prisma.credit.delete({ where: { id } }),
-    ]);
-
-    revalidatePath("/credits");
+  const commercantId = await exigerCommercant();
+  // les paiements partent en cascade (onDelete: Cascade dans le schéma)
+  await prisma.credit.deleteMany({ where: { id, commercantId } });
+  revalidatePath("/credits");
 }
 
-export type PaiementClientState = { error?: string; success?: boolean };
-
+/** Paiement au niveau du client : imputation en cascade, du plus ancien au plus récent */
 export async function payerClient(_prev: PaiementClientState, formData: FormData): Promise<PaiementClientState> {
-  const commercantId = await getCommercantId();
+  const commercantId = await exigerCommercant();
 
-  const clientId = Number(formData.get("clientId"));
+  const emprunteurId = Number(formData.get("emprunteurId"));
+  const observation  = ((formData.get("observation") as string) || "").trim() || null;
   let restant = Number(formData.get("montant"));
 
-  if (!clientId) return { error: "Client invalide." };
+  if (!emprunteurId) return { error: "Client invalide." };
   if (Number.isNaN(restant) || restant <= 0) return { error: "Le montant doit être supérieur à 0." };
 
-  // Crédits non soldés, du plus ancien au plus récent
   const credits = await prisma.credit.findMany({
-    where: { commercantId, clientId, statutCredit: { not: StatutCredit.PAYE } },
+    where: { commercantId, emprunteurId, statutCredit: { not: StatutCredit.PAYE } },
     orderBy: { dateCredit: "asc" },
     select: { id: true, montantTotal: true, montantPaye: true },
   });
 
-  const resteTotal = credits.reduce((s, c) => s + (c.montantTotal - c.montantPaye), 0);
+  const resteTotal = credits.reduce((s, c) => s + (num(c.montantTotal) - num(c.montantPaye)), 0);
   if (restant > resteTotal) return { error: "Le paiement dépasse le total dû par ce client." };
 
-  // Imputation en cascade
   const ops = [];
   for (const credit of credits) {
     if (restant <= 0) break;
-    const resteCredit = credit.montantTotal - credit.montantPaye;
-    const aImputer = Math.min(restant, resteCredit);
-    const nouveauPaye = credit.montantPaye + aImputer;
 
-    ops.push(prisma.paiement.create({ data: { creditId: credit.id, montant: aImputer } }));
+    const total = num(credit.montantTotal);
+    const paye  = num(credit.montantPaye);
+    const aImputer = Math.min(restant, total - paye);
+    const nouveauPaye = paye + aImputer;
+
+    ops.push(prisma.paiement.create({
+      data: { creditId: credit.id, montant: aImputer, observation },
+    }));
     ops.push(prisma.credit.update({
       where: { id: credit.id },
       data: {
         montantPaye: nouveauPaye,
-        statutCredit: nouveauPaye >= credit.montantTotal ? StatutCredit.PAYE : StatutCredit.EN_COURS,
+        statutCredit: computeStatut(nouveauPaye, total),
       },
     }));
 
@@ -159,28 +122,28 @@ export async function payerClient(_prev: PaiementClientState, formData: FormData
   return { success: true };
 }
 
-export async function annulerDernierPaiement(clientId: number) {
-  const commercantId = await getCommercantId();
+/** Corrige une erreur de saisie : retire le dernier paiement enregistré */
+export async function annulerDernierPaiement(emprunteurId: number) {
+  const commercantId = await exigerCommercant();
 
-  // dernier paiement de ce client (tous crédits confondus)
   const dernier = await prisma.paiement.findFirst({
-    where: { credit: { commercantId, clientId } },
+    where: { credit: { commercantId, emprunteurId } },
     orderBy: { datePaiement: "desc" },
-    select: { id: true, montant: true, creditId: true,
-      credit: { select: { montantTotal: true, montantPaye: true } } },
+    select: {
+      id: true, montant: true, creditId: true,
+      credit: { select: { montantTotal: true, montantPaye: true } },
+    },
   });
   if (!dernier) return;
 
-  const nouveauPaye = dernier.credit.montantPaye - dernier.montant;
+  const total = num(dernier.credit.montantTotal);
+  const nouveauPaye = num(dernier.credit.montantPaye) - num(dernier.montant);
 
   await prisma.$transaction([
     prisma.paiement.delete({ where: { id: dernier.id } }),
     prisma.credit.update({
       where: { id: dernier.creditId },
-      data: {
-        montantPaye: nouveauPaye,
-        statutCredit: computeStatut(nouveauPaye, dernier.credit.montantTotal),
-      },
+      data: { montantPaye: nouveauPaye, statutCredit: computeStatut(nouveauPaye, total) },
     }),
   ]);
 

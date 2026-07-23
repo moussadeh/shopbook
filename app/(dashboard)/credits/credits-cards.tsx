@@ -1,33 +1,33 @@
 "use client";
 
 import { TrendingDown, ChevronRight } from "lucide-react";
-import type { ClientCreditRow } from "@/lib/data/credits";
+import type { EmprunteurCreditRow } from "@/lib/data/credits";
 import { statusStyle, statutCreditLabel, formatMRU } from "@/lib/donnes/credits";
 import { Button } from "@/components/ui/button";
 
 type Props = {
-  clients: ClientCreditRow[];
-  onDetail: (c: ClientCreditRow) => void;
-  onPaiement: (c: ClientCreditRow) => void;
-  onNouveauCreditPour: (c: ClientCreditRow) => void;
+  emprunteurs: EmprunteurCreditRow[];
+  onDetail: (c: EmprunteurCreditRow) => void;
+  onPaiement: (c: EmprunteurCreditRow) => void;
+  onNouveauCreditPour: (c: EmprunteurCreditRow) => void;
 };
 
-export default function CreditsCards({ clients, onDetail, onPaiement, onNouveauCreditPour }: Props) {
+export default function CreditsCards({ emprunteurs, onDetail, onPaiement, onNouveauCreditPour }: Props) {
   return (
     <>
-      {clients.map((c) => (
+      {emprunteurs.map((c) => (
         <div
-          key={c.clientId}
+          key={c.emprunteurId}
           onClick={() => onNouveauCreditPour(c)}
           className="bg-white rounded-2xl border p-4 space-y-3 cursor-pointer"
         >
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-full bg-vert-foncee text-white text-xs font-bold flex items-center justify-center shrink-0">
-                {c.clientInitials}
+                {c.emprunteurInitiales}
               </div>
               <div>
-                <p className="font-semibold text-gray-800">{c.clientName}</p>
+                <p className="font-semibold text-gray-800">{c.emprunteurNom}</p>
                 <p className="text-xs text-muted-foreground">
                   {c.nbCredits} crédit{c.nbCredits > 1 ? "s" : ""} · {c.derniereActivite}
                 </p>

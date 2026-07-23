@@ -1,12 +1,12 @@
-import { getCredits, getCreditsStats, getClientsOptions } from "@/lib/data/credits";
+import { getCredits, getCreditsStats, getEmprunteursOptions } from "@/lib/data/credits";
 import CreditsView from "./credits-view";
 
 export default async function CreditsPage() {
-  const [credits, stats, clients] = await Promise.all([
+  const [credits, stats, emprunteurs] = await Promise.all([
     getCredits(),
     getCreditsStats(),
-    getClientsOptions(),
+    getEmprunteursOptions(),
   ]);
 
-  return <CreditsView credits={credits} stats={stats} clients={clients} />;
+  return <CreditsView credits={credits} stats={stats} emprunteurs={emprunteurs} />;
 }

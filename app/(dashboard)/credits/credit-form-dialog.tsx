@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState, useEffect, useState } from "react";
-import type { CreditRow, ClientOption } from "@/lib/data/credits";
+import type { CreditRow, EmprunteurOption } from "@/lib/data/credits";
 import { saveCredit, type ActionState } from "./actions";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -13,20 +13,20 @@ const initial: ActionState = {};
 
 function CreditForm({
   credit,
-  clients,
-  clientPreselection,
+  emprunteurs,
+  emprunteurPreselection,
   onSuccess,
   onCancel,
 }: {
   credit: CreditRow | null;
-  clients: ClientOption[];
-  clientPreselection?: number | null;
+  emprunteurs: EmprunteurOption[];
+  emprunteurPreselection?: number | null;
   onSuccess: () => void;
   onCancel: () => void;
 }) {
   const [state, formAction, isPending] = useActionState(saveCredit, initial);
-  const [clientId, setClientId] = useState<string>(
-    credit ? String(credit.clientId) : clientPreselection ? String(clientPreselection) : ""
+  const [emprunteurId, setEmprunteurId] = useState<string>(
+    credit ? String(credit.emprunteurId) : emprunteurPreselection ? String(emprunteurPreselection) : ""
   );
 
   useEffect(() => { if (state.success) onSuccess(); }, [state.success, onSuccess]);
@@ -36,21 +36,21 @@ function CreditForm({
       <DialogHeader>
         <DialogTitle>{credit ? "Modifier le crédit" : "Nouveau crédit"}</DialogTitle>
         <DialogDescription>
-          {credit ? `Modification du crédit de ${credit.clientName}` : "Remplissez les informations du crédit."}
+          {credit ? `Modification du crédit de ${credit.emprunteurNom}` : "Remplissez les informations du crédit."}
         </DialogDescription>
       </DialogHeader>
 
       <form action={formAction} className="space-y-4">
         {credit && <input type="hidden" name="id" value={credit.id} />}
-        <input type="hidden" name="clientId" value={clientId} />
+        <input type="hidden" name="emprunteurId" value={emprunteurId} />
 
         <div className="space-y-1.5">
           <Label>Client</Label>
-          <Select value={clientId} onValueChange={setClientId}>
-            <SelectTrigger><SelectValue placeholder="Choisir un client" /></SelectTrigger>
+          <Select value={emprunteurId} onValueChange={setEmprunteurId}>
+            <SelectTrigger className="h-11"><SelectValue placeholder="Choisir un client" /></SelectTrigger>
             <SelectContent>
-              {clients.map((c) => (
-                <SelectItem key={c.id} value={String(c.id)}>{c.name}</SelectItem>
+              {emprunteurs.map((e) => (
+                <SelectItem key={e.id} value={String(e.id)}>{e.name}</SelectItem>
               ))}
             </SelectContent>
           </Select>
@@ -58,12 +58,14 @@ function CreditForm({
 
         <div className="space-y-1.5">
           <Label htmlFor="description">Description</Label>
-          <Input id="description" name="description" placeholder="Ex: Achat riz et sucre" defaultValue={credit?.description ?? ""} />
+          <Input id="description" name="description" placeholder="Ex: Achat riz et sucre"
+            defaultValue={credit?.description ?? ""} className="h-11" />
         </div>
 
         <div className="space-y-1.5">
           <Label htmlFor="montantTotal">Montant total (MRU)</Label>
-          <Input id="montantTotal" name="montantTotal" type="number" step="any" placeholder="0" defaultValue={credit?.montantTotal ?? ""} />
+          <Input id="montantTotal" name="montantTotal" type="number" step="any" placeholder="0"
+            defaultValue={credit?.montantTotal ?? ""} className="h-11" />
         </div>
 
         {state.error && <p className="text-sm text-red-600">{state.error}</p>}
@@ -80,26 +82,22 @@ function CreditForm({
 }
 
 export default function CreditFormDialog({
-  open,
-  onOpenChange,
-  credit,
-  clients,
-  clientPreselection,
+  open, onOpenChange, credit, emprunteurs, emprunteurPreselection,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   credit: CreditRow | null;
-  clients: ClientOption[];
-  clientPreselection?: number | null;
+  emprunteurs: EmprunteurOption[];
+  emprunteurPreselection?: number | null;
 }) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <CreditForm
-          key={`${credit?.id ?? "new"}-${clientPreselection ?? ""}-${open}`}
+          key={`${credit?.id ?? "new"}-${emprunteurPreselection ?? ""}-${open}`}
           credit={credit}
-          clients={clients}
-          clientPreselection={clientPreselection}
+          emprunteurs={emprunteurs}
+          emprunteurPreselection={emprunteurPreselection}
           onSuccess={() => onOpenChange(false)}
           onCancel={() => onOpenChange(false)}
         />
