@@ -1,7 +1,6 @@
-import { StatCard } from "@/components/custom/dashboard/stats-cards";
+import type { StatCard } from "@/components/custom/dashboard/stats-cards";
 import { Users, TrendingDown, TrendingUp, Wallet } from "lucide-react";
-import type { DashboardStats } from "@/lib/data/dashboard";
-import { StatutCredit } from "@/app/generated/prisma/enums";
+import type { DashboardStats, DonutSegment } from "@/lib/data/dashboard";
 
 export function statusStyle(statut: string) {
   switch (statut) {
@@ -12,17 +11,16 @@ export function statusStyle(statut: string) {
   }
 }
 
-export const donutColor: Record<StatutCredit, string> = {
-  NON_PAYE: "#ef4444",
-  EN_COURS: "#f59e0b",
-  PAYE:     "#166534",
+export const donutColor: Record<DonutSegment["cle"], string> = {
+  paye:    "#166534",  // vert foncé
+  restant: "#f59e0b",  // ambre
 };
 
 export function buildDashboardStats(s: DashboardStats): StatCard[] {
   return [
-    { label: "Clients",          value: String(s.totalClients),                   icon: Users,        sub: "enregistrés" },
-    { label: "À récupérer",    value: s.encoursTotal.toLocaleString("fr-FR"),    unit: "MRU", icon: TrendingDown, sub: "à recouvrer" },
-    { label: "Encaissé ce mois", value: s.encaisseCeMois.toLocaleString("fr-FR"),  unit: "MRU", icon: TrendingUp,   sub: "paiements reçus" },
-    { label: "Crédits en cours",   value: String(s.creditsActifs),                   icon: Wallet,       sub: "non soldés" },
+    { label: "Clients",          value: String(s.totalEmprunteurs),               icon: Users,        sub: "enregistrés" },
+    { label: "À récupérer",      value: s.encoursTotal.toLocaleString("fr-FR"),   unit: "MRU", icon: TrendingDown, sub: "dû par vos clients" },
+    { label: "Encaissé ce mois", value: s.encaisseCeMois.toLocaleString("fr-FR"), unit: "MRU", icon: TrendingUp,   sub: "paiements reçus" },
+    { label: "Crédits en cours", value: String(s.creditsActifs),                  icon: Wallet,       sub: "non soldés" },
   ];
 }

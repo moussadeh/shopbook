@@ -42,7 +42,7 @@ export default function RecentActivity({ activities }: { activities: ActivityIte
         </div>
       )}
 
-      <Link href="/activite" className="block mt-4 text-center text-xs font-semibold text-vert-foncee hover:underline py-1">
+      <Link href="/#" className="block mt-4 text-center text-xs font-semibold text-vert-foncee hover:underline py-1">
         Voir toute l&apos;activité →
       </Link>
     </div>

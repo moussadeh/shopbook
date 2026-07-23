@@ -1,6 +1,5 @@
 import type { DonutSegment } from "@/lib/data/dashboard";
 import { donutColor } from "@/lib/donnes/dashboard";
-import { statutCreditLabel } from "@/lib/donnes/credits";
 
 export default function DonutChart({ segments, total }: { segments: DonutSegment[]; total: number }) {
   const r = 80, cx = 110, cy = 110;
@@ -14,9 +13,9 @@ export default function DonutChart({ segments, total }: { segments: DonutSegment
           const dash = (seg.pct / 100) * circ;
           const el = (
             <circle
-              key={seg.statut}
+              key={seg.cle}
               cx={cx} cy={cy} r={r} fill="none"
-              stroke={donutColor[seg.statut]} strokeWidth={36}
+              stroke={donutColor[seg.cle]} strokeWidth={36}
               strokeDasharray={`${dash} ${circ - dash}`}
               strokeDashoffset={-offset}
               transform={`rotate(-90 ${cx} ${cy})`}
@@ -33,11 +32,13 @@ export default function DonutChart({ segments, total }: { segments: DonutSegment
 
       <div className="grid grid-cols-2 gap-x-6 gap-y-2 w-full">
         {segments.map((seg) => (
-          <div key={seg.statut} className="flex items-start gap-2">
-            <span className="mt-1 w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: donutColor[seg.statut] }} />
+          <div key={seg.cle} className="flex items-start gap-2">
+            <span className="mt-1 w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: donutColor[seg.cle] }} />
             <div>
-              <p className="text-xs font-semibold text-gray-700">{statutCreditLabel[seg.statut]}</p>
-              <p className="text-xs text-muted-foreground">{seg.pct}% ({seg.montant.toLocaleString("fr-FR")} MRU)</p>
+              <p className="text-xs font-semibold text-gray-700">{seg.label}</p>
+              <p className="text-xs text-muted-foreground">
+                {seg.pct}% ({seg.montant.toLocaleString("fr-FR")} MRU)
+              </p>
             </div>
           </div>
         ))}
