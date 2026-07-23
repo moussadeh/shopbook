@@ -39,7 +39,8 @@ export default function ProduitsView({ produits, stats }: { produits: ProduitRow
 
   const handleDelete = async (p: ProduitRow) => {
     if (!confirm(`Supprimer ${p.nom} ?`)) return;
-    await deleteProduit(p.id);
+    const res = await deleteProduit(p.id);
+    if (res?.error) alert(res.error);
   };
 
   const filtered = produits.filter((p) => {
@@ -99,4 +100,3 @@ export default function ProduitsView({ produits, stats }: { produits: ProduitRow
     </div>
   );
 }
-
