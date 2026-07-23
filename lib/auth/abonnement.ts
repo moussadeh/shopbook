@@ -2,7 +2,7 @@ import "server-only";
 import { redirect } from "next/navigation";
 import prisma from "@/prisma/prisma";
 import { getCommercantId } from "@/lib/auth/auth";
-import { StatutPaiementAbo } from "@/app/generated/prisma/client";
+import { StatutPaiementAbonnement } from "@/app/generated/prisma/client";
 import { type StatutAcces } from "@/lib/data/abonnement-config";
 
 export async function getStatutAcces(): Promise<StatutAcces> {
@@ -36,7 +36,7 @@ export async function getStatutAcces(): Promise<StatutAcces> {
 
   // Bloqué — on regarde le dernier paiement pour le bon message
   const dernier = c.paiementsAbo[0];
-  if (dernier?.statut === StatutPaiementAbo.REJETE) {
+  if (dernier?.statut === StatutPaiementAbonnement.REJETE) {
     return { acces: false, raison: "paiement_rejete", motif: dernier.motifRejet };
   }
   return { acces: false, raison: "essai_termine" };

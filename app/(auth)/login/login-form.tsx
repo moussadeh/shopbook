@@ -30,16 +30,11 @@ export default function LoginForm() {
       )}
 
       <form action={formAction} className="space-y-4">
-        {/* <div className="space-y-1.5">
-          <Label htmlFor="email">Email</Label>
-          <Input id="email" name="email" type="email" placeholder="vous@exemple.com" className="h-11"
-            aria-invalid={!!state.fieldErrors?.email} />
-          {state.fieldErrors?.email && <p className="text-xs text-red-600">{state.fieldErrors.email}</p>}
-        </div> */}
 
         <div className="space-y-1.5">
           <Label htmlFor="telephone">Téléphone</Label>
           <Input id="telephone" name="telephone" type="tel" placeholder="+222 00 00 00 00" className="h-11"
+            defaultValue={state.values?.telephone ?? ""}
             aria-invalid={!!state.fieldErrors?.telephone} />
           {state.fieldErrors?.telephone && <p className="text-xs text-red-600">{state.fieldErrors.telephone}</p>}
         </div>
