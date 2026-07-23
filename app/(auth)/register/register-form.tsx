@@ -2,7 +2,7 @@
 
 import { useActionState, useState } from "react";
 import Link from "next/link";
-import { AlertCircle, Store, ShoppingBag, Check } from "lucide-react";
+import { AlertCircle, Check } from "lucide-react";
 import { registerAction, type AuthState } from "../actions";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
