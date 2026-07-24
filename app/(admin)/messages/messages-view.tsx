@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { Mail, Search, Reply, Check, Circle, ArrowLeft } from "lucide-react";
+import { Mail, Search, Reply, Check, Circle, ArrowLeft, MessageCircle, Phone } from "lucide-react";
 import type { MessageRow } from "@/lib/data/admin";
-import { marquerLu } from "./actions";
+import { marquerLu, marquerRepondu } from "./actions";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
@@ -11,12 +11,15 @@ export default function MessagesView({ messages }: { messages: MessageRow[] }) {
   const [search, setSearch] = useState("");
   const [actif, setActif] = useState<MessageRow | null>(null);
 
-  const filtered = messages.filter(
-    (m) =>
-      m.name.toLowerCase().includes(search.toLowerCase()) ||
-      m.sujet.toLowerCase().includes(search.toLowerCase()) ||
-      m.email.toLowerCase().includes(search.toLowerCase())
-  );
+  const filtered = messages.filter((m) => {
+    const q = search.toLowerCase();
+    return (
+      m.name.toLowerCase().includes(q) ||
+      m.sujet.toLowerCase().includes(q) ||
+      (m.telephone?.includes(search) ?? false) ||
+      (m.email?.toLowerCase().includes(q) ?? false)
+    );
+  });
 
   const nbNonLus = messages.filter((m) => !m.lu).length;
 
@@ -24,6 +27,10 @@ export default function MessagesView({ messages }: { messages: MessageRow[] }) {
     setActif(m);
     if (!m.lu) marquerLu(m.id, true);
   };
+
+  // numéro nettoyé pour le lien WhatsApp
+  const lienWhatsapp = (tel: string, sujet: string) =>
+    `https://wa.me/${tel.replace(/[^0-9]/g, "")}?text=${encodeURIComponent(`Bonjour, au sujet de : ${sujet}`)}`;
 
   return (
     <div className="space-y-5">
@@ -35,7 +42,7 @@ export default function MessagesView({ messages }: { messages: MessageRow[] }) {
       </div>
 
       <div className="grid lg:grid-cols-[360px_1fr] gap-4">
-        {/* Liste — cachée sur mobile quand un message est ouvert */}
+        {/* Liste */}
         <div className={`bg-white rounded-2xl border overflow-hidden flex-col ${actif ? "hidden lg:flex" : "flex"}`}>
           <div className="p-3 border-b">
             <div className="relative">
@@ -69,7 +76,14 @@ export default function MessagesView({ messages }: { messages: MessageRow[] }) {
                     {!m.lu && <Circle size={8} className="fill-vert-foncee text-vert-foncee shrink-0" />}
                   </div>
                   <p className="text-xs text-gray-600 truncate">{m.sujet}</p>
-                  <p className="text-xs text-muted-foreground mt-0.5">{m.date}</p>
+                  <div className="flex items-center gap-2 mt-0.5">
+                    <p className="text-xs text-muted-foreground">{m.date}</p>
+                    {m.repondu && (
+                      <span className="text-[10px] font-semibold text-green-700 bg-green-100 px-1.5 rounded-full">
+                        Répondu
+                      </span>
+                    )}
+                  </div>
                 </div>
               </button>
             ))}
@@ -79,11 +93,10 @@ export default function MessagesView({ messages }: { messages: MessageRow[] }) {
           </div>
         </div>
 
-        {/* Détail — caché sur mobile tant qu'aucun message n'est ouvert */}
+        {/* Détail */}
         <div className={`bg-white rounded-2xl border p-5 md:p-6 ${actif ? "block" : "hidden lg:block"}`}>
           {actif ? (
             <div className="space-y-5">
-              {/* Retour (mobile uniquement) */}
               <button
                 onClick={() => setActif(null)}
                 className="lg:hidden inline-flex items-center gap-1.5 text-sm font-medium text-vert-foncee"
@@ -98,7 +111,14 @@ export default function MessagesView({ messages }: { messages: MessageRow[] }) {
                   </div>
                   <div className="min-w-0">
                     <p className="font-bold text-gray-900 truncate">{actif.name}</p>
-                    <p className="text-sm text-muted-foreground truncate">{actif.email}</p>
+                    {actif.telephone && (
+                      <p className="text-sm text-muted-foreground flex items-center gap-1 truncate">
+                        <Phone size={12} /> {actif.telephone}
+                      </p>
+                    )}
+                    {actif.email && (
+                      <p className="text-sm text-muted-foreground truncate">{actif.email}</p>
+                    )}
                   </div>
                 </div>
                 <span className="text-xs text-muted-foreground shrink-0">{actif.date}</span>
@@ -114,15 +134,33 @@ export default function MessagesView({ messages }: { messages: MessageRow[] }) {
                 <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">{actif.message}</p>
               </div>
 
-              <div className="flex flex-wrap gap-3 pt-2 border-t items-center">
-                <a
-                  href={`mailto:${actif.email}?subject=RE: ${encodeURIComponent(actif.sujet)}`}
-                  className="inline-flex items-center gap-2 bg-vert-foncee text-white font-semibold text-sm px-4 py-2.5 rounded-xl hover:opacity-90 transition"
+              <div className="flex flex-wrap gap-2 pt-2 border-t items-center">
+                {actif.telephone && (
+                  <a
+                    href={lienWhatsapp(actif.telephone, actif.sujet)}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-2 bg-vert-foncee text-white font-semibold text-sm px-4 py-2.5 rounded-xl hover:opacity-90 transition"
+                  >
+                    <MessageCircle size={15} /> Répondre sur WhatsApp
+                  </a>
+                )}
+
+                {actif.email && (
+                  <a
+                    href={`mailto:${actif.email}?subject=RE: ${encodeURIComponent(actif.sujet)}`}
+                    className="inline-flex items-center gap-2 border font-semibold text-sm px-4 py-2.5 rounded-xl hover:bg-muted transition"
+                  >
+                    <Reply size={15} /> Par email
+                  </a>
+                )}
+
+                <Button
+                  variant="outline"
+                  onClick={() => marquerRepondu(actif.id, !actif.repondu)}
+                  className="gap-2"
                 >
-                  <Reply size={15} /> Répondre par email
-                </a>
-                <Button variant="outline" onClick={() => marquerLu(actif.id, !actif.lu)} className="gap-2">
-                  <Check size={15} /> Marquer {actif.lu ? "non lu" : "lu"}
+                  <Check size={15} /> {actif.repondu ? "Marquer non répondu" : "Marquer répondu"}
                 </Button>
               </div>
             </div>

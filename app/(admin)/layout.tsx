@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { exigerAdmin } from "@/lib/auth/abonnement";
+import { exigerAdmin } from "@/lib/auth/auth";
 import { logoutAction } from "@/app/(auth)/actions";
 import AdminNav from "./admin-nav";
 import Image from "next/image";
