@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { AlertCircle, CheckCircle2 } from "lucide-react";
 import { soumettrePaiement, type AboState } from "./actions";
-import { PRIX_ABONNEMENT } from "@/lib/data/abonnement-config";
+import { PRIX_ABONNEMENT } from "@/lib/config";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
