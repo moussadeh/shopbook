@@ -1,4 +1,4 @@
-import { StatutCommande, StatutPaiementCommande, ModeCommande } from "@/app/generated/prisma/client";
+import { StatutCommande, StatutPaiementCommande, ModeCommande } from "@/app/generated/prisma/enums";
 import { Inbox, Loader, PackageCheck, Wallet } from "lucide-react";
 import type { StatCard } from "@/components/custom/dashboard/stats-cards";
 import type { CommandesStats } from "@/lib/data/commandes";

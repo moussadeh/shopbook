@@ -15,7 +15,7 @@ export default function CommandesCards({ commandes, onDetail }: { commandes: Com
                 {c.initials}
               </div>
               <div>
-                <p className="font-semibold text-gray-800">{c.acheteurNom}</p>
+                <p className="font-semibold text-gray-800">{c.clientNom}</p>
                 <p className="text-xs text-muted-foreground">#{c.id} · {c.nbArticles} article{c.nbArticles > 1 ? "s" : ""}</p>
               </div>
             </div>

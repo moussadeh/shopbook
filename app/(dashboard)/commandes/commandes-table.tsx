@@ -28,7 +28,7 @@ export default function CommandesTable({ commandes, onDetail }: { commandes: Com
                   {c.initials}
                 </div>
                 <div className="min-w-0">
-                  <p className="font-semibold text-gray-800 truncate">{c.acheteurNom}</p>
+                  <p className="font-semibold text-gray-800 truncate">{c.clientNom}</p>
                   <p className="text-xs text-muted-foreground">{c.nbArticles} article{c.nbArticles > 1 ? "s" : ""}</p>
                 </div>
               </div>
