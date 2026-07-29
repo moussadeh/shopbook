@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { Search, ShoppingCart } from "lucide-react";
+import { Search, Store } from "lucide-react";
 import type { Vitrine, VitrineProduit } from "@/lib/data/boutique-publique";
 import VitrineHero from "./vitrine-hero";
 import ProduitCard from "./produit-card";
@@ -10,7 +10,8 @@ import PanierPanel from "./panier-panel";
 import PanierBarreMobile from "./panier-barre-mobile";
 import CheckoutModal from "./checkout-modal";
 import Image from "next/image";
-import AcheteurMenu from "../../acheteur-menu";
+import UtilisateurMenu from "../../utilisateur-menu";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export type LignePanier = { produit: VitrineProduit; qte: number };
 
@@ -19,13 +20,15 @@ const LOT = 9;
 export default function VitrineView({
   vitrine,
   slug,
-  acheteur,
+  client,
+  estProprietaire,
 }: {
   vitrine: Vitrine;
   slug: string;
-  acheteur: { id: number; nom: string; telephone: string } | null;
+  client: { nom: string; telephone: string } | null;
+  estProprietaire: boolean;
 }) {
-  const dejaConnecte = !!acheteur;
+  const dejaConnecte = !!client;
   const [search, setSearch] = useState("");
   const [tri, setTri] = useState<"recent" | "prix-asc" | "prix-desc">("recent");
   const [visibles, setVisibles] = useState(LOT);
@@ -89,26 +92,28 @@ export default function VitrineView({
           </Link>
 
           <div className="flex items-center gap-2">
-            {acheteur && (
-              <div>
-                <AcheteurMenu nom={acheteur.nom} />
-              </div>
+            {client ? (
+              <UtilisateurMenu nom={client.nom} estProprietaire={estProprietaire} />
+            ) : (
+              <Link
+                href={`/login?retour=/boutique/${slug}`}
+                className="text-sm font-semibold text-vert-foncee border rounded-xl px-3 h-10 flex items-center hover:bg-muted transition"
+              >
+                Se connecter
+              </Link>
             )}
-            {/* <button
-              onClick={() => setPanierMobileOuvert(true)}
-              className="lg:hidden relative w-10 h-10 rounded-xl border flex items-center justify-center hover:bg-muted transition"
-              aria-label="Voir le panier"
-            >
-              <ShoppingCart size={18} className="text-gray-700" />
-              {nbArticles > 0 && (
-                <span className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-vert-foncee text-white text-xs font-bold flex items-center justify-center">
-                  {nbArticles}
-                </span>
-              )}
-            </button> */}
           </div>
         </div>
       </div>
+
+      {estProprietaire && (
+        <div className="max-w-6xl mx-auto px-4 md:px-6 pt-4">
+          <div className="bg-green-50 border border-green-100 rounded-2xl p-3 flex items-center gap-2 text-sm text-vert-foncee">
+            <Store size={16} className="shrink-0" />
+            Ceci est votre boutique. Vous ne pouvez pas commander.
+          </div>
+        </div>
+      )}
 
       <VitrineHero vitrine={vitrine} />
 
@@ -118,7 +123,7 @@ export default function VitrineView({
           <div>
             <h2 className="text-lg font-bold text-vert-foncee mb-4">Nos produits</h2>
 
-            <div className="flex flex-col sm:flex-row gap-3 mb-5">
+            <div className="flex flex-col sm:flex-row gap-3 mb-5 items-center">
               <div className="relative flex-1">
                 <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
                 <input
@@ -128,15 +133,16 @@ export default function VitrineView({
                   className="w-full h-11 pl-9 pr-3 rounded-xl border bg-white text-sm outline-none focus:border-vert-foncee transition"
                 />
               </div>
-              <select
-                value={tri}
-                onChange={(e) => onTri(e.target.value as typeof tri)}
-                className="h-11 px-3 rounded-xl border bg-white text-sm outline-none focus:border-vert-foncee transition"
-              >
-                <option value="recent">Plus récents</option>
-                <option value="prix-asc">Prix croissant</option>
-                <option value="prix-desc">Prix décroissant</option>
-              </select>
+              <Select value={tri} onValueChange={(v) => onTri(v as typeof tri)}>
+                <SelectTrigger className="h-11 rounded-xl bg-white sm:w-44">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="recent">Plus récents</SelectItem>
+                  <SelectItem value="prix-asc">Prix croissant</SelectItem>
+                  <SelectItem value="prix-desc">Prix décroissant</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
             {produitsFiltres.length === 0 ? (
@@ -147,7 +153,7 @@ export default function VitrineView({
               <>
                 <div className="grid grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-2.5 md:gap-3">
                   {produits.map((p) => (
-                    <ProduitCard key={p.id} produit={p} qte={panier[p.id]?.qte ?? 0} onAdd={() => ajouter(p)} onChange={changerQte} />
+                    <ProduitCard key={p.id} produit={p} qte={panier[p.id]?.qte ?? 0} onAdd={() => ajouter(p)} onChange={changerQte} lectureSeule={estProprietaire} />
                   ))}
                 </div>
 
@@ -164,9 +170,11 @@ export default function VitrineView({
           </div>
 
           {/* Panier desktop */}
-          <div className="hidden lg:block sticky top-20">
-            <PanierPanel lignes={lignes} total={total} onChange={changerQte} onRemove={retirer} onCheckout={ouvrirCheckout} />
-          </div>
+          { !estProprietaire && (
+            <div className="hidden lg:block sticky top-20">
+              <PanierPanel lignes={lignes} total={total} onChange={changerQte} onRemove={retirer} onCheckout={ouvrirCheckout} />
+            </div>
+          )}
         </div>
 
         <p className="text-center text-xs text-muted-foreground mt-8">
@@ -174,7 +182,7 @@ export default function VitrineView({
         </p>
       </main>
 
-      {nbArticles > 0 && (
+      { !estProprietaire && nbArticles > 0 && (
         <PanierBarreMobile
           nbArticles={nbArticles}
           total={total}
@@ -189,17 +197,19 @@ export default function VitrineView({
       )}
 
       {/* Modale de commande */}
-      <CheckoutModal
-        ouvert={checkoutOuvert}
-        onFermer={() => setCheckoutOuvert(false)}
-        slug={slug}
-        lignes={lignes}
-        total={total}
-        dejaConnecte={dejaConnecte}
-        livraison={vitrine.livraison}
-        retrait={vitrine.retrait}
-        onCommandeOk={viderPanier}
-      />
+      { !estProprietaire && (
+        <CheckoutModal
+          ouvert={checkoutOuvert}
+          onFermer={() => setCheckoutOuvert(false)}
+          slug={slug}
+          lignes={lignes}
+          total={total}
+          dejaConnecte={dejaConnecte}
+          livraison={vitrine.livraison}
+          retrait={vitrine.retrait}
+          onCommandeOk={viderPanier}
+        />
+      )}
     </div>
   );
 }

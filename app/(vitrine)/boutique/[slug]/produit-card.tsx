@@ -7,9 +7,10 @@ type Props = {
   qte: number;
   onAdd: () => void;
   onChange: (id: number, delta: number) => void;
+  lectureSeule?: boolean;
 };
 
-export default function ProduitCard({ produit, qte, onAdd, onChange }: Props) {
+export default function ProduitCard({ produit, qte, onAdd, onChange, lectureSeule }: Props) {
   const indispo = !produit.disponible;
 
   return (
@@ -35,9 +36,9 @@ export default function ProduitCard({ produit, qte, onAdd, onChange }: Props) {
         )}
 
         <div className="flex items-center justify-between mt-auto pt-1.5">
-          <span className="font-bold text-gray-900 text-xs">{produit.prix} MRU</span>
+          <span className="font-bold text-xs text-vert-foncee">{produit.prix} MRU</span>
 
-          {indispo ? (
+          { lectureSeule ? null : indispo ? (
             <span className="text-[10px] text-muted-foreground">—</span>
           ) : qte === 0 ? (
             <button onClick={onAdd} className="w-7 h-7 rounded-lg bg-vert-foncee text-white flex items-center justify-center hover:opacity-90 transition" aria-label="Ajouter">

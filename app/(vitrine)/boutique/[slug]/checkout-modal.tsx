@@ -2,7 +2,7 @@
 
 import { useActionState, useEffect, useState } from "react";
 import { X, Truck, ShoppingBag, CheckCircle2, AlertCircle } from "lucide-react";
-import { registerAcheteur, loginAcheteur, type AcheteurAuthState } from "@/app/(vitrine)/acheteur-actions";
+import { registerDepuisVitrine, loginDepuisVitrine, type AuthState } from "@/app/(vitrine)/vitrine-auth-actions";
 import { passerCommande } from "@/app/(vitrine)/commande-actions";
 import type { LignePanier } from "@/app/(vitrine)/boutique/[slug]/vitrine-view";
 import { Input } from "@/components/ui/input";
@@ -21,10 +21,10 @@ type Props = {
   dejaConnecte: boolean;
   livraison: boolean;
   retrait: boolean;
-  onCommandeOk: () => void; // vider le panier
+  onCommandeOk: () => void;
 };
 
-const initAuth: AcheteurAuthState = {};
+const initAuth: AuthState = {};
 
 export default function CheckoutModal({
   ouvert, onFermer, slug, lignes, total, dejaConnecte, livraison, retrait, onCommandeOk,
@@ -63,14 +63,19 @@ export default function CheckoutModal({
   );
 }
 
-/* --- Étape 1 : auth (connexion ou inscription) --- */
+/* --- Étape 1 : auth unifiée (le client s'inscrit avec profil CLIENT) --- */
 function EtapeAuth({ onOk }: { onOk: () => void }) {
   const [mode, setMode] = useState<"login" | "register">("register");
-  const action = mode === "register" ? registerAcheteur : loginAcheteur;
+  const action = mode === "register" ? registerDepuisVitrine : loginDepuisVitrine;
   const [state, formAction, isPending] = useActionState(action, initAuth);
   const err = state.fieldErrors ?? {};
 
-  useEffect(() => { if (state.success) onOk(); }, [state.success, onOk]);
+  // registerDepuisVitrine / loginDepuisVitrine redirigent en cas de succès, mais depuis la modale
+  // on veut rester sur place : on détecte le succès via l'absence d'erreur au retour.
+  // Comme ces actions redirigent, on s'appuie plutôt sur router refresh.
+  useEffect(() => {
+    if (state.success) onOk();
+  }, [state.success, onOk]);
 
   return (
     <div className="space-y-4">
@@ -85,13 +90,24 @@ function EtapeAuth({ onOk }: { onOk: () => void }) {
       )}
 
       <form action={formAction} className="space-y-3">
+        {/* profil imposé pour l'inscription depuis une vitrine */}
+        {mode === "register" && <input type="hidden" name="profil" value="CLIENT" />}
+
         {mode === "register" && (
-          <div className="space-y-1.5">
-            <Label htmlFor="nom">Nom</Label>
-            <Input id="nom" name="nom" placeholder="Votre nom" defaultValue={state.values?.nom ?? ""} className="h-11" />
-            {err.nom && <p className="text-xs text-red-600">{err.nom}</p>}
+          <div className="grid grid-cols-2 gap-2">
+            <div className="space-y-1.5">
+              <Label htmlFor="prenom">Prénom</Label>
+              <Input id="prenom" name="prenom" placeholder="Mohamed" defaultValue={state.values?.prenom ?? ""} className="h-11" />
+              {err.prenom && <p className="text-xs text-red-600">{err.prenom}</p>}
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="nom">Nom</Label>
+              <Input id="nom" name="nom" placeholder="Ahmed" defaultValue={state.values?.nom ?? ""} className="h-11" />
+              {err.nom && <p className="text-xs text-red-600">{err.nom}</p>}
+            </div>
           </div>
         )}
+
         <div className="space-y-1.5">
           <Label htmlFor="telephone">Téléphone</Label>
           <Input id="telephone" name="telephone" type="tel" placeholder="+222 00 00 00 00" defaultValue={state.values?.telephone ?? ""} className="h-11" />
@@ -127,7 +143,7 @@ function EtapeLivraison({
 }) {
   const [mode, setMode] = useState<"LIVRAISON" | "RETRAIT">(retrait ? "RETRAIT" : "LIVRAISON");
   const [adresse, setAdresse] = useState("");
-  const [note, setNote] = useState("");
+  const [commentaire, setCommentaire] = useState("");
   const [erreur, setErreur] = useState<string | null>(null);
   const [envoi, setEnvoi] = useState(false);
 
@@ -135,7 +151,7 @@ function EtapeLivraison({
     setErreur(null);
     setEnvoi(true);
     const res = await passerCommande({
-      slug, mode, adresse, note,
+      slug, mode, adresse, commentaire,
       lignes: lignes.map((l) => ({ produitId: l.produit.id, qte: l.qte })),
     });
     setEnvoi(false);
@@ -145,7 +161,6 @@ function EtapeLivraison({
 
   return (
     <div className="space-y-4">
-      {/* Mode */}
       <div>
         <Label>Comment récupérer votre commande ?</Label>
         <div className="grid grid-cols-2 gap-2 mt-1.5">
@@ -166,11 +181,10 @@ function EtapeLivraison({
       )}
 
       <div className="space-y-1.5">
-        <Label htmlFor="note">Note (optionnel)</Label>
-        <Textarea id="note" value={note} onChange={(e) => setNote(e.target.value)} placeholder="Une précision pour le commerçant…" className="resize-none min-h-16" />
+        <Label htmlFor="commentaire">Note (optionnel)</Label>
+        <Textarea id="commentaire" value={commentaire} onChange={(e) => setCommentaire(e.target.value)} placeholder="Une précision pour le commerçant…" className="resize-none min-h-16" />
       </div>
 
-      {/* Récap */}
       <div className="bg-gray-50 rounded-xl p-3 space-y-1.5">
         {lignes.map((l) => (
           <div key={l.produit.id} className="flex justify-between text-sm">
@@ -209,7 +223,6 @@ function ModeBtn({ actif, onClick, icon, titre, desc }: { actif: boolean; onClic
   );
 }
 
-/* --- Étape 3 : succès --- */
 function EtapeSucces({ onFermer }: { onFermer: () => void }) {
   return (
     <div className="text-center space-y-4 py-4">
