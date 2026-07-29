@@ -46,12 +46,14 @@ export default function UtilisateurMenu({ nom, estProprietaire = false }: { nom:
                 <Package size={15} /> Mes commandes
               </Link>
             )}
-            <Link
-              href="/dashboard"
-              className="w-full flex items-center gap-2 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-muted transition border-b"
-            >
-              Gérer ma boutique
-            </Link>
+            { estProprietaire && (
+              <Link
+                href="/dashboard"
+                className="w-full flex items-center gap-2 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-muted transition border-b"
+              >
+                Gérer ma boutique
+              </Link>
+            )}
             <button onClick={deconnexion} disabled={isPending}
               className="w-full flex items-center gap-2 px-4 py-3 text-sm font-medium text-red-600 hover:bg-red-50 transition">
               <LogOut size={15} /> {isPending ? "Déconnexion…" : "Se déconnecter"}
