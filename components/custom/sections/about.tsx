@@ -16,7 +16,7 @@ export default function About() {
   ];
 
   const etapes = [
-    { n: "1", titre: "Créez votre compte", desc: "Quelques infos sur votre boutique, et c'est prêt. 14 jours d'essai gratuit." },
+    { n: "1", titre: "Créez votre compte", desc: "Quelques infos sur votre boutique, et c'est prêt. 7 jours d'essai gratuit." },
     { n: "2", titre: "Ajoutez vos crédits", desc: "Notez qui vous doit quoi, au fur et à mesure de vos ventes." },
     { n: "3", titre: "Notez les paiements", desc: "À chaque remboursement, le reste et le statut se mettent à jour seuls." },
     { n: "4", titre: "Gardez le contrôle", desc: "Consultez votre tableau de bord à tout moment." },
