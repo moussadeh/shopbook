@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { AlertCircle, CheckCircle2 } from "lucide-react";
+import { AlertCircle, CheckCircle2, Home, LogOut } from "lucide-react";
 import { soumettrePaiement, type AboState } from "./actions";
 import { PRIX_ABONNEMENT } from "@/lib/config";
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useActionState } from "react";
+import { logoutAction } from "@/app/(auth)/actions";
 
 const initial: AboState = {};
 const methodes = [
@@ -77,6 +78,11 @@ export default function PaiementForm() {
             <Button type="submit" disabled={isPending} className="w-full h-11 bg-vert-foncee text-white hover:opacity-90">
               {isPending ? "Envoi..." : "J'ai payé, soumettre"}
             </Button>
+            <div className="text-center text-sm text-muted-foreground">
+              <Link href="/" className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-vert-foncee transition">
+                <Home size={15} /> Retour à la page d&apos;accueil
+              </Link>
+            </div>
           </form>
         </>
       )}
