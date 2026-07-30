@@ -12,7 +12,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     <div className="min-h-screen bg-gray-50/60">
       <header className="sticky top-0 z-30 bg-white border-b px-4 md:px-6 py-3">
         <div className="max-w-6xl mx-auto flex items-center justify-between gap-3">
-          {/* Logo → accueil */}
+          {/* Logo => accueil */}
           <Link href="/" className="flex items-center gap-2 shrink-0">
             <Image src="/logos/logo/ShopBook.png" alt="Logo" width={36} height={36} className="object-contain rounded" />
             <span>

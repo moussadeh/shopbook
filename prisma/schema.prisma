@@ -12,12 +12,14 @@ datasource db {
   provider = "postgresql"
 }
 
-//////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Les utilisateurs (commerçants, clients, administrateurs)
-// Les commerçants se connectent pour acceder à leur boutique et gérer leurs produits, commandes et crédits.
+// Les commerçants se connectent pour acceder à leur boutique et gérer leurs produits, 
+// commandes et crédits.
 // Les clients se connectent pour passer des commandes et les gérer.
-// Les administrateurs se connectent pour gérer les commerçants et leurs abonnements.Tout en répondant aux messages des clients.
-//////////////////////////////////////////////////
+// Les administrateurs se connectent pour gérer les commerçants et leurs abonnements.
+// Tout en répondant aux messages des clients.
+////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 model Utilisateur {
   id         Int      @id @default(autoincrement())
@@ -82,10 +84,10 @@ model Emprunteur {
   @@index([commercantId])
 }
 
-//////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Les crédits un crédit est renseigné par un commerçant en choisissant l'emprunteur et le montant.
 // Le commerçant peut ensuite enregistrer les paiements effectués par l'emprunteur pour ce crédit.
-//////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 model Credit {
   id           Int          @id @default(autoincrement())
@@ -120,9 +122,9 @@ model Paiement {
   @@index([creditId])
 }
 
-//////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Le commerçant peut gérer sa boutique, ses produits et les commandes passées par les clients.
-//////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 model Boutique {
   id                  Int      @id @default(autoincrement())
@@ -175,9 +177,9 @@ model ImageProduit {
   @@index([produitId])
 }
 
-//////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Les commandes
-//////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 model Commande {
   id                    Int                    @id @default(autoincrement())
@@ -220,9 +222,9 @@ model LigneCommande {
   @@index([produitId])
 }
 
-//////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Les abonnements des commerçants
-//////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 model PaiementAbonnement {
   id               Int                      @id @default(autoincrement())
@@ -242,9 +244,9 @@ model PaiementAbonnement {
   @@index([commercantId])
 }
 
-//////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Les messages de contact des clients
-//////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 model MessageContact {
   id          Int       @id @default(autoincrement())
@@ -261,166 +263,6 @@ model MessageContact {
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 }
-
-////////////////////////////////////////////////////////////////////////////
-
-/**
- * model Commercant {
- * id                Int   @id @default(autoincrement())
- * nom               String
- * prenom            String
- * telephone         String   @unique
- * email             String   @unique
- * motDePasse        String
- * nomBoutique       String
- * description       String?
- * ville             String
- * quartier          String
- * pays              String
- * essaiFinLe        DateTime @default(now())
- * role              Role @default(COMMERCANT)
- * abonneJusquau     DateTime?
- * createdAt         DateTime @default(now())
- * updatedAt         DateTime @updatedAt
- * clients           Client[]
- * produits          Produit[]
- * credits           Credit[]
- * paiementsAbo      PaiementAbonnement[]
- * boutique          Boutique?
- * commandes         Commande[]
- * }
- * model Client {
- * id           Int   @id @default(autoincrement())
- * commercantId Int
- * nom          String
- * prenom       String
- * telephone    String
- * email        String?
- * createdAt    DateTime @default(now())
- * updatedAt    DateTime @updatedAt
- * commercant   Commercant @relation(fields: [commercantId], references: [id])
- * credits      Credit[]
- * }
- * model Credit {
- * id            Int   @id @default(autoincrement())
- * commercantId  Int
- * clientId      Int
- * montantTotal  Float
- * montantPaye   Float   @default(0)
- * statutCredit  StatutCredit @default(NON_PAYE)
- * dateCredit    DateTime @default(now())
- * description   String?
- * createdAt     DateTime @default(now())
- * updatedAt     DateTime @updatedAt
- * commercant    Commercant @relation(fields: [commercantId], references: [id])
- * client        Client     @relation(fields: [clientId], references: [id])
- * paiements     Paiement[]
- * }
- * model Paiement {
- * id           Int   @id @default(autoincrement())
- * creditId     Int
- * montant      Float
- * datePaiement DateTime @default(now())
- * createdAt    DateTime @default(now())
- * credit       Credit @relation(fields: [creditId], references: [id])
- * }
- * model Produit {
- * id            Int   @id @default(autoincrement())
- * commercantId  Int
- * nom           String
- * prix          Float
- * categorie     CategorieProduit @default(AUTRES)
- * description   String?
- * disponible    Boolean  @default(false)
- * createdAt     DateTime  @default(now())
- * updatedAt     DateTime @updatedAt
- * commercant    Commercant @relation(fields: [commercantId], references: [id])
- * images        ProduitImage[]
- * lignesCommande LigneCommande[]
- * }
- * model MessageContact {
- * id        Int      @id @default(autoincrement())
- * prenom    String
- * nom       String
- * email     String
- * sujet     String
- * message   String
- * lu        Boolean  @default(false)
- * createdAt DateTime @default(now())
- * }
- * model PaiementAbonnement {
- * id           Int                @id @default(autoincrement())
- * commercantId Int
- * methode      MethodePaiement
- * montant      Float
- * justificatifUrl String             // capture d'écran du paiement (Supabase Storage)
- * statut       StatutPaiementAbonnement  @default(EN_ATTENTE)
- * motifRejet   String?            // si l'admin rejette
- * verifieLe    DateTime?
- * createdAt    DateTime           @default(now())
- * commercant   Commercant @relation(fields: [commercantId], references: [id])
- * }
- * model Boutique {
- * id            Int      @id @default(autoincrement())
- * commercantId  Int      @unique
- * slug          String   @unique   // l'URL : shopbook.mr/boutique/[slug]
- * nom           String
- * description   String?
- * quartier      String?
- * telephone     String?
- * active        Boolean  @default(true)
- * livraison     Boolean  @default(false)
- * retrait       Boolean  @default(true)
- * createdAt     DateTime @default(now())
- * updatedAt     DateTime @updatedAt
- * commercant    Commercant @relation(fields: [commercantId], references: [id], onDelete: Cascade)
- * }
- * model ProduitImage {
- * id         Int      @id @default(autoincrement())
- * produitId  Int
- * url        String            // URL publique dans le bucket "produits"
- * ordre      Int      @default(0)
- * createdAt  DateTime @default(now())
- * produit    Produit  @relation(fields: [produitId], references: [id], onDelete: Cascade)
- * }
- * model Acheteur {
- * id         Int      @id @default(autoincrement())
- * nom        String
- * telephone  String   @unique
- * motDePasse String
- * createdAt  DateTime @default(now())
- * updatedAt  DateTime @updatedAt
- * commandes  Commande[]
- * }
- * model Commande {
- * id            Int      @id @default(autoincrement())
- * acheteurId    Int
- * commercantId  Int
- * mode          ModeCommande
- * adresse       String?
- * statut        StatutCommande   @default(NOUVELLE)
- * statutPaiement StatutPaiementCommande @default(EN_ATTENTE)
- * total         Float
- * note          String?
- * createdAt     DateTime @default(now())
- * updatedAt     DateTime @updatedAt
- * acheteur      Acheteur     @relation(fields: [acheteurId], references: [id])
- * commercant    Commercant   @relation(fields: [commercantId], references: [id], onDelete: Cascade)
- * lignes        LigneCommande[]
- * }
- * model LigneCommande {
- * id           Int      @id @default(autoincrement())
- * commandeId   Int
- * produitId    Int?
- * nomProduit   String
- * prixUnitaire Float
- * quantite     Int
- * commande     Commande @relation(fields: [commandeId], references: [id], onDelete: Cascade)
- * produit      Produit? @relation(fields: [produitId], references: [id], onDelete: SetNull)
- * }
- */
-
-////////////////////////////////////////////////////////////////////////////
 
 enum StatutCredit {
   NON_PAYE
@@ -461,31 +303,3 @@ enum StatutPaiementCommande {
   EN_ATTENTE
   PAYEE
 }
-
-// enum Role {
-//   COMMERCANT
-//   ADMIN
-//   CLIENT
-// }
-
-// enum CategorieProduit {
-//   ALIMENTAIRE
-//   BOISSONS
-//   HYGIENE
-//   VETEMENTS
-//   AUTRES
-// }
-
-// enum UniteProduit {
-//   SAC
-//   KILO
-//   LIBAR
-//   LITRE
-//   SACHET
-//   CARTON
-//   BOITE
-//   BOUTEILLE
-//   BIDON
-//   METRE
-//   PAQUET
-// }

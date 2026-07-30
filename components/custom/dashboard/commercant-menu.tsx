@@ -25,7 +25,7 @@ export default function CommercantMenu({ initiale, prenom, nomComplet, nomBoutiq
           <span className="hidden md:block text-sm font-medium text-gray-700">
             {nomBoutique ?? prenom}
           </span>
-          <ChevronDown size={14} className="text-gray-500 hidden md:block" />
+          <ChevronDown size={14} className="text-gray-500" />
         </button>
       </DropdownMenuTrigger>
 

@@ -5,7 +5,6 @@ import { exigerCommercant } from "@/lib/auth/auth";
 import { ABONNEMENT_JOURS, PRIX_ABONNEMENT } from "@/lib/config";
 import { MethodePaiement } from "@/app/generated/prisma/client";
 import { uploadCapture } from "@/lib/services/storage";
-import { notifierAdminNouveauPaiement } from "@/lib/services/email";
 import { revalidatePath } from "next/cache";
 
 export type AboState = { error?: string; success?: boolean };
@@ -52,12 +51,6 @@ export async function soumettrePaiement(_prev: AboState, formData: FormData): Pr
       data: { finAbonnement },
     }),
   ]);
-
-  await notifierAdminNouveauPaiement({
-    commercantId,
-    methode,
-    montant: PRIX_ABONNEMENT * NOMBRE_MOIS,
-  });
 
   revalidatePath("/abonnement");
   return { success: true };
