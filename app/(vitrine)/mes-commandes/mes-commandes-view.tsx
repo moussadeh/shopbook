@@ -4,9 +4,10 @@ import Link from "next/link";
 import { useState } from "react";
 import { Truck, ShoppingBag, ChevronDown, Package, PackageCheck, Store } from "lucide-react";
 import type { MaCommande } from "@/lib/data/mes-commandes";
-import { statutLabel, statutStyle, paiementLabel, formatMRU } from "@/lib/donnes/commandes";
+import { statutLabel, statutStyle, formatMRU } from "@/lib/donnes/commandes";
+import UtilisateurMenu from "../utilisateur-menu";
 
-export default function MesCommandesView({ commandes }: { commandes: MaCommande[] }) {
+export default function MesCommandesView({ commandes, nom }: { commandes: MaCommande[]; nom: string }) {
   return (
     <div className="min-h-screen bg-gray-50/60">
       {/* En-tête simple */}
@@ -15,7 +16,7 @@ export default function MesCommandesView({ commandes }: { commandes: MaCommande[
           <Link href="/" className="font-bold text-lg">
             <span className="text-vert-foncee">Shop</span><span className="text-orange">Book</span>
           </Link>
-          <span className="text-sm font-semibold text-gray-700">Mes commandes</span>
+          <UtilisateurMenu nom={nom} />
         </div>
       </div>
 
