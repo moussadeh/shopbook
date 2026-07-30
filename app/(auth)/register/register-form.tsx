@@ -18,7 +18,7 @@ export default function RegisterForm() {
   const err = state.fieldErrors ?? {};
 
   return (
-    <div className="bg-white rounded-3xl border p-6 sm:p-8 shadow-sm">
+    <div className="bg-white rounded-3xl border p-5 sm:p-8 shadow-sm">
       <div className="space-y-1.5 mb-6">
         <h2 className="text-2xl font-bold text-vert-foncee">Bienvenue parmi nous</h2>
         <p className="text-sm text-muted-foreground">Quelques infos et votre compte est prêt.</p>
@@ -131,7 +131,7 @@ function ProfilTuile({
         {icon}
       </div> */}
       <p className="text-sm font-semibold text-gray-900">{titre}</p>
-      <p className="text-xs text-muted-foreground leading-snug">{desc}</p>
+      {/* <p className="text-xs text-muted-foreground leading-snug">{desc}</p> */}
       {actif && (
         <span className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-vert-foncee">
           <Check size={12} /> Sélectionné

@@ -63,7 +63,9 @@ export default async function AuthLayout({ children }: { children: React.ReactNo
         <div className="flex-1 flex items-center justify-center p-6">
           <div className="w-full max-w-md space-y-6">
             <div className="flex flex-col items-center gap-2 lg:hidden">
-              <Image src="/logos/logo/ShopBook.png" alt="Logo" width={70} height={70} className="object-contain rounded" />
+              <Link href="/" className="flex flex-col items-center gap-2 lg:hidden">
+                <Image src="/logos/logo/ShopBook.png" alt="Logo" width={70} height={70} className="object-contain rounded" />
+              </Link>
               <span>
                 <span className="font-bold tracking-tight text-2xl text-vert-foncee">Shop</span>
                 <span className="font-bold tracking-tight text-2xl text-orange">Book</span>
