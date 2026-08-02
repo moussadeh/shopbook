@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { AlertCircle, CheckCircle2, Home, LogOut } from "lucide-react";
+import { AlertCircle, CheckCircle2, Home } from "lucide-react";
 import { soumettrePaiement, type AboState } from "./actions";
 import { PRIX_ABONNEMENT } from "@/lib/config";
 import { Button } from "@/components/ui/button";
@@ -11,7 +11,6 @@ import { Input } from "@/components/ui/input";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useActionState } from "react";
-import { logoutAction } from "@/app/(auth)/actions";
 
 const initial: AboState = {};
 const methodes = [
