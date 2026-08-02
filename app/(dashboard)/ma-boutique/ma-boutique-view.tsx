@@ -40,7 +40,7 @@ export default function MaBoutiqueView({ boutique }: { boutique: BoutiqueRow | n
       {/* En-tête */}
       <div className="flex items-center gap-3">
         {/*<div className="w-11 h-11 rounded-2xl bg-vert-foncee text-white flex items-center justify-center shrink-0">*/}
-          <Image src="/logos/logo/ShopBook.png" alt="Logo" width={36} height={36} className="object-contain rounded" />
+          <Image src="/logos/logo/ShopBook.png" alt="Logo" width={50} height={50} className="object-contain rounded" />
         {/*</div>*/}
         <div>
           <h1 className="text-lg md:text-xl font-bold text-vert-foncee">Ma boutique en ligne</h1>
