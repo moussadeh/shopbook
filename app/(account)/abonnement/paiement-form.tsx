@@ -28,7 +28,7 @@ export default function PaiementForm() {
   return (
     <div className="rounded-2xl border bg-white p-6 shadow-sm space-y-5">
       <div>
-        <h2 className="text-lg font-bold text-gray-900">S&apos;abonner</h2>
+        <h2 className="text-lg font-bold text-vert-foncee">S&apos;abonner</h2>
         <p className="text-sm text-muted-foreground">
           Montant : <span className="font-semibold text-gray-800">{PRIX_ABONNEMENT} MRU</span> / mois.
           Envoyez le paiement, puis joignez la capture.

@@ -1,7 +1,8 @@
 "use client";
 
 import { useActionState, useEffect, useState } from "react";
-import { Store, Link2, Copy, Check, ExternalLink, Truck, ShoppingBag, AlertCircle, CheckCircle2 } from "lucide-react";
+import { Link2, Copy, Check, ExternalLink, Truck, ShoppingBag, AlertCircle, CheckCircle2 } from "lucide-react";
+import Image from "next/image";
 import type { BoutiqueRow } from "@/lib/data/boutique";
 import { enregistrerBoutique, basculerActive, type BoutiqueState } from "./actions";
 import { Input } from "@/components/ui/input";
@@ -38,11 +39,11 @@ export default function MaBoutiqueView({ boutique }: { boutique: BoutiqueRow | n
     <div className="px-4 md:px-6 py-5 space-y-5 max-w-3xl mx-auto">
       {/* En-tête */}
       <div className="flex items-center gap-3">
-        <div className="w-11 h-11 rounded-2xl bg-vert-foncee text-white flex items-center justify-center shrink-0">
-          <Store size={20} />
-        </div>
+        {/*<div className="w-11 h-11 rounded-2xl bg-vert-foncee text-white flex items-center justify-center shrink-0">*/}
+          <Image src="/logos/logo/ShopBook.png" alt="Logo" width={36} height={36} className="object-contain rounded" />
+        {/*</div>*/}
         <div>
-          <h1 className="text-lg md:text-xl font-bold text-gray-900">Ma boutique en ligne</h1>
+          <h1 className="text-lg md:text-xl font-bold text-vert-foncee">Ma boutique en ligne</h1>
           <p className="text-xs text-muted-foreground">
             Votre vitrine que vos clients peuvent visiter et où ils peuvent commander.
           </p>
