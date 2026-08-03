@@ -40,7 +40,7 @@ export default function LoginForm() {
         <div className="space-y-1.5">
           <div className="flex items-center justify-between">
             <Label htmlFor="motDePasse">Mot de passe</Label>
-            {/* <Link href="/mot-de-passe-oublie" className="text-xs font-medium text-vert-foncee hover:underline">Oublié ?</Link> */}
+            <Link href="/mot-de-passe-oublie" className="text-xs font-medium text-vert-foncee hover:underline">Oublié ?</Link>
           </div>
           <PasswordInput id="motDePasse" name="motDePasse" placeholder="••••••••"
             aria-invalid={!!state.fieldErrors?.motDePasse} />
