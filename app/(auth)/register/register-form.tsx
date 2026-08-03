@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import PasswordInput from "@/components/custom/auth/password-input";
+import TelephoneInput from "@/components/custom/auth/telephone-input";
 
 const initial: AuthState = {};
 
@@ -74,8 +75,7 @@ export default function RegisterForm() {
 
         <div className="space-y-1.5">
           <Label htmlFor="telephone">Téléphone</Label>
-          <Input id="telephone" name="telephone" type="tel" placeholder="+222 00 00 00 00" className="h-11"
-            defaultValue={state.values?.telephone ?? ""} aria-invalid={!!err.telephone} />
+          <TelephoneInput id="telephone" name="telephone" defaultValue={state.values?.telephone} invalid={!!state.fieldErrors?.telephone} />
           {err.telephone && <p className="text-xs text-red-600">{err.telephone}</p>}
           <p className="text-xs text-muted-foreground">C&apos;est avec ce numéro que vous vous connecterez.</p>
         </div>
