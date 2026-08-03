@@ -1,6 +1,5 @@
 "use client";
 
-import { forwardRef } from "react";
 import Image from "next/image";
 
 /** Formate "41424344" → "41 42 43 44" (groupes de 2, visuel seulement) */

@@ -4,7 +4,6 @@ import { useActionState } from "react";
 import Link from "next/link";
 import { AlertCircle } from "lucide-react";
 import { loginAction, type AuthState } from "../actions";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
