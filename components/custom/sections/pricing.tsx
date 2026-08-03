@@ -7,6 +7,7 @@ import {
   Star,
   BadgeDollarSign,
 } from "lucide-react"
+import Link from "next/link";
 
 export default function Pricing() {
   return (
@@ -28,7 +29,7 @@ export default function Pricing() {
         </div>
 
         {/* Cards */}
-        <div className="grid lg:grid-cols-3 gap-6 md:gap-8">
+        <div className="grid lg:grid-cols-2 gap-6 md:gap-8 max-w-4xl mx-auto">
 
           {/* Découverte */}
           <div className="rounded-3xl border border-slate-200 bg-white p-6 md:p-8 shadow-sm hover:shadow-xl transition-all duration-300">
@@ -68,9 +69,11 @@ export default function Pricing() {
                 </p>
               </div>
 
-              <button className="cursor-pointer w-full rounded-xl border border-vert-foncee py-3 font-medium text-vert-foncee transition hover:bg-vert-claire text-sm md:text-base">
-                Commencer gratuitement
-              </button>
+              <Link href="/register">
+                <button className="cursor-pointer w-full rounded-xl border border-vert-foncee py-3 font-medium text-vert-foncee transition hover:bg-vert-claire text-sm md:text-base">
+                  Commencer gratuitement
+                </button>
+              </Link>
             </div>
           </div>
 
@@ -90,7 +93,7 @@ export default function Pricing() {
                   <span className="pb-1 text-lg text-slate-600">MRU / mois</span>
                 </div>
                 <div className="mt-2 inline-flex items-center rounded-full bg-vert-claire px-3 py-1 text-sm text-vert-foncee">
-                  <Star size={14} className="mr-2" />Le plus populaire
+                  <Star size={14} className="mr-2" />Abonnement
                 </div>
                 <p className="mt-2 text-slate-600 leading-7 text-sm md:text-base">
                   Tout ShopBook pour gérer votre activité, sans limite de temps.
@@ -102,9 +105,12 @@ export default function Pricing() {
                 {[
                   "Statistiques détaillées de votre activité",
                   "Historique complet de vos crédits",
-                  "Export de vos données",
-                  "Sauvegarde automatique de vos données",
-                  "Aide rapide quand vous en avez besoin",
+                  // "Export de vos données",
+                  "Votre boutique en ligne, pour vos clients",
+                  // "Sauvegarde automatique de vos données",
+                  "Gestion des commandes et des stocks",
+                  // "Aide rapide quand vous en avez besoin",
+                  "Un lien personnalisé pour votre boutique",
                 ].map((item) => (
                   <div key={item} className="flex items-center gap-3">
                     <div className="rounded-full bg-vert-claire p-1 shrink-0">
@@ -115,14 +121,16 @@ export default function Pricing() {
                 ))}
               </div>
 
-              <button className="cursor-pointer w-full rounded-xl bg-vert-foncee py-3 font-medium text-white transition hover:bg-[#17441d] text-sm md:text-base">
-                Choisir le plan Essentiel
-              </button>
+              <Link href="/login">
+                <button className="cursor-pointer w-full rounded-xl bg-vert-foncee py-3 font-medium text-white transition hover:bg-[#17441d] text-sm md:text-base">
+                  S&apos;abonner maintenant
+                </button>
+              </Link>
             </div>
           </div>
 
           {/* Équipe */}
-          <div className="rounded-3xl border border-slate-200 bg-white p-6 md:p-8 shadow-sm hover:shadow-xl transition-all duration-300">
+          {/* <div className="rounded-3xl border border-slate-200 bg-white p-6 md:p-8 shadow-sm hover:shadow-xl transition-all duration-300">
             <div className="space-y-5 md:space-y-6">
               <div>
                 <h3 className="text-xl md:text-2xl font-semibold text-slate-900">Équipe</h3>
@@ -160,7 +168,7 @@ export default function Pricing() {
                 Choisir le plan Équipe
               </button>
             </div>
-          </div>
+          </div> */}
 
         </div>
 

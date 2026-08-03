@@ -19,7 +19,7 @@ export default function LoginForm() {
     <div className="bg-white rounded-3xl border p-6 sm:p-8 shadow-sm">
       <div className="space-y-1.5 mb-6">
         <h2 className="text-2xl font-bold text-vert-foncee">Content de vous revoir</h2>
-        <p className="text-sm text-muted-foreground">Connectez-vous pour accéder à votre boutique.</p>
+        <p className="text-sm text-muted-foreground">Connectez-vous pour accéder à votre espace.</p>
       </div>
 
       {state.error && (
