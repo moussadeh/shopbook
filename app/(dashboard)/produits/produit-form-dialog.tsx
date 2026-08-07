@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import imageCompression from "browser-image-compression";
 
 const initial: ActionState = {};
 const MAX_IMAGES = 3;
@@ -32,12 +33,58 @@ function ProduitForm({ produit, onSuccess, onCancel }: {
   const total = imagesExistantes.length + fichiers.length;
   const placesRestantes = MAX_IMAGES - total;
 
+  const [traitement, setTraitement] = useState(false);
+  const [erreurImage, setErreurImage] = useState<string | null>(null);
+
   useEffect(() => { if (state.success) onSuccess(); }, [state.success, onSuccess]);
 
-  const onPick = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const nouveaux = Array.from(e.target.files ?? []).slice(0, placesRestantes);
-    setFichiers((f) => [...f, ...nouveaux]);
-    e.target.value = "";
+  const TYPES_OK = ["image/jpeg", "image/png", "image/.jpg"];
+  const MAX_KO_APRES = 800; // cible après compression : ~800 Ko max
+  const onPick = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const choisis = Array.from(e.target.files ?? []);
+    e.target.value = ""; // on vide tde suite pour pouvoir re-choisir le même fichier
+
+    setErreurImage(null);
+    const erreurs: string[] = [];
+    const aTraiter: File[] = [];
+
+    // 1. Validation du type AVANT tout
+    for (const f of choisis) {
+      if (!TYPES_OK.includes(f.type)) {
+        erreurs.push(`${f.name} : seuls JPG, PNG et WEBP sont acceptés.`);
+        continue;
+      }
+      aTraiter.push(f);
+    }
+
+    // on ne garde que ce qui rentre dans les places restantes
+    const dansLaLimite = aTraiter.slice(0, placesRestantes);
+
+    // 2. Compression
+    setTraitement(true);
+    const compresses: File[] = [];
+    for (const f of dansLaLimite) {
+      try {
+        const compresse = await imageCompression(f, {
+          maxSizeMB: MAX_KO_APRES / 1024,   // ~0,78 Mo
+          maxWidthOrHeight: 1200,           // on réduit les très grandes images
+          useWebWorker: true,
+        });
+        // On garantit un vrai File (la compression peut renvoyer un Blob)
+        const fichierFinal = new File([compresse], f.name, {
+          type: compresse.type || f.type,
+          lastModified: Date.now(),
+        });
+        compresses.push(fichierFinal);
+      } catch {
+        erreurs.push(`${f.name} : impossible de traiter cette image.`);
+      }
+    }
+    setTraitement(false);
+
+    // 3. On ajoute les images valides et compressées
+    if (compresses.length) setFichiers((prev) => [...prev, ...compresses]);
+    if (erreurs.length) setErreurImage(erreurs.join(" "));
   };
 
   const retirerExistante = (imageId: number) => {
@@ -122,8 +169,14 @@ function ProduitForm({ produit, onSuccess, onCancel }: {
               </button>
             )}
           </div>
-          <input ref={fileRef} type="file" accept="image/*" multiple className="hidden" onChange={onPick} />
+          <input ref={fileRef} type="file" accept="image/jpeg,image/png,image/jpg" multiple className="hidden" onChange={onPick} />
           {state.error && <p className="text-sm text-red-600">{state.error}</p>}
+          {traitement && (
+            <p className="text-xs text-muted-foreground">Traitement des images en cours…</p>
+          )}
+          {erreurImage && (
+            <p className="text-sm text-red-600">{erreurImage}</p>
+          )}
         </div>
 
         <div className="flex gap-3 pt-2">

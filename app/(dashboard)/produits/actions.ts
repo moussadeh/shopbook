@@ -8,7 +8,7 @@ import { uploadImageProduit } from "@/lib/services/storage";
 export type ActionState = { error?: string; success?: boolean };
 
 const MAX_IMAGES = 3;
-const MAX_OCTETS = 2 * 1024 * 1024; // 2 Mo
+const MAX_OCTETS = 1024 * 1024; // 1 Mo
 
 /** Récupère la boutique du commerçant connecté (sécurité : elle lui appartient forcément) */
 async function boutiqueDuCommercant(): Promise<number | null> {
