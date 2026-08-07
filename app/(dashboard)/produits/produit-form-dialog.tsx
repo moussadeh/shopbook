@@ -1,9 +1,9 @@
 "use client";
 
-import { useActionState, useEffect, useRef, useState } from "react";
-import { X, ImagePlus } from "lucide-react";
+import { useActionState, useEffect, useRef, useState, useTransition } from "react";
+import { X, ImagePlus, Trash2 } from "lucide-react";
 import type { ProduitRow } from "@/lib/data/produits";
-import { saveProduit, type ActionState } from "./actions";
+import { saveProduit, type ActionState, supprimerImageProduit } from "./actions";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -21,12 +21,16 @@ function ProduitForm({ produit, onSuccess, onCancel }: {
   const [state, formAction, isPending] = useActionState(saveProduit, initial);
   const [disponible, setDisponible] = useState(produit?.disponible ?? true);
 
+  // Images deja en base — état local pour pouvoir en retirer à l'écran
+  const [imagesExistantes, setImagesExistantes] = useState(produit?.images ?? []);
+  const [suppression, startSuppression] = useTransition();
+
   // Images à ajouter (création) : aperçus locaux
   const [fichiers, setFichiers] = useState<File[]>([]);
   const fileRef = useRef<HTMLInputElement>(null);
 
-  const dejaLa = produit?.images.length ?? 0;
-  const placesRestantes = MAX_IMAGES - dejaLa - fichiers.length;
+  const total = imagesExistantes.length + fichiers.length;
+  const placesRestantes = MAX_IMAGES - total;
 
   useEffect(() => { if (state.success) onSuccess(); }, [state.success, onSuccess]);
 
@@ -34,6 +38,14 @@ function ProduitForm({ produit, onSuccess, onCancel }: {
     const nouveaux = Array.from(e.target.files ?? []).slice(0, placesRestantes);
     setFichiers((f) => [...f, ...nouveaux]);
     e.target.value = "";
+  };
+
+  const retirerExistante = (imageId: number) => {
+    if (!confirm("Supprimer cette photo ?")) return;
+    startSuppression(async () => {
+      await supprimerImageProduit(imageId);
+      setImagesExistantes((imgs) => imgs.filter((i) => i.id !== imageId));
+    });
   };
 
   return (
@@ -79,17 +91,27 @@ function ProduitForm({ produit, onSuccess, onCancel }: {
 
         {/* Images (surtout à la création) */}
         <div className="space-y-2">
-          <Label>Photos ({dejaLa + fichiers.length}/{MAX_IMAGES})</Label>
+          <Label>Photos ({total}/{MAX_IMAGES})</Label>
           <div className="grid grid-cols-3 gap-2">
+            {imagesExistantes.map((img) => (
+              <div key={img.id} className="relative aspect-square rounded-xl overflow-hidden border">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={img.url} alt="" className="w-full h-full object-cover" />
+                <button type="button" onClick={() => retirerExistante(img.id)} disabled={suppression}
+                  className="absolute top-1 right-1 w-6 h-6 rounded-full bg-black/60 text-white flex items-center justify-center" aria-label="Supprimer la photo">
+                  <Trash2 size={12} />
+                </button>
+              </div>
+            ))}
+            {/* Nouveaux fichiers (aperçus locaux) */}
             {fichiers.map((f, i) => (
               <div key={i} className="relative aspect-square rounded-xl overflow-hidden border">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={URL.createObjectURL(f)} alt="" className="w-full h-full object-cover" />
                 <button type="button" onClick={() => setFichiers((arr) => arr.filter((_, j) => j !== i))}
-                  className="absolute top-1 right-1 w-6 h-6 rounded-full bg-black/60 text-white flex items-center justify-center">
+                  className="absolute top-1 right-1 w-6 h-6 rounded-full bg-black/60 text-white flex items-center justify-center" aria-label="Supprimer la photo">
                   <X size={13} />
                 </button>
-                {/* le File est relayé au form via un input caché */}
                 <input type="file" name="images" hidden ref={(el) => { if (el) attachFile(el, f); }} />
               </div>
             ))}
