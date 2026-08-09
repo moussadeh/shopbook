@@ -125,7 +125,7 @@ export default function VitrineView({
           <div>
             <h2 className="text-lg font-bold text-vert-foncee mb-4">Nos produits</h2>
 
-            <div className="flex flex-col sm:flex-row gap-3 mb-5 items-center">
+            <div className="flex gap-3 mb-5 items-center">
               <div className="relative flex-1">
                 <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
                 <input
