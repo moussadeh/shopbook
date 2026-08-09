@@ -3,7 +3,7 @@
 import prisma from "@/prisma/prisma";
 import { exigerCommercant } from "@/lib/auth/auth";
 import { revalidatePath } from "next/cache";
-import { uploadImageProduit } from "@/lib/services/storage";
+import { supprimerImageBucket, uploadImageProduit } from "@/lib/services/storage";
 
 export type ActionState = { error?: string; success?: boolean };
 
@@ -110,10 +110,11 @@ export async function supprimerImageProduit(imageId: number) {
 
   const image = await prisma.imageProduit.findFirst({
     where: { id: imageId, produit: { boutiqueId } },
-    select: { id: true },
+    select: { id: true, url: true },
   });
   if (!image) return;
 
+  await supprimerImageBucket(image.url);
   await prisma.imageProduit.delete({ where: { id: imageId } });
   revalidatePath("/produits");
 }

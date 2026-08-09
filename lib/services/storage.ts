@@ -59,3 +59,17 @@ export async function uploadImageProduit(file: File, produitId: number): Promise
   const { data } = supabase.storage.from("produits").getPublicUrl(chemin);
   return data.publicUrl;
 }
+
+export async function supprimerImageBucket(url: string): Promise<void> {
+  const marqueur = "/produits/";
+  const index = url.indexOf(marqueur);
+  if (index === -1) return; // URL inattendue, on ne fait rien
+
+  const chemin = url.slice(index + marqueur.length);
+
+  const { error } = await supabase.storage.from("produits").remove([chemin]);
+  if (error) {
+    console.error("[supprimerImageBucket] échec:", error);
+    // on n'interrompt pas : la ligne en base doit quand même partir
+  }
+}
