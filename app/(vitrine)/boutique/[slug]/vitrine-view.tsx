@@ -12,6 +12,7 @@ import CheckoutModal from "./checkout-modal";
 import Image from "next/image";
 import UtilisateurMenu from "../../utilisateur-menu";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import ProduitDetailModal from "./produit-detail-modal";
 
 export type LignePanier = { produit: VitrineProduit; qte: number };
 
@@ -35,6 +36,7 @@ export default function VitrineView({
   const [panier, setPanier] = useState<Record<number, LignePanier>>({});
   const [panierMobileOuvert, setPanierMobileOuvert] = useState(false);
   const [checkoutOuvert, setCheckoutOuvert] = useState(false);
+  const [produitOuvert, setProduitOuvert] = useState<VitrineProduit | null>(null);
 
   const lignes = Object.values(panier);
   const nbArticles = lignes.reduce((s, l) => s + l.qte, 0);
@@ -151,9 +153,9 @@ export default function VitrineView({
               </div>
             ) : (
               <>
-                <div className="grid grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-2.5 md:gap-3">
+                <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-2.5 md:gap-3">
                   {produits.map((p) => (
-                    <ProduitCard key={p.id} produit={p} qte={panier[p.id]?.qte ?? 0} onAdd={() => ajouter(p)} onChange={changerQte} lectureSeule={estProprietaire} />
+                    <ProduitCard key={p.id} produit={p} qte={panier[p.id]?.qte ?? 0} onAdd={() => ajouter(p)} onChange={changerQte} onOuvrir={() => setProduitOuvert(p)} lectureSeule={estProprietaire} />
                   ))}
                 </div>
 
@@ -210,6 +212,15 @@ export default function VitrineView({
           onCommandeOk={viderPanier}
         />
       )}
+
+      <ProduitDetailModal
+        produit={produitOuvert}
+        qte={produitOuvert ? (panier[produitOuvert.id]?.qte ?? 0) : 0}
+        onFermer={() => setProduitOuvert(null)}
+        onAdd={() => produitOuvert && ajouter(produitOuvert)}
+        onChange={changerQte}
+        lectureSeule={estProprietaire}
+      />
     </div>
   );
 }

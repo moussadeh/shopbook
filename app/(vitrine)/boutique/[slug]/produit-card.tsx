@@ -7,14 +7,15 @@ type Props = {
   qte: number;
   onAdd: () => void;
   onChange: (id: number, delta: number) => void;
+  onOuvrir: () => void;
   lectureSeule?: boolean;
 };
 
-export default function ProduitCard({ produit, qte, onAdd, onChange, lectureSeule }: Props) {
+export default function ProduitCard({ produit, qte, onAdd, onChange, onOuvrir, lectureSeule }: Props) {
   const indispo = !produit.disponible;
 
   return (
-    <div className={`bg-white rounded-xl border overflow-hidden flex flex-col ${indispo ? "opacity-60" : ""}`}>
+    <div onClick={onOuvrir} className={`bg-white rounded-xl border overflow-hidden flex flex-col ${indispo ? "opacity-60" : ""}`}>
       <div className="aspect-square bg-vert-claire-2 text-vert-foncee flex items-center justify-center relative">
         {produit.image ? (
           // eslint-disable-next-line @next/next/no-img-element
@@ -41,11 +42,11 @@ export default function ProduitCard({ produit, qte, onAdd, onChange, lectureSeul
           { lectureSeule ? null : indispo ? (
             <span className="text-[10px] text-muted-foreground">—</span>
           ) : qte === 0 ? (
-            <button onClick={onAdd} className="w-7 h-7 rounded-lg bg-vert-foncee text-white flex items-center justify-center hover:opacity-90 transition" aria-label="Ajouter">
+            <button onClick={(e) => { e.stopPropagation(); onAdd(); }} className="w-7 h-7 rounded-lg bg-vert-foncee text-white flex items-center justify-center hover:opacity-90 transition" aria-label="Ajouter">
               <Plus size={15} />
             </button>
           ) : (
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
               <button onClick={() => onChange(produit.id, -1)} className="w-6 h-6 rounded-md border flex items-center justify-center" aria-label="Moins">
                 <Minus size={12} />
               </button>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { LogOut, ChevronDown, Package } from "lucide-react";
+import { LogOut, ChevronDown, Package, Store } from "lucide-react";
 import { logoutAction } from "@/app/(auth)/actions";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -41,10 +41,16 @@ export default function UtilisateurMenu({ nom, estProprietaire = false }: { nom:
               <p className="text-xs text-muted-foreground">Connecté</p>
             </div>
             { !estProprietaire && (
-              <Link href="/mes-commandes" onClick={() => setOuvert(false)}
-                className="w-full flex items-center gap-2 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-muted transition border-b">
-                <Package size={15} /> Mes commandes
-              </Link>
+              <>
+                <Link href="/mes-commandes" onClick={() => setOuvert(false)}
+                  className="w-full flex items-center gap-2 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-muted transition border-b">
+                  <Package size={15} /> Mes commandes
+                </Link>
+                <Link href="/mes-boutiques" onClick={() => setOuvert(false)}
+                  className="w-full flex items-center gap-2 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-muted transition border-b">
+                  <Store size={15} /> Mes boutiques
+                </Link>
+              </>
             )}
             { estProprietaire && (
               <Link
