@@ -14,7 +14,7 @@ export default function PanierPanel({ lignes, total, onChange, onRemove, onCheck
 
   return (
     <div className="bg-vert-claire-2 rounded-2xl border p-4 space-y-4">
-      <h3 className="font-bold text-gray-900">Votre commande {nb > 0 && `(${nb})`}</h3>
+      <h3 className="font-bold text-vert-foncee">Votre commande {nb > 0 && `(${nb})`}</h3>
 
       {lignes.length === 0 ? (
         <div className="py-10 text-center space-y-2">

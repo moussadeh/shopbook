@@ -1,10 +1,12 @@
-import { BadgeCheck, ShieldCheck, HandCoins, Sparkles } from "lucide-react";
+import { BadgeCheck, Building2, MapPin, Phone } from "lucide-react";
 import type { Vitrine } from "@/lib/data/boutique-publique";
 import Image from "next/image";
+import { Badge } from "@/components/ui/badge";
 
 const IMAGE_VITRINE = "/images/boutique3.png";
 
 export default function VitrineHero({ vitrine }: { vitrine: Vitrine }) {
+  const telAffiche = vitrine.telephone.replace(/^\+222/, "").replace(/(\d{2})(?=\d)/g, "$1 ").trim();
   return (
     <header className="max-w-6xl mx-auto px-4 md:px-6 pt-5">
       <div className="rounded-3xl bg-vert-claire-2 text-black overflow-hidden flex flex-col md:flex-row">
@@ -22,14 +24,26 @@ export default function VitrineHero({ vitrine }: { vitrine: Vitrine }) {
             </p>
           </div>
 
+          {/* Badges d'infos */}
           <div className="flex flex-wrap gap-2 pt-1">
-            <Reassurance icon={<Sparkles size={14} />} label="Produits de qualité" />
-            <Reassurance icon={<HandCoins size={14} />} label="Prix justes" />
-            <Reassurance icon={<ShieldCheck size={14} />} label="Service fiable" />
+            {vitrine.telephone && (
+              <Badge variant="outline" className="gap-1.5 bg-white/70 text-gray-700 hover:bg-white transition font-medium p-3">
+                <Phone size={12} className="text-vert-foncee" /> {telAffiche}
+              </Badge>
+            )}
+            {vitrine.ville && (
+              <Badge variant="outline" className="gap-1.5 bg-white/70 text-gray-700 font-medium p-3">
+                <Building2 size={12} className="text-vert-foncee" /> {vitrine.ville}
+              </Badge>
+            )}
+            {vitrine.quartier && (
+              <Badge variant="outline" className="gap-1.5 bg-white/70 text-gray-700 font-medium p-3">
+                <MapPin size={12} className="text-vert-foncee" /> {vitrine.quartier}
+              </Badge>
+            )}
           </div>
         </div>
 
-        {/* Image partagée — optimisée via next/image */}
         <div className="relative w-full h-52 sm:h-64 md:h-auto md:w-2/5 md:min-h-[200px] order-1 md:order-2">
           <Image
             src={IMAGE_VITRINE}
@@ -37,19 +51,11 @@ export default function VitrineHero({ vitrine }: { vitrine: Vitrine }) {
             fill
             sizes="(max-width: 768px) 100vw, 40vw"
             className="object-cover"
+            quality={85}
             priority
           />
         </div>
       </div>
     </header>
-  );
-}
-
-function Reassurance({ icon, label }: { icon: React.ReactNode; label: string }) {
-  return (
-    <span className="text-black inline-flex items-center gap-1.5 text-xs font-medium bg-white/15 rounded-full px-3 py-1.5">
-      <span className="text-vert-foncee">{icon}</span>
-      {label}
-    </span>
   );
 }
