@@ -3,17 +3,18 @@
 import { ChevronDown, LogOut } from "lucide-react";
 import { logoutAction } from "@/app/(auth)/actions";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
+  DropdownMenu, DropdownMenuContent, DropdownMenuItem,
+  DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-type Props = { initiale: string; nomBoutique: string; prenom:string; };
+type Props = {
+  initiale: string;
+  prenom: string;
+  nomComplet: string;
+  nomBoutique: string | null;
+};
 
-export default function CommercantMenu({ initiale, nomBoutique, prenom }: Props) {
+export default function CommercantMenu({ initiale, prenom, nomComplet, nomBoutique }: Props) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -21,13 +22,20 @@ export default function CommercantMenu({ initiale, nomBoutique, prenom }: Props)
           <div className="w-7 h-7 rounded-full bg-vert-foncee flex items-center justify-center text-white text-xs font-bold">
             {initiale}
           </div>
-          <span className="hidden md:block text-sm font-medium text-gray-700">Boutique de {prenom}</span>
-          <ChevronDown size={14} className="text-gray-500 hidden md:block" />
+          <span className="hidden md:block text-sm font-medium text-gray-700">
+            {nomBoutique ?? prenom}
+          </span>
+          <ChevronDown size={14} className="text-gray-500" />
         </button>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent align="end" className="w-48">
-        <DropdownMenuLabel className="truncate">{nomBoutique}</DropdownMenuLabel>
+      <DropdownMenuContent align="end" className="w-52">
+        <DropdownMenuLabel className="truncate">
+          {nomComplet}
+          {nomBoutique && (
+            <span className="block text-xs font-normal text-muted-foreground truncate">{nomBoutique}</span>
+          )}
+        </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem
           onSelect={() => logoutAction()}

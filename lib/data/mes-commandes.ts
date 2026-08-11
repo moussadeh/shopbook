@@ -1,10 +1,12 @@
 import "server-only";
 
 import prisma from "@/prisma/prisma";
-import { getAcheteurId } from "@/lib/auth/acheteur";
+import { getUtilisateurActuel } from "@/lib/auth/auth";
 import { StatutCommande, StatutPaiementCommande, ModeCommande } from "@/app/generated/prisma/client";
 
-export type MaCommandeLigne = { nom: string; prixUnitaire: number; quantite: number };
+const num = (d: unknown) => Number(d ?? 0);
+
+export type MaCommandeLigne = { nom: string; prixUnitaire: number; quantite: number; total: number };
 
 export type MaCommande = {
   id: number;
@@ -24,30 +26,35 @@ const fmt = new Intl.DateTimeFormat("fr-FR", {
 });
 
 export async function getMesCommandes(): Promise<MaCommande[] | null> {
-  const acheteurId = await getAcheteurId();
-  if (!acheteurId) return null; // non connecté
+  const utilisateur = await getUtilisateurActuel();
+  if (!utilisateur?.client) return null; // pas connecté ou pas de profil client
 
   const rows = await prisma.commande.findMany({
-    where: { acheteurId },
+    where: { clientId: utilisateur.client.id },
     orderBy: { createdAt: "desc" },
     select: {
-      id: true, mode: true, adresse: true, statut: true, statutPaiement: true,
-      total: true, createdAt: true,
-      commercant: { select: { boutique: { select: { nom: true, slug: true } } } },
-      lignes: { select: { nomProduit: true, prixUnitaire: true, quantite: true } },
+      id: true, mode: true, adresseLivraison: true,
+      statutCommande: true, statutPaiement: true, montantTotal: true, createdAt: true,
+      boutique: { select: { nom: true, slug: true } },
+      lignes: { select: { nomProduit: true, prixUnitaire: true, quantite: true, total: true } },
     },
   });
 
   return rows.map((c) => ({
     id: c.id,
-    boutiqueNom: c.commercant.boutique?.nom ?? "Boutique",
-    boutiqueSlug: c.commercant.boutique?.slug ?? null,
+    boutiqueNom: c.boutique?.nom ?? "Boutique",
+    boutiqueSlug: c.boutique?.slug ?? null,
     mode: c.mode,
-    adresse: c.adresse ?? "",
-    statut: c.statut,
+    adresse: c.adresseLivraison ?? "",
+    statut: c.statutCommande,
     statutPaiement: c.statutPaiement,
-    total: c.total,
+    total: num(c.montantTotal),
     date: fmt.format(c.createdAt),
-    lignes: c.lignes.map((l) => ({ nom: l.nomProduit, prixUnitaire: l.prixUnitaire, quantite: l.quantite })),
+    lignes: c.lignes.map((l) => ({
+      nom: l.nomProduit,
+      prixUnitaire: num(l.prixUnitaire),
+      quantite: l.quantite,
+      total: num(l.total),
+    })),
   }));
 }

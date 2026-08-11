@@ -1,11 +1,13 @@
 import "server-only";
 
 import prisma from "@/prisma/prisma";
-import { getCommercantId } from "@/lib/auth/auth";
+import { exigerCommercant } from "@/lib/auth/auth";
 import { StatutCredit } from "@/app/generated/prisma/client";
 
+const num = (d: unknown) => Number(d ?? 0);
+
 export type DashboardStats = {
-  totalClients: number;
+  totalEmprunteurs: number;
   encoursTotal: number;
   encaisseCeMois: number;
   creditsActifs: number;
@@ -20,24 +22,19 @@ export type ActivityItem = {
   amountPositive: boolean;
 };
 
-export type DonutSegment = { statut: StatutCredit; montant: number; pct: number };
-
-export type TopClient = {
-  id: number; name: string; initials: string;
-  creditTotal: number; statut: StatutCredit; lastActivity: string;
+export type DonutSegment = {
+  cle: "paye" | "restant";
+  label: string;
+  montant: number;
+  pct: number;
 };
-
-export type TopProduit = { id: number; nom: string; vendu: number; prixUnitaire: number };
 
 export type DashboardData = {
   stats: DashboardStats;
   activities: ActivityItem[];
   distribution: { segments: DonutSegment[]; total: number };
-  topClients: TopClient[];
-  topProduits: TopProduit[];
 };
 
-const fmtDate = new Intl.DateTimeFormat("fr-FR", { day: "numeric", month: "long", year: "numeric" });
 const fmtMRU = (n: number) => `${n.toLocaleString("fr-FR")} MRU`;
 
 function tempsEcoule(date: Date): string {
@@ -52,16 +49,15 @@ function tempsEcoule(date: Date): string {
 }
 
 export async function getDashboardData(): Promise<DashboardData> {
-  const commercantId = await getCommercantId();
+  const commercantId = await exigerCommercant();
   const now = new Date();
   const debutMois = new Date(now.getFullYear(), now.getMonth(), 1);
 
   const [
-    totalClients, creditsActifs, encours, paiementsMois,
-    recentPaiements, recentCredits, recentClients,
-    distributionRaw, clientsAvecCredits,
+    totalEmprunteurs, creditsActifs, encours, paiementsMois,
+    recentPaiements, recentCredits, recentEmprunteurs, distributionRaw,
   ] = await Promise.all([
-    prisma.client.count({ where: { commercantId } }),
+    prisma.emprunteur.count({ where: { commercantId } }),
     prisma.credit.count({ where: { commercantId, statutCredit: { not: StatutCredit.PAYE } } }),
     prisma.credit.aggregate({
       where: { commercantId, statutCredit: { not: StatutCredit.PAYE } },
@@ -74,16 +70,20 @@ export async function getDashboardData(): Promise<DashboardData> {
     prisma.paiement.findMany({
       where: { credit: { commercantId } },
       orderBy: { datePaiement: "desc" }, take: 6,
-      select: { id: true, montant: true, datePaiement: true,
-        credit: { select: { client: { select: { prenom: true, nom: true } } } } },
+      select: {
+        id: true, montant: true, datePaiement: true,
+        credit: { select: { emprunteur: { select: { prenom: true, nom: true } } } },
+      },
     }),
     prisma.credit.findMany({
       where: { commercantId },
       orderBy: { dateCredit: "desc" }, take: 6,
-      select: { id: true, montantTotal: true, dateCredit: true,
-        client: { select: { prenom: true, nom: true } } },
+      select: {
+        id: true, montantTotal: true, dateCredit: true,
+        emprunteur: { select: { prenom: true, nom: true } },
+      },
     }),
-    prisma.client.findMany({
+    prisma.emprunteur.findMany({
       where: { commercantId },
       orderBy: { createdAt: "desc" }, take: 6,
       select: { id: true, prenom: true, nom: true, createdAt: true },
@@ -92,23 +92,12 @@ export async function getDashboardData(): Promise<DashboardData> {
       where: { commercantId },
       _sum: { montantTotal: true, montantPaye: true },
     }),
-    prisma.client.findMany({
-      where: { commercantId, credits: { some: {} } },
-      select: { id: true, prenom: true, nom: true,
-        credits: { select: { montantTotal: true, montantPaye: true, statutCredit: true, updatedAt: true },
-          orderBy: { updatedAt: "desc" } } },
-    }),
-    // prisma.produit.findMany({
-    //   where: { commercantId },
-    //   select: { id: true, nom: true, prixUnitaire: true, credits: { select: { quantite: true } } },
-    // }),
   ]);
 
-  // --- stats ---
   const stats: DashboardStats = {
-    totalClients,
-    encoursTotal: (encours._sum.montantTotal ?? 0) - (encours._sum.montantPaye ?? 0),
-    encaisseCeMois: paiementsMois._sum.montant ?? 0,
+    totalEmprunteurs,
+    encoursTotal: num(encours._sum.montantTotal) - num(encours._sum.montantPaye),
+    encaisseCeMois: num(paiementsMois._sum.montant),
     creditsActifs,
   };
 
@@ -116,66 +105,36 @@ export async function getDashboardData(): Promise<DashboardData> {
   const acts: (ActivityItem & { _d: Date })[] = [
     ...recentPaiements.map((p) => ({
       id: `p${p.id}`, type: "payment" as const,
-      name: `${p.credit.client.prenom} ${p.credit.client.nom}`,
+      name: `${p.credit.emprunteur.prenom} ${p.credit.emprunteur.nom}`,
       _d: p.datePaiement, date: tempsEcoule(p.datePaiement),
-      amount: `+${fmtMRU(p.montant)}`, amountPositive: true,
+      amount: `+${fmtMRU(num(p.montant))}`, amountPositive: true,
     })),
     ...recentCredits.map((c) => ({
       id: `c${c.id}`, type: "credit" as const,
-      name: `${c.client.prenom} ${c.client.nom}`,
+      name: `${c.emprunteur.prenom} ${c.emprunteur.nom}`,
       _d: c.dateCredit, date: tempsEcoule(c.dateCredit),
-      amount: `+${fmtMRU(c.montantTotal)}`, amountPositive: true,
+      amount: `+${fmtMRU(num(c.montantTotal))}`, amountPositive: true,
     })),
-    ...recentClients.map((cl) => ({
-      id: `cl${cl.id}`, type: "new_client" as const,
-      name: `${cl.prenom} ${cl.nom}`,
-      _d: cl.createdAt, date: tempsEcoule(cl.createdAt),
+    ...recentEmprunteurs.map((e) => ({
+      id: `e${e.id}`, type: "new_client" as const,
+      name: `${e.prenom} ${e.nom}`,
+      _d: e.createdAt, date: tempsEcoule(e.createdAt),
       amount: "", amountPositive: true,
     })),
   ];
   acts.sort((a, b) => b._d.getTime() - a._d.getTime());
   const activities: ActivityItem[] = acts.slice(0, 6).map(({ _d, ...rest }) => rest);
 
-  // --- donut ---
-  const totalCredits = distributionRaw._sum.montantTotal ?? 0;
-  const totalPaye = distributionRaw._sum.montantPaye ?? 0;
+  // --- donut : encaissé vs restant à récupérer ---
+  const totalCredits = num(distributionRaw._sum.montantTotal);
+  const totalPaye    = num(distributionRaw._sum.montantPaye);
   const totalRestant = totalCredits - totalPaye;
+  const pct = (v: number) => (totalCredits > 0 ? Math.round((v / totalCredits) * 100) : 0);
 
   const segments: DonutSegment[] = [
-    { statut: "PAYE" as StatutCredit, montant: totalPaye,
-      pct: totalCredits > 0 ? Math.round((totalPaye / totalCredits) * 100) : 0 },
-    { statut: "EN_COURS" as StatutCredit, montant: totalRestant,
-      pct: totalCredits > 0 ? Math.round((totalRestant / totalCredits) * 100) : 0 },
+    { cle: "paye",    label: "Encaissé",      montant: totalPaye,    pct: pct(totalPaye) },
+    { cle: "restant", label: "À récupérer",   montant: totalRestant, pct: pct(totalRestant) },
   ];
 
-  const totalDistribution = totalCredits;
-
-  // --- top clients (par restant dû) ---
-  const topClients: TopClient[] = clientsAvecCredits
-    .map((c) => {
-      const restant = c.credits
-        .filter((cr) => cr.statutCredit !== StatutCredit.PAYE)
-        .reduce((s, cr) => s + (cr.montantTotal - cr.montantPaye), 0);
-      const statut = restant <= 0 ? StatutCredit.PAYE
-        : c.credits.some((cr) => cr.statutCredit === StatutCredit.NON_PAYE) ? StatutCredit.NON_PAYE
-        : StatutCredit.EN_COURS;
-      return {
-        id: c.id, name: `${c.prenom} ${c.nom}`,
-        initials: `${c.prenom[0] ?? ""}${c.nom[0] ?? ""}`.toUpperCase(),
-        creditTotal: restant, statut,
-        lastActivity: fmtDate.format(c.credits[0]?.updatedAt ?? now),
-      };
-    })
-    .filter((c) => c.creditTotal > 0)
-    .sort((a, b) => b.creditTotal - a.creditTotal)
-    .slice(0, 5);
-
-  // // --- top produits (par quantité vendue) ---
-  // const topProduits: TopProduit[] = produitsRaw
-  //   .map((p) => ({ id: p.id, nom: p.nom, prixUnitaire: p.prixUnitaire,
-  //     vendu: p.credits.reduce((s, cp) => s + cp.quantite, 0) }))
-  //   .sort((a, b) => b.vendu - a.vendu)
-  //   .slice(0, 5);
-
-  return { stats, activities, distribution: { segments, total: totalDistribution }, topClients, topProduits: [] };
+  return { stats, activities, distribution: { segments, total: totalCredits } };
 }

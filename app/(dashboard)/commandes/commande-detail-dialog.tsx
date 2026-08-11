@@ -22,7 +22,6 @@ export default function CommandeDetailDialog({ commande, open, onOpenChange }: P
   const avancer = (s: StatutCommande) => start(() => { changerStatutCommande(commande.id, s); onOpenChange(false); });
   const payer = () => start(() => { validerPaiementCommande(commande.id); onOpenChange(false); });
 
-  // actions selon l'état + le mode
   const actions: { label: string; statut: StatutCommande; variant?: "danger" }[] = [];
   if (commande.statut === "NOUVELLE") {
     actions.push({ label: "Prendre en charge", statut: StatutCommande.EN_PREPARATION });
@@ -53,9 +52,9 @@ export default function CommandeDetailDialog({ commande, open, onOpenChange }: P
               {commande.initials}
             </div>
             <div className="min-w-0">
-              <p className="font-bold text-gray-900">{commande.acheteurNom}</p>
-              <a href={`tel:${commande.acheteurTel}`} className="text-sm text-vert-foncee flex items-center gap-1">
-                <Phone size={13} /> {commande.acheteurTel}
+              <p className="font-bold text-gray-900">{commande.clientNom}</p>
+              <a href={`tel:${commande.clientTel}`} className="text-sm text-vert-foncee flex items-center gap-1">
+                <Phone size={13} /> {commande.clientTel}
               </a>
             </div>
             <span className={`ml-auto px-2.5 py-1 rounded-full text-xs font-semibold ${statutStyle[commande.statut]}`}>
@@ -72,7 +71,7 @@ export default function CommandeDetailDialog({ commande, open, onOpenChange }: P
             {commande.mode === "LIVRAISON" && commande.adresse && (
               <p className="text-sm text-gray-600 flex items-start gap-2"><MapPin size={14} className="mt-0.5 shrink-0" /> {commande.adresse}</p>
             )}
-            {commande.note && <p className="text-xs text-muted-foreground italic">« {commande.note} »</p>}
+            {commande.commentaire && <p className="text-xs text-muted-foreground italic">« {commande.commentaire} »</p>}
             <p className="text-xs text-muted-foreground">{commande.date}</p>
           </div>
 
@@ -83,7 +82,7 @@ export default function CommandeDetailDialog({ commande, open, onOpenChange }: P
               {commande.lignes.map((l, i) => (
                 <div key={i} className="flex items-center justify-between text-sm">
                   <span className="text-gray-700"><span className="font-semibold">{l.quantite}×</span> {l.nom}</span>
-                  <span className="font-medium">{formatMRU(l.prixUnitaire * l.quantite)}</span>
+                  <span className="font-medium">{formatMRU(l.total)}</span>
                 </div>
               ))}
               <div className="flex items-center justify-between border-t pt-2 font-bold">

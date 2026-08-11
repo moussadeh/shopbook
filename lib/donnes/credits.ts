@@ -1,7 +1,7 @@
 import { Wallet, TrendingDown, TrendingUp, CheckCircle2 } from "lucide-react";
 import type { StatCard } from "@/components/custom/dashboard/stats-cards";
 import type { CreditsStats } from "@/lib/data/credits";
-import { StatutCredit } from "@/app/generated/prisma/client";
+import { StatutCredit } from "@/app/generated/prisma/enums";
 
 export function formatMRU(amount: number): string {
   return `${amount.toLocaleString("fr-FR")} MRU`;
@@ -26,9 +26,9 @@ export function statusStyle(statut: string) {
 
 export function buildCreditsStats(s: CreditsStats): StatCard[] {
   return [
-    { label: "Crédits en cours",   value: String(s.creditsActifs),                  icon: Wallet,       sub: "non payés" },
-    { label: "À récupérer",    value: s.encoursTotal.toLocaleString("fr-FR"),   unit: "MRU", icon: TrendingDown, sub: "dû par vos clients" },
+    { label: "Crédits en cours", value: String(s.creditsActifs),                  icon: Wallet,       sub: "non payés" },
+    { label: "À récupérer",      value: s.encoursTotal.toLocaleString("fr-FR"),   unit: "MRU", icon: TrendingDown, sub: "dû par vos clients" },
     { label: "Encaissé ce mois", value: s.encaisseCeMois.toLocaleString("fr-FR"), unit: "MRU", icon: TrendingUp,   sub: "paiements reçus" },
-    { label: "Crédits payés",   value: String(s.creditsSoldes),                  icon: CheckCircle2, sub: "payés" },
+    { label: "Crédits payés",    value: String(s.creditsSoldes),                  icon: CheckCircle2, sub: "soldés" },
   ];
 }

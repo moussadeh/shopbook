@@ -4,13 +4,13 @@ import { SignJWT, jwtVerify } from "jose";
 
 const secret = new TextEncoder().encode(process.env.SESSION_SECRET);
 const COOKIE = "shopbook_session";
-const MAX_AGE = 60 * 60 * 24; // 24 heures
+const MAX_AGE = 60 * 60 * 24 * 7; // 7 jours
 
-export async function createSession(commercantId: number) {
-  const token = await new SignJWT({ commercantId })
+export async function createSession(utilisateurId: number) {
+  const token = await new SignJWT({ utilisateurId })
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
-    .setExpirationTime("1d")
+    .setExpirationTime("7d")
     .sign(secret);
 
   const store = await cookies();
@@ -23,13 +23,13 @@ export async function createSession(commercantId: number) {
   });
 }
 
-export async function getSession(): Promise<{ commercantId: number } | null> {
+export async function getSession(): Promise<{ utilisateurId: number } | null> {
   const store = await cookies();
   const token = store.get(COOKIE)?.value;
   if (!token) return null;
   try {
     const { payload } = await jwtVerify(token, secret);
-    return { commercantId: payload.commercantId as number };
+    return { utilisateurId: payload.utilisateurId as number };
   } catch {
     return null;
   }

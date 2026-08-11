@@ -46,11 +46,11 @@ export default function ConditionsPage() {
 
         <Section n="3" titre="Essai gratuit">
           <p>
-            À l&apos;inscription, vous bénéficiez d&apos;un essai gratuit de 14 jours, donnant accès à l&apos;ensemble des
+            À l&apos;inscription, vous bénéficiez d&apos;un essai gratuit de 7 jours, donnant accès à l&apos;ensemble des
             fonctionnalités de ShopBook, sans paiement et sans engagement.
           </p>
           <p>
-            À la fin des 14 jours, si vous n&apos;avez pas souscrit d&apos;abonnement, l&apos;accès à votre espace est restreint
+            À la fin des 7 jours, si vous n&apos;avez pas souscrit d&apos;abonnement, l&apos;accès à votre espace est restreint
             jusqu&apos;à ce que vous régliez un abonnement. Vos données restent conservées.
           </p>
         </Section>

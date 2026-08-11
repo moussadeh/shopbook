@@ -26,8 +26,8 @@ export default function CommandesView({ commandes, stats }: { commandes: Command
 
   const filtered = commandes.filter((c) => {
     const matchSearch =
-      c.acheteurNom.toLowerCase().includes(search.toLowerCase()) ||
-      c.acheteurTel.includes(search) ||
+      c.clientNom.toLowerCase().includes(search.toLowerCase()) ||
+      c.clientTel.includes(search) ||
       String(c.id).includes(search);
     const matchFilter = filter === "Toutes" || statutLabel[c.statut] === filter;
     return matchSearch && matchFilter;
@@ -47,9 +47,8 @@ export default function CommandesView({ commandes, stats }: { commandes: Command
         filters={FILTRES}
         activeFilter={filter}
         onFilterChange={handleFilter}
-        />
+      />
 
-      {/* Desktop */}
       <div className="hidden md:block bg-white rounded-2xl border overflow-hidden">
         <CommandesTable commandes={paginated} onDetail={setDetail} />
         {filtered.length === 0 && (
@@ -58,7 +57,6 @@ export default function CommandesView({ commandes, stats }: { commandes: Command
         <DesktopPagination currentPage={currentPage} totalPages={totalPages} totalItems={filtered.length} itemLabel="commandes" onPageChange={setCurrentPage} />
       </div>
 
-      {/* Mobile */}
       <div className="md:hidden space-y-3">
         <CommandesCards commandes={paginated} onDetail={setDetail} />
         {filtered.length === 0 && (

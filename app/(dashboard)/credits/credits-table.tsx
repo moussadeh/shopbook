@@ -1,19 +1,19 @@
 "use client";
 
 import { TrendingDown, ChevronRight } from "lucide-react";
-import type { ClientCreditRow } from "@/lib/data/credits";
+import type { EmprunteurCreditRow } from "@/lib/data/credits";
 import { statusStyle, statutCreditLabel, formatMRU } from "@/lib/donnes/credits";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 
 type Props = {
-  clients: ClientCreditRow[];
-  onDetail: (c: ClientCreditRow) => void;
-  onPaiement: (c: ClientCreditRow) => void;
-  onNouveauCreditPour: (c: ClientCreditRow) => void;
+  emprunteurs: EmprunteurCreditRow[];
+  onDetail: (c: EmprunteurCreditRow) => void;
+  onPaiement: (c: EmprunteurCreditRow) => void;
+  onNouveauCreditPour: (c: EmprunteurCreditRow) => void;
 };
 
-export default function CreditsTable({ clients, onDetail, onPaiement, onNouveauCreditPour }: Props) {
+export default function CreditsTable({ emprunteurs, onDetail, onPaiement, onNouveauCreditPour }: Props) {
   return (
     <Table>
       <TableHeader>
@@ -28,9 +28,9 @@ export default function CreditsTable({ clients, onDetail, onPaiement, onNouveauC
         </TableRow>
       </TableHeader>
       <TableBody>
-        {clients.map((c) => (
+        {emprunteurs.map((c) => (
           <TableRow
-            key={c.clientId}
+            key={c.emprunteurId}
             className="cursor-pointer"
             onClick={() => onNouveauCreditPour(c)}
             title="Cliquer pour ajouter un crédit à ce client"
@@ -38,9 +38,9 @@ export default function CreditsTable({ clients, onDetail, onPaiement, onNouveauC
             <TableCell>
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-full bg-vert-foncee text-white text-xs font-bold flex items-center justify-center shrink-0">
-                  {c.clientInitials}
+                  {c.emprunteurInitiales}
                 </div>
-                <span className="font-semibold text-gray-800">{c.clientName}</span>
+                <span className="font-semibold text-gray-800">{c.emprunteurNom}</span>
               </div>
             </TableCell>
             <TableCell>

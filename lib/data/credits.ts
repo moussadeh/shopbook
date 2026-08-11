@@ -1,15 +1,16 @@
 import "server-only";
 
 import prisma from "@/prisma/prisma";
-import { getCommercantId } from "@/lib/auth/auth";
+import { exigerCommercant } from "@/lib/auth/auth";
 import { StatutCredit } from "@/app/generated/prisma/client";
 
-// Un crédit individuel (utilisé dans le détail, le formulaire, le paiement)
+const num = (d: unknown) => Number(d ?? 0);
+
 export type CreditRow = {
   id: number;
-  clientId: number;
-  clientName: string;
-  clientInitials: string;
+  emprunteurId: number;
+  emprunteurNom: string;
+  emprunteurInitiales: string;
   description: string;
   montantTotal: number;
   montantPaye: number;
@@ -18,113 +19,107 @@ export type CreditRow = {
   date: string;
 };
 
-// Une ligne du tableau = un client avec tous ses crédits regroupés
-export type ClientCreditRow = {
-  clientId: number;
-  clientName: string;
-  clientInitials: string;
+export type EmprunteurCreditRow = {
+  emprunteurId: number;
+  emprunteurNom: string;
+  emprunteurInitiales: string;
   nbCredits: number;
-  montantTotal: number;     // somme des montants
-  montantPaye: number;      // somme des paiements
-  montantRestant: number;   // somme des restants
+  montantTotal: number;
+  montantPaye: number;
+  montantRestant: number;
   statutGlobal: StatutCredit;
-  derniereActivite: string; // date du crédit le plus récent
-  credits: CreditRow[];     // le détail
+  derniereActivite: string;
+  credits: CreditRow[];
 };
 
-export type ClientOption = { id: number; name: string };
+export type EmprunteurOption = { id: number; name: string };
 
 const fmtDate = new Intl.DateTimeFormat("fr-FR", { day: "numeric", month: "long", year: "numeric" });
 
-// Statut global d'un client à partir de ses crédits
 function statutGlobal(credits: { montantTotal: number; montantPaye: number }[]): StatutCredit {
   const total = credits.reduce((s, c) => s + c.montantTotal, 0);
-  const paye = credits.reduce((s, c) => s + c.montantPaye, 0);
+  const paye  = credits.reduce((s, c) => s + c.montantPaye, 0);
 
-  if (paye >= total) return StatutCredit.PAYE;   // tout est réglé
-  if (paye <= 0)     return StatutCredit.NON_PAYE; // rien n'a été payé
-  return StatutCredit.EN_COURS;                   // paiement partiel
+  if (paye >= total) return StatutCredit.PAYE;
+  if (paye <= 0)     return StatutCredit.NON_PAYE;
+  return StatutCredit.EN_COURS;
 }
 
-export async function getCredits(): Promise<ClientCreditRow[]> {
-  const commercantId = await getCommercantId();
+export async function getCredits(): Promise<EmprunteurCreditRow[]> {
+  const commercantId = await exigerCommercant();
 
   const rows = await prisma.credit.findMany({
     where: { commercantId },
     orderBy: { dateCredit: "desc" },
     select: {
       id: true,
-      clientId: true,
+      emprunteurId: true,
       description: true,
       montantTotal: true,
       montantPaye: true,
       statutCredit: true,
       dateCredit: true,
-      client: { select: { prenom: true, nom: true } },
+      emprunteur: { select: { prenom: true, nom: true } },
     },
   });
 
-  // Transforme chaque crédit en CreditRow
-  const creditsDetailles: (CreditRow & { _date: Date })[] = rows.map((c) => ({
-    id: c.id,
-    clientId: c.clientId,
-    clientName: `${c.client.prenom} ${c.client.nom}`,
-    clientInitials: `${c.client.prenom[0] ?? ""}${c.client.nom[0] ?? ""}`.toUpperCase(),
-    description: c.description ?? "",
-    montantTotal: c.montantTotal,
-    montantPaye: c.montantPaye,
-    montantRestant: c.montantTotal - c.montantPaye,
-    statut: c.statutCredit,
-    date: fmtDate.format(c.dateCredit),
-    _date: c.dateCredit,
-  }));
+  const details: (CreditRow & { _date: Date })[] = rows.map((c) => {
+    const total = num(c.montantTotal);
+    const paye  = num(c.montantPaye);
+    return {
+      id: c.id,
+      emprunteurId: c.emprunteurId,
+      emprunteurNom: `${c.emprunteur.prenom} ${c.emprunteur.nom}`,
+      emprunteurInitiales: `${c.emprunteur.prenom[0] ?? ""}${c.emprunteur.nom[0] ?? ""}`.toUpperCase(),
+      description: c.description ?? "",
+      montantTotal: total,
+      montantPaye: paye,
+      montantRestant: total - paye,
+      statut: c.statutCredit,
+      date: fmtDate.format(c.dateCredit),
+      _date: c.dateCredit,
+    };
+  });
 
-  // Regroupe par client
-  const parClient = new Map<number, (CreditRow & { _date: Date })[]>();
-  for (const credit of creditsDetailles) {
-    const liste = parClient.get(credit.clientId) ?? [];
+  // Regroupe par emprunteur (l'ordre d'insertion suit le tri par date desc)
+  const parEmprunteur = new Map<number, (CreditRow & { _date: Date })[]>();
+  for (const credit of details) {
+    const liste = parEmprunteur.get(credit.emprunteurId) ?? [];
     liste.push(credit);
-    parClient.set(credit.clientId, liste);
+    parEmprunteur.set(credit.emprunteurId, liste);
   }
 
-  // Construit une ligne par client
-  const lignes: ClientCreditRow[] = [];
-  for (const [clientId, credits] of parClient) {
-    const premier = credits[0]; // déjà trié par date desc
+  const lignes: EmprunteurCreditRow[] = [];
+  for (const [emprunteurId, credits] of parEmprunteur) {
+    const premier = credits[0];
     const montantTotal = credits.reduce((s, c) => s + c.montantTotal, 0);
-    const montantPaye = credits.reduce((s, c) => s + c.montantPaye, 0);
+    const montantPaye  = credits.reduce((s, c) => s + c.montantPaye, 0);
 
     lignes.push({
-      clientId,
-      clientName: premier.clientName,
-      clientInitials: premier.clientInitials,
+      emprunteurId,
+      emprunteurNom: premier.emprunteurNom,
+      emprunteurInitiales: premier.emprunteurInitiales,
       nbCredits: credits.length,
       montantTotal,
       montantPaye,
       montantRestant: montantTotal - montantPaye,
       statutGlobal: statutGlobal(credits),
       derniereActivite: premier.date,
-      // on retire le champ technique _date avant d'exposer les crédits
       credits: credits.map(({ _date, ...rest }) => rest),
     });
   }
 
-  // Trie les clients par dernière activité (le plus récent d'abord)
-  // (parClient préserve l'ordre d'insertion = ordre des crédits triés desc,
-  //  donc les clients sont déjà à peu près dans le bon ordre ; on s'assure)
   return lignes;
 }
 
-// --- inchangé en dessous ---
-
-export async function getClientsOptions(): Promise<ClientOption[]> {
-  const commercantId = await getCommercantId();
-  const clients = await prisma.client.findMany({
+export async function getEmprunteursOptions(): Promise<EmprunteurOption[]> {
+  const commercantId = await exigerCommercant();
+  const emprunteurs = await prisma.emprunteur.findMany({
     where: { commercantId },
     orderBy: [{ prenom: "asc" }, { nom: "asc" }],
     select: { id: true, prenom: true, nom: true },
   });
-  return clients.map((c) => ({ id: c.id, name: `${c.prenom} ${c.nom}` }));
+  return emprunteurs.map((e) => ({ id: e.id, name: `${e.prenom} ${e.nom}` }));
 }
 
 export type CreditsStats = {
@@ -135,7 +130,7 @@ export type CreditsStats = {
 };
 
 export async function getCreditsStats(): Promise<CreditsStats> {
-  const commercantId = await getCommercantId();
+  const commercantId = await exigerCommercant();
   const now = new Date();
   const debutMois = new Date(now.getFullYear(), now.getMonth(), 1);
 
@@ -154,8 +149,8 @@ export async function getCreditsStats(): Promise<CreditsStats> {
 
   return {
     creditsActifs,
-    encoursTotal: (encours._sum.montantTotal ?? 0) - (encours._sum.montantPaye ?? 0),
-    encaisseCeMois: paiementsMois._sum.montant ?? 0,
+    encoursTotal: num(encours._sum.montantTotal) - num(encours._sum.montantPaye),
+    encaisseCeMois: num(paiementsMois._sum.montant),
     creditsSoldes,
   };
 }

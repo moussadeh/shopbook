@@ -1,11 +1,10 @@
 "use server";
 
 import prisma from "@/prisma/prisma";
-import { getCommercantId } from "@/lib/auth/auth";
+import { exigerCommercant } from "@/lib/auth/auth";
 import { revalidatePath } from "next/cache";
 import { StatutCommande, StatutPaiementCommande } from "@/app/generated/prisma/client";
 
-// transitions autorisées (sécurité : on ne saute pas d'étapes)
 const transitions: Record<StatutCommande, StatutCommande[]> = {
   NOUVELLE:       [StatutCommande.EN_PREPARATION, StatutCommande.REFUSEE],
   EN_PREPARATION: [StatutCommande.PRETE, StatutCommande.EN_LIVRAISON, StatutCommande.ANNULEE],
@@ -17,26 +16,38 @@ const transitions: Record<StatutCommande, StatutCommande[]> = {
   ANNULEE:        [],
 };
 
+/** boutique du commerçant connecté (garantit qu'il agit sur SES commandes) */
+async function boutiqueDuCommercant(): Promise<number | null> {
+  const commercantId = await exigerCommercant();
+  const b = await prisma.boutique.findUnique({
+    where: { commercantId },
+    select: { id: true },
+  });
+  return b?.id ?? null;
+}
+
 export async function changerStatutCommande(id: number, nouveau: StatutCommande) {
-  const commercantId = await getCommercantId();
+  const boutiqueId = await boutiqueDuCommercant();
+  if (!boutiqueId) return;
 
   const commande = await prisma.commande.findFirst({
-    where: { id, commercantId },
-    select: { statut: true },
+    where: { id, boutiqueId },
+    select: { statutCommande: true },
   });
   if (!commande) return;
 
-  // vérifie que la transition est permise
-  if (!transitions[commande.statut].includes(nouveau)) return;
+  if (!transitions[commande.statutCommande].includes(nouveau)) return;
 
-  await prisma.commande.update({ where: { id }, data: { statut: nouveau } });
+  await prisma.commande.update({ where: { id }, data: { statutCommande: nouveau } });
   revalidatePath("/commandes");
 }
 
 export async function validerPaiementCommande(id: number) {
-  const commercantId = await getCommercantId();
+  const boutiqueId = await boutiqueDuCommercant();
+  if (!boutiqueId) return;
+
   await prisma.commande.updateMany({
-    where: { id, commercantId },
+    where: { id, boutiqueId },
     data: { statutPaiement: StatutPaiementCommande.PAYEE },
   });
   revalidatePath("/commandes");

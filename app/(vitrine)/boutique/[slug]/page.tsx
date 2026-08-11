@@ -1,5 +1,5 @@
 import { getBoutiquePublique } from "@/lib/data/boutique-publique";
-import { getAcheteur, getAcheteurId } from "@/lib/auth/acheteur";
+import { getUtilisateurActuel } from "@/lib/auth/auth";
 import BoutiqueFermee from "./boutique-fermee";
 import VitrineView from "./vitrine-view";
 import { notFound } from "next/navigation";
@@ -9,9 +9,7 @@ type Props = { params: Promise<{ slug: string }> };
 export async function generateMetadata({ params }: Props) {
   const { slug } = await params;
   const res = await getBoutiquePublique(slug);
-  if (res && res.active) {
-    return { title: `${res.vitrine.nom} · ShopBook` };
-  }
+  if (res && res.active) return { title: `${res.vitrine.nom} · ShopBook` };
   return { title: "Boutique · ShopBook" };
 }
 
@@ -22,8 +20,19 @@ export default async function BoutiquePage({ params }: Props) {
   if (!res) notFound();
   if (!res.active) return <BoutiqueFermee />;
 
-  const acheteurId = await getAcheteurId();
-  const acheteur = await getAcheteur();
+  const utilisateur = await getUtilisateurActuel();
+  const estProprietaire = utilisateur?.commercant?.id === res.commercantId;
 
-  return <VitrineView vitrine={res.vitrine} slug={slug} acheteur={acheteur} />;
+  const client = utilisateur
+    ? { nom: `${utilisateur.prenom} ${utilisateur.nom}`, telephone: utilisateur.telephone }
+    : null;
+
+  return (
+    <VitrineView
+      vitrine={res.vitrine}
+      slug={slug}
+      client={client}
+      estProprietaire={estProprietaire}
+    />
+  );
 }

@@ -1,8 +1,7 @@
 import { redirect } from "next/navigation";
-import { getSession } from "@/lib/auth/session";
+import { getUtilisateurActuel } from "@/lib/auth/auth";
 import { Check } from "lucide-react";
 import Image from "next/image";
-import prisma from "@/prisma/prisma";
 import Link from "next/link";
 
 const atouts = [
@@ -12,13 +11,12 @@ const atouts = [
 ];
 
 export default async function AuthLayout({ children }: { children: React.ReactNode }) {
-  const session = await getSession();
-  if (session) {
-    const c = await prisma.commercant.findUnique({
-      where: { id: session.commercantId },
-      select: { role: true },
-    });
-    redirect(c?.role === "ADMIN" ? "/messages" : "/dashboard");
+  const u = await getUtilisateurActuel();
+  if (u) {
+    if (u.estAdmin) redirect("/messages");
+    else if (u.commercant) redirect("/dashboard");
+    else if (u.client) redirect("/mes-commandes");
+    else redirect("/");
   }
 
   return (
@@ -62,20 +60,21 @@ export default async function AuthLayout({ children }: { children: React.ReactNo
 
       {/* Droite : zone formulaire */}
       <div className="flex flex-col min-h-screen lg:min-h-0 bg-gray-50/60">
-      <div className="flex-1 flex items-center justify-center p-6">
-        <div className="w-full max-w-md space-y-6">
-          {/* En-tête mobile : logo + nom centrés (caché sur desktop, déjà présent à gauche) */}
-          <div className="flex flex-col items-center gap-2 lg:hidden">
-            <Image src="/logos/logo/ShopBook.png" alt="Logo" width={70} height={70} className="object-contain rounded" />
-            <span>
-              <span className="font-bold tracking-tight text-2xl text-vert-foncee">Shop</span>
-              <span className="font-bold tracking-tight text-2xl text-orange">Book</span>
-            </span>
+        <div className="flex-1 flex items-center justify-center p-6">
+          <div className="w-full max-w-md space-y-6">
+            <div className="flex flex-col items-center gap-2 lg:hidden">
+              <Link href="/" className="flex flex-col items-center gap-2 lg:hidden">
+                <Image src="/logos/logo/ShopBook.png" alt="Logo" width={70} height={70} className="object-contain rounded" />
+              </Link>
+              <span>
+                <span className="font-bold tracking-tight text-2xl text-vert-foncee">Shop</span>
+                <span className="font-bold tracking-tight text-2xl text-orange">Book</span>
+              </span>
+            </div>
+            {children}
           </div>
-          {children}
         </div>
       </div>
-    </div>
     </div>
   );
 }

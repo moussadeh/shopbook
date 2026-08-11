@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { AlertCircle, CheckCircle2 } from "lucide-react";
+import { AlertCircle, CheckCircle2, Home } from "lucide-react";
 import { soumettrePaiement, type AboState } from "./actions";
-import { PRIX_ABONNEMENT } from "@/lib/data/abonnement-config";
+import { PRIX_ABONNEMENT } from "@/lib/config";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -27,7 +27,7 @@ export default function PaiementForm() {
   return (
     <div className="rounded-2xl border bg-white p-6 shadow-sm space-y-5">
       <div>
-        <h2 className="text-lg font-bold text-gray-900">S&apos;abonner</h2>
+        <h2 className="text-lg font-bold text-vert-foncee">S&apos;abonner</h2>
         <p className="text-sm text-muted-foreground">
           Montant : <span className="font-semibold text-gray-800">{PRIX_ABONNEMENT} MRU</span> / mois.
           Envoyez le paiement, puis joignez la capture.
@@ -77,6 +77,11 @@ export default function PaiementForm() {
             <Button type="submit" disabled={isPending} className="w-full h-11 bg-vert-foncee text-white hover:opacity-90">
               {isPending ? "Envoi..." : "J'ai payé, soumettre"}
             </Button>
+            <div className="text-center text-sm text-muted-foreground">
+              <Link href="/" className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-vert-foncee transition">
+                <Home size={15} /> Retour à la page d&apos;accueil
+              </Link>
+            </div>
           </form>
         </>
       )}

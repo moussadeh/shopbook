@@ -63,7 +63,9 @@ export default function AbonnementsView({ paiements }: { paiements: PaiementAboR
               <div className="flex items-center justify-between md:justify-end gap-4 md:gap-6 shrink-0">
                 <div className="md:text-right">
                   <p className="text-sm font-bold text-gray-900">{p.montant.toLocaleString("fr-FR")} MRU</p>
-                  <p className="text-xs text-muted-foreground">{p.methode} · {p.date}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {p.methode} · {p.nombreMois} mois · {p.date}
+                  </p>
                 </div>
                 <span className={`px-2 py-0.5 rounded-full text-xs font-semibold shrink-0 ${statutBadge[p.statut]}`}>
                   {statutLabel[p.statut]}
@@ -74,12 +76,13 @@ export default function AbonnementsView({ paiements }: { paiements: PaiementAboR
             {/* Actions — seulement si en attente ou rejeté */}
             {(p.statut === "EN_ATTENTE" || (p.statut === "REJETE" && p.motifRejet)) && (
               <div className="flex flex-wrap items-center justify-between gap-2 mt-3 pt-3 border-t">
-                {p.captureUrl ? (
-                  <a href={p.captureUrl} rel="noreferrer" className="inline-flex items-center gap-1 text-xs font-semibold text-vert-foncee hover:underline">
-                    <ExternalLink size={12} /> Voir la capture
+                {p.justificatifUrl ? (
+                  <a href={p.justificatifUrl} rel="noreferrer"
+                    className="inline-flex items-center gap-1 text-xs font-semibold text-vert-foncee hover:underline">
+                    <ExternalLink size={12} /> Voir le justificatif
                   </a>
                 ) : (
-                  <span className="text-xs text-muted-foreground">Capture indisponible</span>
+                  <span className="text-xs text-muted-foreground">Justificatif indisponible</span>
                 )}
 
                 {p.statut === "EN_ATTENTE" && (

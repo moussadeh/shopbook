@@ -1,8 +1,10 @@
 "use server";
 
 import prisma from "@/prisma/prisma";
-import { getAcheteurId } from "@/lib/auth/acheteur";
+import { getUtilisateurActuel, exigerClient } from "@/lib/auth/auth";
 import { ModeCommande } from "@/app/generated/prisma/client";
+
+const num = (d: unknown) => Number(d ?? 0);
 
 export type CommandeState = { error?: string; commandeId?: number };
 
@@ -12,29 +14,36 @@ export async function passerCommande(input: {
   slug: string;
   mode: "LIVRAISON" | "RETRAIT";
   adresse?: string;
-  note?: string;
+  commentaire?: string;
   lignes: LigneInput[];
 }): Promise<CommandeState> {
-  const acheteurId = await getAcheteurId();
-  if (!acheteurId) return { error: "Vous devez être connecté pour commander." };
+  const utilisateur = await getUtilisateurActuel();
+  if (!utilisateur) return { error: "Vous devez être connecté pour commander." };
 
   if (input.lignes.length === 0) return { error: "Votre panier est vide." };
   if (input.mode === "LIVRAISON" && !input.adresse?.trim())
     return { error: "L'adresse de livraison est requise." };
 
-  // Retrouver la boutique + son commerçant
   const boutique = await prisma.boutique.findUnique({
     where: { slug: input.slug },
-    select: { commercantId: true, active: true, livraison: true, retrait: true },
+    select: {
+      id: true, estActive: true, livraisonDisponible: true, retraitDisponible: true, commercant: { select: { utilisateurId: true } }
+    },
   });
-  if (!boutique || !boutique.active) return { error: "Cette boutique n'est pas disponible." };
-  if (input.mode === "LIVRAISON" && !boutique.livraison) return { error: "La livraison n'est pas proposée." };
-  if (input.mode === "RETRAIT" && !boutique.retrait) return { error: "Le retrait n'est pas proposé." };
+  if (!boutique || !boutique.estActive) return { error: "Cette boutique n'est pas disponible." };
 
-  // Recharger les produits depuis la BDD (on ne fait JAMAIS confiance aux prix venus du client)
+  // On ne commande pas sur sa propre boutique
+  if (boutique.commercant.utilisateurId === utilisateur.id) {
+    return { error: "Vous êtes le propriétaire de cette boutique, vous ne pouvez pas y commander." };
+  }
+
+  if (input.mode === "LIVRAISON" && !boutique.livraisonDisponible) return { error: "La livraison n'est pas proposée." };
+  if (input.mode === "RETRAIT" && !boutique.retraitDisponible) return { error: "Le retrait n'est pas proposé." };
+
+  // Recharger les produits depuis la BDD — jamais confiance aux prix du client
   const ids = input.lignes.map((l) => l.produitId);
   const produits = await prisma.produit.findMany({
-    where: { id: { in: ids }, commercantId: boutique.commercantId, disponible: true },
+    where: { id: { in: ids }, boutiqueId: boutique.id, disponible: true },
     select: { id: true, nom: true, prix: true },
   });
 
@@ -42,22 +51,34 @@ export async function passerCommande(input: {
     .map((l) => {
       const p = produits.find((x) => x.id === l.produitId);
       if (!p || l.qte <= 0) return null;
-      return { produitId: p.id, nomProduit: p.nom, prixUnitaire: p.prix, quantite: l.qte };
+      const prix = num(p.prix);
+      return {
+        produitId: p.id,
+        nomProduit: p.nom,
+        prixUnitaire: prix,
+        quantite: l.qte,
+        total: prix * l.qte,
+      };
     })
     .filter((l): l is NonNullable<typeof l> => l !== null);
 
   if (lignesValides.length === 0) return { error: "Aucun produit valide dans le panier." };
 
-  const total = lignesValides.reduce((s, l) => s + l.prixUnitaire * l.quantite, 0);
+  const montantTotal = lignesValides.reduce((s, l) => s + l.total, 0);
+
+  // Profil client (créé à la volée si l'utilisateur n'en a pas encore)
+  const clientId = await exigerClient();
 
   const commande = await prisma.commande.create({
     data: {
-      acheteurId,
-      commercantId: boutique.commercantId,
+      clientId,
+      boutiqueId: boutique.id,
       mode: input.mode as ModeCommande,
-      adresse: input.mode === "LIVRAISON" ? input.adresse!.trim() : null,
-      note: input.note?.trim() || null,
-      total,
+      adresseLivraison: input.mode === "LIVRAISON" ? input.adresse!.trim() : null,
+      commentaire: input.commentaire?.trim() || null,
+      nomDestinataire: `${utilisateur.prenom} ${utilisateur.nom}`,
+      telephoneDestinataire: utilisateur.telephone,
+      montantTotal,
       lignes: { create: lignesValides },
     },
     select: { id: true },

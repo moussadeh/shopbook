@@ -1,6 +1,6 @@
 import "server-only";
 import prisma from "@/prisma/prisma";
-import { getCommercantId } from "@/lib/auth/auth";
+import { exigerCommercant } from "@/lib/auth/auth";
 
 export type BoutiqueRow = {
   id: number;
@@ -8,25 +8,29 @@ export type BoutiqueRow = {
   nom: string;
   description: string;
   quartier: string;
+  ville: string;
   telephone: string;
-  active: boolean;
-  livraison: boolean;
-  retrait: boolean;
+  estActive: boolean;
+  livraisonDisponible: boolean;
+  retraitDisponible: boolean;
 };
 
 export async function getMaBoutique(): Promise<BoutiqueRow | null> {
-  const commercantId = await getCommercantId();
+  const commercantId = await exigerCommercant();
+
   const b = await prisma.boutique.findUnique({ where: { commercantId } });
   if (!b) return null;
+
   return {
     id: b.id,
     slug: b.slug,
     nom: b.nom,
     description: b.description ?? "",
     quartier: b.quartier ?? "",
-    telephone: b.telephone ?? "",
-    active: b.active,
-    livraison: b.livraison,
-    retrait: b.retrait,
+    ville: b.ville ?? "",
+    telephone: b.telephone,
+    estActive: b.estActive,
+    livraisonDisponible: b.livraisonDisponible,
+    retraitDisponible: b.retraitDisponible,
   };
 }

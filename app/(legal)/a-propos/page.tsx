@@ -70,7 +70,7 @@ export default function AProposPage() {
       <section className="rounded-2xl border bg-white p-6 md:p-8 space-y-5">
         <h2 className="text-xl font-bold text-gray-900">Comment ça marche</h2>
         <ol className="space-y-4">
-          <Etape n="1" titre="Créez votre compte" desc="Quelques informations sur vous et votre boutique, et c'est prêt. Vous démarrez avec 14 jours d'essai gratuit." />
+          <Etape n="1" titre="Créez votre compte" desc="Quelques informations sur vous et votre boutique, et c'est prêt. Vous démarrez avec 7 jours d'essai gratuit." />
           <Etape n="2" titre="Ajoutez vos clients et vos crédits" desc="Enregistrez qui vous doit quoi, au fur et à mesure de vos ventes à crédit." />
           <Etape n="3" titre="Notez les paiements" desc="À chaque remboursement, ajoutez le montant reçu. ShopBook calcule le reste et met à jour le statut." />
           <Etape n="4" titre="Gardez le contrôle" desc="Consultez votre tableau de bord à tout moment pour savoir où vous en êtes." />
@@ -92,7 +92,7 @@ export default function AProposPage() {
       <section className="rounded-2xl bg-vert-foncee text-white p-8 text-center space-y-4">
         <h2 className="text-2xl font-bold">Prêt à ranger le cahier ?</h2>
         <p className="text-white/80 max-w-md mx-auto text-sm">
-          Essayez ShopBook gratuitement pendant 14 jours. Sans carte bancaire, sans engagement.
+          Essayez ShopBook gratuitement pendant 7 jours. Sans carte bancaire, sans engagement.
         </p>
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 pt-1">
           <Link href="/register" className="bg-white text-vert-foncee font-bold px-6 py-3 rounded-lg hover:opacity-90 transition text-center">
