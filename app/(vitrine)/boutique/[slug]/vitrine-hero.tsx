@@ -1,9 +1,9 @@
-import { BadgeCheck, Building2, MapPin, Phone } from "lucide-react";
+import { Building2, MapPin, Phone } from "lucide-react";
 import type { Vitrine } from "@/lib/data/boutique-publique";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 
-const IMAGE_VITRINE = "/images/boutique3.png";
+const IMAGE_VITRINE = "/images/boutique4.png";
 
 export default function VitrineHero({ vitrine }: { vitrine: Vitrine }) {
   const telAffiche = vitrine.telephone.replace(/^\+222/, "").replace(/(\d{2})(?=\d)/g, "$1 ").trim();
@@ -17,7 +17,6 @@ export default function VitrineHero({ vitrine }: { vitrine: Vitrine }) {
           <div>
             <h1 className="text-vert-foncee text-2xl md:text-3xl font-bold flex items-center gap-2">
               {vitrine.nom}
-              <BadgeCheck size={22} className="text-vert-foncee" />
             </h1>
             <p className="text-black mt-2 leading-relaxed max-w-sm">
               Passez vos commandes en quelques clics et payez à la réception. Simple et sans souci.
