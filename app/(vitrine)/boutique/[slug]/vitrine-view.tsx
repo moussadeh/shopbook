@@ -23,11 +23,13 @@ export default function VitrineView({
   slug,
   client,
   estProprietaire,
+  estCommercant
 }: {
   vitrine: Vitrine;
   slug: string;
   client: { nom: string; telephone: string } | null;
   estProprietaire: boolean;
+  estCommercant: boolean;
 }) {
   const dejaConnecte = !!client;
   const [search, setSearch] = useState("");
@@ -95,7 +97,7 @@ export default function VitrineView({
 
           <div className="flex items-center gap-2">
             {client ? (
-              <UtilisateurMenu nom={client.nom} estProprietaire={estProprietaire} />
+              <UtilisateurMenu nom={client.nom} estProprietaire={estProprietaire} estCommercant={estCommercant} />
             ) : (
               <Link
                 href={`/login?retour=/boutique/${slug}`}

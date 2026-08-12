@@ -9,11 +9,14 @@ import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import PasswordInput from "@/components/custom/auth/password-input";
 import TelephoneInput from "@/components/custom/auth/telephone-input";
+import { useSearchParams } from "next/navigation";
 
 const initial: AuthState = {};
 
 export default function LoginForm() {
   const [state, formAction, isPending] = useActionState(loginAction, initial);
+  const params = useSearchParams();
+  const retour = params.get("retour") ?? "";
 
   return (
     <div className="bg-white rounded-3xl border p-6 sm:p-8 shadow-sm">
@@ -46,6 +49,8 @@ export default function LoginForm() {
             aria-invalid={!!state.fieldErrors?.motDePasse} />
           {state.fieldErrors?.motDePasse && <p className="text-xs text-red-600">{state.fieldErrors.motDePasse}</p>}
         </div>
+
+        <input type="hidden" name="retour" value={retour} />
 
         <Button type="submit" disabled={isPending} className="w-full h-11 bg-vert-foncee text-white hover:opacity-90">
           {isPending ? "Connexion..." : "Se connecter"}

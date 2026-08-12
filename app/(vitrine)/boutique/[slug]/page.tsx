@@ -22,6 +22,7 @@ export default async function BoutiquePage({ params }: Props) {
 
   const utilisateur = await getUtilisateurActuel();
   const estProprietaire = utilisateur?.commercant?.id === res.commercantId;
+  const estCommercant = !!utilisateur?.commercant;
 
   const client = utilisateur
     ? { nom: `${utilisateur.prenom} ${utilisateur.nom}`, telephone: utilisateur.telephone }
@@ -33,6 +34,7 @@ export default async function BoutiquePage({ params }: Props) {
       slug={slug}
       client={client}
       estProprietaire={estProprietaire}
+      estCommercant={estCommercant}
     />
   );
 }
