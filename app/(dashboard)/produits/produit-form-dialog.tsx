@@ -38,8 +38,8 @@ function ProduitForm({ produit, onSuccess, onCancel }: {
 
   useEffect(() => { if (state.success) onSuccess(); }, [state.success, onSuccess]);
 
-  const TYPES_OK = ["image/jpeg", "image/png", "image/.jpg"];
-  const MAX_KO_APRES = 800; // cible après compression : ~800 Ko max
+  const TYPES_OK = ["image/jpeg", "image/png", "image/webp"];
+  const MAX_KO_APRES = 400; // cible après compression : ~400 Ko max
   const onPick = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const choisis = Array.from(e.target.files ?? []);
     e.target.value = ""; // on vide tde suite pour pouvoir re-choisir le même fichier
@@ -66,8 +66,8 @@ function ProduitForm({ produit, onSuccess, onCancel }: {
     for (const f of dansLaLimite) {
       try {
         const compresse = await imageCompression(f, {
-          maxSizeMB: MAX_KO_APRES / 1024,   // ~0,78 Mo
-          maxWidthOrHeight: 1200,           // on réduit les très grandes images
+          maxSizeMB: MAX_KO_APRES / 1024,   // ~0,4 Mo
+          maxWidthOrHeight: 800,           // on réduit les très grandes images
           useWebWorker: true,
         });
         // On garantit un vrai File (la compression peut renvoyer un Blob)
@@ -169,7 +169,7 @@ function ProduitForm({ produit, onSuccess, onCancel }: {
               </button>
             )}
           </div>
-          <input ref={fileRef} type="file" accept="image/jpeg,image/png,image/jpg" multiple className="hidden" onChange={onPick} />
+          <input ref={fileRef} type="file" accept="image/jpeg,image/png,image/webp" multiple className="hidden" onChange={onPick} />
           {state.error && <p className="text-sm text-red-600">{state.error}</p>}
           {traitement && (
             <p className="text-xs text-muted-foreground">Traitement des images en cours…</p>

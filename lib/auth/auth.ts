@@ -1,10 +1,11 @@
 import "server-only";
+import { cache } from "react";
 import { redirect } from "next/navigation";
 import prisma from "@/prisma/prisma";
 import { getSession } from "./session";
 
 /** Lecture souple — ne redirige pas (pages publiques : vitrine, landing) */
-export async function getUtilisateurActuel() {
+export const getUtilisateurActuel = cache(async () => {
   const session = await getSession();
   if (!session) return null;
 
@@ -16,7 +17,7 @@ export async function getUtilisateurActuel() {
       client: { select: { id: true } },
     },
   });
-}
+});
 
 /** Exige une connexion — renvoie l'id de l'utilisateur */
 export async function exigerUtilisateur(): Promise<number> {

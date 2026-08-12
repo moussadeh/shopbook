@@ -58,14 +58,17 @@ export async function saveProduit(_prev: ActionState, formData: FormData): Promi
 
   // Images jointes — limite de 3
   const fichiers = formData.getAll("images").filter((f): f is File => f instanceof File && f.size > 0);
+  let imagesIgnorees = 0;
   if (fichiers.length > 0) {
     const dejaLa = await prisma.imageProduit.count({ where: { produitId } });
     let ordre = dejaLa;
 
     for (const file of fichiers) {
       if (ordre >= MAX_IMAGES) break;
-      if (!file.type.startsWith("image/")) continue;
-      if (file.size > MAX_OCTETS) continue;
+      if (!file.type.startsWith("image/") || file.size > MAX_OCTETS) {
+        imagesIgnorees++;
+        continue;
+      }
 
       const url = await uploadImageProduit(file, produitId);
       await prisma.imageProduit.create({ data: { produitId, url, ordre } });
@@ -74,6 +77,13 @@ export async function saveProduit(_prev: ActionState, formData: FormData): Promi
   }
 
   revalidatePath("/produits");
+  
+  if (imagesIgnorees > 0) {
+    return {
+      success: true,
+      error: `Produit enregistré, mais ${imagesIgnorees} image(s) trop lourde(s) ont été ignorée(s).`,
+    };
+  }
   return { success: true };
 }
 

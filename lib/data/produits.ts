@@ -1,5 +1,6 @@
 import "server-only";
 
+import { cache } from "react";
 import prisma from "@/prisma/prisma";
 import { exigerCommercant } from "@/lib/auth/auth";
 
@@ -14,18 +15,18 @@ export type ProduitRow = {
   description: string;
   disponible: boolean;
   images: ProduitImageRow[];
-  image: string | null; // 1re image (raccourci pour la liste)
+  image: string | null;
 };
 
 /** Retourne l'id de la boutique du commerçant, ou null s'il n'en a pas encore */
-export async function getBoutiqueId(): Promise<number | null> {
+export const getBoutiqueId = cache(async (): Promise<number | null> => {
   const commercantId = await exigerCommercant();
   const b = await prisma.boutique.findUnique({
     where: { commercantId },
     select: { id: true },
   });
   return b?.id ?? null;
-}
+});
 
 export async function getProduits(): Promise<ProduitRow[]> {
   const boutiqueId = await getBoutiqueId();
@@ -35,11 +36,7 @@ export async function getProduits(): Promise<ProduitRow[]> {
     where: { boutiqueId },
     orderBy: { createdAt: "desc" },
     select: {
-      id: true,
-      nom: true,
-      prix: true,
-      description: true,
-      disponible: true,
+      id: true, nom: true, prix: true, description: true, disponible: true,
       images: { select: { id: true, url: true }, orderBy: { ordre: "asc" } },
     },
   });
