@@ -18,8 +18,13 @@ export default function ProduitCard({ produit, qte, onAdd, onChange, onOuvrir, l
     <div onClick={onOuvrir} className={`bg-white rounded-xl border overflow-hidden flex flex-col ${indispo ? "opacity-60" : ""}`}>
       <div className="aspect-square bg-vert-claire-2 text-vert-foncee flex items-center justify-center relative">
         {produit.image ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={produit.image} alt={produit.nom} className="absolute inset-0 w-full h-full object-cover" />
+          <Image
+            src={produit.image}
+            alt={produit.nom}
+            fill
+            sizes="(max-width: 768px) 50vw, (max-width: 1280px) 33vw, 25vw"
+            className="object-cover"
+          />
         ) : (
           <Package size={26} />
         )}

@@ -1,5 +1,6 @@
 import "server-only";
 
+import { cache } from "react";
 import prisma from "@/prisma/prisma";
 import { exigerCommercant } from "@/lib/auth/auth";
 import { StatutCommande, StatutPaiementCommande, ModeCommande } from "@/app/generated/prisma/client";
@@ -34,14 +35,14 @@ const ordreStatut: Record<StatutCommande, number> = {
 };
 
 /** boutique du commerçant connecté, ou null */
-export async function getBoutiqueId(): Promise<number | null> {
+export const getBoutiqueId = cache(async (): Promise<number | null> => {
   const commercantId = await exigerCommercant();
   const b = await prisma.boutique.findUnique({
     where: { commercantId },
     select: { id: true },
   });
   return b?.id ?? null;
-}
+});
 
 export async function getCommandes(): Promise<CommandeRow[]> {
   const boutiqueId = await getBoutiqueId();
