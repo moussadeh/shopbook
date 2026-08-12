@@ -1,10 +1,11 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { LogOut, ChevronDown, Package, Store, LayoutDashboard } from "lucide-react";
+import { LogOut, ChevronDown, Package, Store, LayoutDashboard, Rocket } from "lucide-react";
 import { logoutAction } from "@/app/(auth)/actions";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { devenirCommercant } from "@/app/(vitrine)/devenir-commercant-action";
 
 export default function UtilisateurMenu({ nom, estProprietaire = false, estCommercant = false }: { nom: string, estProprietaire?: boolean, estCommercant?: boolean }) {
   const [ouvert, setOuvert] = useState(false);
@@ -60,8 +61,16 @@ export default function UtilisateurMenu({ nom, estProprietaire = false, estComme
                 </Link>
               </>
             )}
+            {!estCommercant && (
+              <button
+                onClick={devenirCommercant}
+                className="w-full flex items-center gap-2 px-4 py-3 text-sm font-medium text-vert-foncee hover:bg-green-50 transition border-b text-left hover:cursor-pointer"
+              >
+                <Rocket size={15} /> Ouvrir ma boutique
+              </button>
+            )}
             <button onClick={deconnexion} disabled={isPending}
-              className="w-full flex items-center gap-2 px-4 py-3 text-sm font-medium text-red-600 hover:bg-red-50 transition">
+              className="w-full flex items-center gap-2 px-4 py-3 text-sm font-medium text-red-600 hover:bg-red-50 transition hover:cursor-pointer">
               <LogOut size={15} /> {isPending ? "Déconnexion…" : "Se déconnecter"}
             </button>
           </div>
