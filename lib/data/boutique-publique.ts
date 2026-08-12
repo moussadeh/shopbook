@@ -1,5 +1,6 @@
 import "server-only";
 
+import { cache } from "react";
 import prisma from "@/prisma/prisma";
 
 const num = (d: unknown) => Number(d ?? 0);
@@ -25,9 +26,10 @@ export type Vitrine = {
   produits: VitrineProduit[];
 };
 
-export async function getBoutiquePublique(
-  slug: string
-): Promise<{ active: false } | { active: true; vitrine: Vitrine; commercantId: number } | null> {
+export const getBoutiquePublique = cache(
+  async (
+    slug: string
+  ): Promise<{ active: false } | { active: true; vitrine: Vitrine; commercantId: number } | null> => {
   const boutique = await prisma.boutique.findUnique({
     where: { slug },
     select: {
@@ -82,4 +84,4 @@ export async function getBoutiquePublique(
       })),
     },
   };
-}
+});

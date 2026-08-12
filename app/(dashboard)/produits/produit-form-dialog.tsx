@@ -36,7 +36,10 @@ function ProduitForm({ produit, onSuccess, onCancel }: {
   const [traitement, setTraitement] = useState(false);
   const [erreurImage, setErreurImage] = useState<string | null>(null);
 
-  useEffect(() => { if (state.success) onSuccess(); }, [state.success, onSuccess]);
+  useEffect(() => {
+    // on ne ferme que si c'est un succès PROPRE (aucune image ignorée)
+    if (state.success && !state.error) onSuccess();
+  }, [state.success, state.error, onSuccess]);
 
   const TYPES_OK = ["image/jpeg", "image/png", "image/webp"];
   const MAX_KO_APRES = 400; // cible après compression : ~400 Ko max
@@ -170,7 +173,14 @@ function ProduitForm({ produit, onSuccess, onCancel }: {
             )}
           </div>
           <input ref={fileRef} type="file" accept="image/jpeg,image/png,image/webp" multiple className="hidden" onChange={onPick} />
-          {state.error && <p className="text-sm text-red-600">{state.error}</p>}
+          {/* vraie erreur : le produit n'a pas été enregistré */}
+          {state.error && !state.success && (
+            <p className="text-sm text-red-600">{state.error}</p>
+          )}
+          {/* avertissement : produit enregistré, mais image(s) ignorée(s) */}
+          {state.error && state.success && (
+            <p className="text-sm text-amber-600">{state.error}</p>
+          )}
           {traitement && (
             <p className="text-xs text-muted-foreground">Traitement des images en cours…</p>
           )}
