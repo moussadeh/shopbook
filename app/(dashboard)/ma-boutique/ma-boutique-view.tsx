@@ -10,6 +10,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { QrCode } from "lucide-react";
+import QrCodeDialog from "./qr-code-dialog";
 
 const initial: BoutiqueState = {};
 
@@ -22,6 +24,8 @@ export default function MaBoutiqueView({ boutique }: { boutique: BoutiqueRow | n
 
   const base = process.env.NEXT_PUBLIC_APP_URL ?? "";
   const lienPublic = boutique ? `${base}/boutique/${boutique.slug}` : "";
+
+  const [qrOuvert, setQrOuvert] = useState(false);
 
   useEffect(() => {
     if (copie) {
@@ -63,6 +67,9 @@ export default function MaBoutiqueView({ boutique }: { boutique: BoutiqueRow | n
             <div className="flex gap-2 items-center">
               <Button onClick={copier} variant="outline" className="flex-1 sm:flex-none gap-1.5">
                 {copie ? <><Check size={15} /> Copié</> : <><Copy size={15} /> Copier</>}
+              </Button>
+              <Button onClick={() => setQrOuvert(true)} variant="outline" className="gap-1.5">
+                <QrCode size={15} /> QR code
               </Button>
               <a href={lienPublic} rel="noreferrer"
                 className="inline-flex items-center justify-center gap-1.5 px-3 rounded-xl border text-sm font-medium hover:bg-muted transition">
@@ -179,6 +186,13 @@ export default function MaBoutiqueView({ boutique }: { boutique: BoutiqueRow | n
           </Button>
         </div>
       )}
+
+      <QrCodeDialog
+        open={qrOuvert}
+        onOpenChange={setQrOuvert}
+        lien={lienPublic}
+        nomBoutique={boutique?.nom ?? ""}
+      />
     </div>
   );
 }
