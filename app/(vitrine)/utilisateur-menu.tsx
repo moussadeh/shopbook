@@ -1,12 +1,12 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { LogOut, ChevronDown, Package, Store } from "lucide-react";
+import { LogOut, ChevronDown, Package, Store, LayoutDashboard } from "lucide-react";
 import { logoutAction } from "@/app/(auth)/actions";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
-export default function UtilisateurMenu({ nom, estProprietaire = false }: { nom: string, estProprietaire?: boolean }) {
+export default function UtilisateurMenu({ nom, estProprietaire = false, estCommercant = false }: { nom: string, estProprietaire?: boolean, estCommercant?: boolean }) {
   const [ouvert, setOuvert] = useState(false);
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
@@ -40,6 +40,14 @@ export default function UtilisateurMenu({ nom, estProprietaire = false }: { nom:
               <p className="text-sm font-semibold text-gray-900 truncate">{nom}</p>
               <p className="text-xs text-muted-foreground">Connecté</p>
             </div>
+            { estCommercant && (
+              <Link
+                href="/dashboard"
+                className="w-full flex items-center gap-2 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-muted transition border-b"
+              >
+                <LayoutDashboard size={15} /> {estProprietaire ? "Gérer ma boutique" : "Mon dashboard"}
+              </Link>
+            )}
             { !estProprietaire && (
               <>
                 <Link href="/mes-commandes" onClick={() => setOuvert(false)}
@@ -51,14 +59,6 @@ export default function UtilisateurMenu({ nom, estProprietaire = false }: { nom:
                   <Store size={15} /> Mes boutiques
                 </Link>
               </>
-            )}
-            { estProprietaire && (
-              <Link
-                href="/dashboard"
-                className="w-full flex items-center gap-2 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-muted transition border-b"
-              >
-                Gérer ma boutique
-              </Link>
             )}
             <button onClick={deconnexion} disabled={isPending}
               className="w-full flex items-center gap-2 px-4 py-3 text-sm font-medium text-red-600 hover:bg-red-50 transition">

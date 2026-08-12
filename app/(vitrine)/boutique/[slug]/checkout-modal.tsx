@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import TelephoneInput from "@/components/custom/auth/telephone-input";
 
 type Etape = "auth" | "livraison" | "succes";
 
@@ -70,9 +71,6 @@ function EtapeAuth({ onOk }: { onOk: () => void }) {
   const [state, formAction, isPending] = useActionState(action, initAuth);
   const err = state.fieldErrors ?? {};
 
-  // registerDepuisVitrine / loginDepuisVitrine redirigent en cas de succès, mais depuis la modale
-  // on veut rester sur place : on détecte le succès via l'absence d'erreur au retour.
-  // Comme ces actions redirigent, on s'appuie plutôt sur router refresh.
   useEffect(() => {
     if (state.success) onOk();
   }, [state.success, onOk]);
@@ -110,7 +108,7 @@ function EtapeAuth({ onOk }: { onOk: () => void }) {
 
         <div className="space-y-1.5">
           <Label htmlFor="telephone">Téléphone</Label>
-          <Input id="telephone" name="telephone" type="tel" placeholder="+222 00 00 00 00" defaultValue={state.values?.telephone ?? ""} className="h-11" />
+          <TelephoneInput id="telephone" name="telephone" defaultValue={state.values?.telephone} invalid={!!err.telephone} />
           {err.telephone && <p className="text-xs text-red-600">{err.telephone}</p>}
         </div>
         <div className="space-y-1.5">
