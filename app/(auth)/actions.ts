@@ -78,6 +78,7 @@ export async function registerAction(_prev: AuthState, formData: FormData): Prom
 export async function loginAction(_prev: AuthState, formData: FormData): Promise<AuthState> {
   const raw = Object.fromEntries(formData) as Record<string, string>;
   const values = { telephone: raw.telephone ?? "" };
+  const retour = (formData.get("retour") as string) || "";
 
   const parsed = loginSchema.safeParse(raw);
   if (!parsed.success) {
@@ -103,6 +104,10 @@ export async function loginAction(_prev: AuthState, formData: FormData): Promise
   }
 
   await createSession(u.id);
+
+  if (retour && retour.startsWith("/")) {
+    redirect(retour); // on revient d'où on venait
+  }
 
   if (u.estAdmin) redirect("/messages");
   if (u.commercant) redirect("/dashboard");
