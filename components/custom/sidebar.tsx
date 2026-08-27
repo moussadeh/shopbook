@@ -18,7 +18,7 @@ import {
 
 const navItems = [
   { label: "Tableau de bord", href: "/dashboard", icon: LayoutDashboard },
-  { label: "Clients",         href: "/emprunteurs",    icon: Users },
+  { label: "Emprunteurs",         href: "/emprunteurs",    icon: Users },
   { label: "Crédits",         href: "/credits",    icon: CreditCard },
   { label: "Produits",        href: "/produits",   icon: Package },
   { label: "Commandes",       href: "/commandes",  icon: Inbox },
