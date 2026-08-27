@@ -40,7 +40,7 @@ export default function Pricing() {
                   <span className="text-3xl md:text-4xl font-bold">Gratuit</span>
                 </div>
                 <div className="mt-2 inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-sm text-slate-700">
-                  <Clock3 size={14} className="mr-2" />Pendant 7 jours
+                  <Clock3 size={14} className="mr-2" />Pendant X jours
                 </div>
                 <p className="mt-2 text-slate-600 text-sm md:text-base">
                   Essayez tout ShopBook, sans payer, sans engagement.
@@ -89,7 +89,7 @@ export default function Pricing() {
               <div>
                 <h3 className="text-xl md:text-2xl font-semibold text-slate-900">Essentiel</h3>
                 <div className="mt-0 flex items-end gap-2">
-                  <span className="text-3xl md:text-4xl font-bold">500</span>
+                  <span className="text-3xl md:text-4xl font-bold">XXX</span>
                   <span className="pb-1 text-lg text-slate-600">MRU / mois</span>
                 </div>
                 <div className="mt-2 inline-flex items-center rounded-full bg-vert-claire px-3 py-1 text-sm text-vert-foncee">
