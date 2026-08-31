@@ -33,7 +33,7 @@ export default function ProduitDetailModal({ produit, qte, onFermer, onAdd, onCh
 
             <div className="space-y-4">
               {/* Image principale — taille contenue */}
-              <div className="relative w-40 h-40 mx-auto rounded-2xl bg-green-50 overflow-hidden">
+              <div className="relative w-full aspect-square rounded-2xl bg-green-50 overflow-hidden">
                 {imagePrincipale ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={imagePrincipale} alt={produit.nom} className="absolute inset-0 w-full h-full object-cover" />
